@@ -22,10 +22,10 @@ The root is closed. Someone who is not signed in cannot read or write.
 | `profiles/{uid}/name` | Display name | Read, write own | Read |
 | `profiles/{uid}/placement` | What is known as of a date | Read own | Read, write |
 | `strands/{strandId}` | A course strand | Read | Read, write |
-| `items/{itemId}` | A probe, repair, research task, or retest | Read | Read, write |
+| `items/{itemId}` | A probe, repair, research task, retest, or placement check | Read | Read, write |
 | `guides/{itemId}` | What the parent looks for in an answer | No | Read, write |
 | `sources/{sourceId}` | A text she is to understand | Read | Read, write |
-| `attempts/{uid}/{attemptId}` | Her answer | Read and write own | Read |
+| `attempts/{uid}/{attemptId}` | Her answer. She can create one. She cannot edit or delete it | Read, create own | Read |
 | `reviews/{uid}/{attemptId}` | Known, partial, or unknown, plus a note | Read own | Read, write |
 | `mastery/{uid}/{strandId}/{ideaId}` | Whether an idea is currently known | Read own | Read, write |
 
@@ -71,7 +71,7 @@ Placement is the parent's record of where she is. It is not a score she sets. Th
 }
 ```
 
-`domain` is one of `english`, `mathematics`, `science`, `social`, `management`, `psychology`.
+`domain` is one of `english`, `mathematics`, `science`, `social`, `management`, `psychology`, `placement`. `placement` is only the first-login check.
 
 `phase` is one of `foundation`, `year10`, `ncea-l1`, `interest`.
 
@@ -89,6 +89,7 @@ Stable strand ids:
 | `management-101` | interest | The Helios walkthrough, then her own case |
 | `psychology-insight` | interest | Names for internal processes she already notices, tied to Leading |
 | `decision-context` | foundation | History, politics, and technology only as far as a honest PESTEL needs them |
+| `placement-check` | foundation | First login. Multiple choice that validates or invalidates the October 2026 placement notes |
 
 ## Item record
 
@@ -112,9 +113,26 @@ Items contain everything she is allowed to see. They do not contain the answer.
 }
 ```
 
-`kind` is `probe`, `repair`, `research`, or `retest`.
+`kind` is `probe`, `repair`, `research`, `retest`, or `check`. `check` is only the first-login placement check.
 
-`answerKind` is `sentence`, `paragraph`, `essay`, or `presentation`. Essays and presentations are normal answers for her, not a special mode.
+`answerKind` is `sentence`, `paragraph`, `essay`, `presentation`, or `choice`. Essays and presentations are normal answers for her, not a special mode. A `choice` item adds `claim`, `predict`, and `choices`. `predict` is `known` or `unknown`: what the October 2026 note expects. It is not the answer. The screen does not announce it before she answers. The correct choice id lives on the guide, under `answer`, not on the item.
+
+```json
+{
+  "strandId": "placement-check",
+  "ideaId": "placement-physics",
+  "kind": "check",
+  "order": 7,
+  "answerKind": "choice",
+  "claim": "physics",
+  "predict": "unknown",
+  "prompt": "Which unit measures energy?",
+  "choices": {
+    "newton": { "text": "newton", "order": 1 },
+    "joule": { "text": "joule", "order": 2 }
+  }
+}
+```
 
 `ideaId` groups a probe, its repair or research, and its retest. Mastery is stored on `ideaId`, not on the item.
 
@@ -163,6 +181,22 @@ Her father's own books are further sources of this same shape. The repository do
 }
 ```
 
+A placement-check attempt stores the chosen id and whether it matched the guide. She sends `matched`. The rules accept the write only when `matched` is the real comparison with `guides/{itemId}/answer`. A wrong `matched` is rejected, so the client cannot invent a correct answer. The guide itself stays unreadable.
+
+```json
+{
+  "itemId": "check-physics-2",
+  "strandId": "placement-check",
+  "ideaId": "placement-physics",
+  "answerKind": "choice",
+  "selected": "joule",
+  "matched": true,
+  "submittedAt": 1763200000000
+}
+```
+
+The first attempt for an item is the one that counts. A later push id does not replace it. Single-level notes validate when a majority of the three answers fit `predict`. English and chemistry contain both `known` and `unknown` questions, and those notes validate only when every answer fits. The wording for each note is in `lib/claims.mjs`. The questions and the key are in `content/placement-check.mjs`. The React app does not import that file.
+
 ```json
 {
   "itemId": "m101-pestel-letters",
@@ -201,6 +235,26 @@ These ids stay. The prompts can be edited. The ids should not, or attempts will 
 | `m101-own-case` | research | A real organisation she chooses. Her own PESTEL, SWOT, one SMART goal, and POLC. The words have to be doing work |
 
 `m101-own-case` is the research task. It opens after the probes show the gaps, not before. A retest id, when a probe fails, is the probe id plus `-retest`. Example: `m101-pestel-letters-retest`. Same `ideaId`, new question.
+
+## Placement-check items
+
+These ids stay. Three questions for each October 2026 note. `predict` follows that note: `known` where the note says the idea is already there, `unknown` where it says the idea is not.
+
+| Item ids | Claim | Note | Predict |
+| --- | --- | --- | --- |
+| `check-math-1` `check-math-2` `check-math-3` | `mathematics` | Year 10 project book complete | all `known` |
+| `check-english-1` `check-english-2` `check-english-3` | `english` | Halfway through Year 10 | two `known`, then one `unknown` |
+| `check-physics-1` `check-physics-2` `check-physics-3` | `physics` | Extremely poor | all `unknown` |
+| `check-chem-1` `check-chem-2` `check-chem-3` | `chemistry` | pH and basic ions only | two `known`, then one `unknown` |
+| `check-bio-1` `check-bio-2` `check-bio-3` | `biology` | Very poor | all `unknown` |
+| `check-geo-1` `check-geo-2` `check-geo-3` | `geology` | Very poor | all `unknown` |
+| `check-history-1` `check-history-2` `check-history-3` | `history` | Poor | all `unknown` |
+| `check-politics-1` `check-politics-2` `check-politics-3` | `politics` | Poor | all `unknown` |
+| `check-tech-1` `check-tech-2` `check-tech-3` | `technology` | Poor | all `unknown` |
+| `check-psych-1` `check-psych-2` `check-psych-3` | `psychology` | Advanced | all `known` |
+| `check-social-1` `check-social-2` `check-social-3` | `socialManagement` | Advanced | all `known` |
+
+Management is an interest, not a claimed level, so the check does not score it.
 
 ## What not to add
 

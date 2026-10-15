@@ -99,7 +99,7 @@ Five bezels.
 
 Anything longer than the question starts collapsed. The Helios essay is a source she opens from a research or walkthrough bezel. It is not sitting above the first probe.
 
-The first screen after login is the next probe.
+The first time she logs in, the screen is a placement check: multiple-choice questions that validate or invalidate the October 2026 notes. She can leave and continue later. Answered questions stay answered. When every question has an attempt, the screen says, claim by claim, whether the note held. A majority of single-level claims must fit. English and chemistry are split notes, so they hold only when the earlier questions and the later question both fit. After that check is complete, the first screen of ordinary study is the next probe.
 
 ## Management walkthrough
 
@@ -133,8 +133,8 @@ These do not change the 2026 course. They change how 2027 assessment is entered.
 ## Order of creation
 
 1. This plan, the database contract, and rules that match the contract.
-2. The parent checks the placement table. A correction changes a field. It does not add a new tree.
-3. The app, only after that: two logins, the five bezels, and the management probes through to `m101-own-case`, saved as attempts and reviews.
+2. Her first login runs the placement check in `database.md`. The result validates or invalidates each note. A correction changes the placement field. It does not add a new tree.
+3. The rest of the app, after that check: two logins, the five bezels, and the management probes through to `m101-own-case`, saved as attempts and reviews.
 4. The science claims probe, then physics, using the same screens.
 5. English remains in the Start Right course. The site stores the essay or presentation she produces from it. It does not replace the rest of that book in the first build.
 6. The mathematics hold check.

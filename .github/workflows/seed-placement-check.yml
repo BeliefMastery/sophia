@@ -1,0 +1,27 @@
+name: Seed placement check
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - content/placement-check.mjs
+      - lib/checkContent.mjs
+      - lib/records.mjs
+      - scripts/seed-placement-check.js
+      - .github/workflows/seed-placement-check.yml
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Write the placement questions
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
+        run: node scripts/seed-placement-check.js

@@ -1,0 +1,234 @@
+:root {
+  color-scheme: light;
+  --ink: #1c1915;
+  --paper: #f6f1e6;
+  --frame: #241f1b;
+  --brass: #c6a36a;
+  --line: #ddd4c6;
+  --good: #1d5c42;
+  --bad: #8d3f14;
+  --muted: #655e54;
+  --shadow: 0 18px 40px rgba(36, 28, 18, 0.16);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 500px at 20% -10%, #f8f4ec, transparent 50%),
+    linear-gradient(180deg, #e7e0d4, #cfc6b8);
+}
+
+.shell {
+  width: min(760px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 28px 0 64px;
+  display: grid;
+  gap: 18px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6px;
+}
+
+.wordmark {
+  margin: 0;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.bezel {
+  background: var(--frame);
+  border-radius: 22px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+
+.bezel-plate {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--brass);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 6px 10px 10px;
+}
+
+.bezel-screen {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 22px 20px 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.bezel.is-validated .bezel-plate { color: #b7d7c6; }
+.bezel.is-invalidated .bezel-plate { color: #f0c2a4; }
+
+h1, h2, p { margin: 0; }
+
+h1, .prompt {
+  font-family: Palatino, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-size: 1.55rem;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+
+h2 {
+  font-family: Palatino, Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.prompt-small {
+  white-space: pre-wrap;
+  font-family: Palatino, Georgia, serif;
+}
+
+.quiet, .note { color: var(--muted); }
+
+.note { letter-spacing: 0.02em; }
+
+.meter {
+  height: 6px;
+  background: var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.meter span {
+  display: block;
+  height: 100%;
+  background: var(--frame);
+}
+
+details {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.choices {
+  display: grid;
+  gap: 8px;
+}
+
+.choice, .primary, .text {
+  font: inherit;
+}
+
+.choice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #fffdf8;
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.choice.is-selected {
+  border-color: var(--frame);
+  box-shadow: inset 0 0 0 1px var(--frame);
+  background: #fff;
+}
+
+.choice-mark {
+  flex: 0 0 auto;
+  width: 1.6rem;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  padding-top: 3px;
+}
+
+.primary {
+  justify-self: start;
+  background: var(--frame);
+  color: var(--paper);
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  min-height: 48px;
+  cursor: pointer;
+}
+
+.primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.text {
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 44px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sign-in {
+  display: grid;
+  gap: 12px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+input {
+  font: inherit;
+  min-height: 48px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fffdf8;
+  color: var(--ink);
+}
+
+.alert {
+  color: var(--bad);
+}
+
+.answer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.answer-list li {
+  display: grid;
+  gap: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 640px) {
+  .shell { width: min(100% - 20px, 760px); padding-top: 16px; }
+  h1, .prompt { font-size: 1.35rem; }
+  .bezel-screen { padding: 16px; }
+  .bezel-plate { letter-spacing: 0.08em; }
+}

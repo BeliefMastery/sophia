@@ -38,8 +38,11 @@
     "attempts": {
       "$uid": {
         ".read": "auth != null && (auth.uid == $uid || root.child('roles').child(auth.uid).child('parent').val() == true)",
-        ".write": "auth != null && auth.uid == $uid",
-        ".indexOn": ["strandId", "itemId", "submittedAt"]
+        ".indexOn": ["strandId", "itemId", "submittedAt"],
+        "$attemptId": {
+          ".write": "auth != null && auth.uid == $uid && !data.exists()",
+          ".validate": "newData.hasChildren(['itemId','strandId','ideaId','answerKind','submittedAt']) && root.child('items').child(newData.child('itemId').val()).exists() && newData.child('strandId').val() == root.child('items').child(newData.child('itemId').val()).child('strandId').val() && newData.child('ideaId').val() == root.child('items').child(newData.child('itemId').val()).child('ideaId').val() && newData.child('answerKind').val() == root.child('items').child(newData.child('itemId').val()).child('answerKind').val() && newData.child('submittedAt').isNumber() && ((newData.child('answerKind').val() != 'choice' && newData.child('answer').isString()) || (newData.child('answerKind').val() == 'choice' && newData.child('selected').isString() && root.child('items').child(newData.child('itemId').val()).child('choices').child(newData.child('selected').val()).exists() && root.child('guides').child(newData.child('itemId').val()).child('answer').isString() && newData.child('matched').isBoolean() && newData.child('matched').val() == (newData.child('selected').val() == root.child('guides').child(newData.child('itemId').val()).child('answer').val())))"
+        }
       }
     },
     "reviews": {
