@@ -214,6 +214,17 @@ async function main() {
       if (written.status !== 200) fail(`Parent profile write failed with HTTP ${written.status}`);
       console.log(`parent profile set ${uid}`);
     }
+    if (label === "parent" && user.displayName !== "Warwick") {
+      const named = await googleJson({
+        method: "POST",
+        hostname: "identitytoolkit.googleapis.com",
+        path: `/v1/projects/${serviceAccount.project_id}/accounts:update`,
+        token,
+        payload: { localId: uid, displayName: "Warwick" },
+      });
+      if (named.status !== 200) fail(`Parent display name failed (${named.status}: ${errorText(named.body)})`);
+      console.log(`parent display name set ${uid}`);
+    }
   }
 
   const labels = users.map((user) => labelFor(user.email));
