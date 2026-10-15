@@ -116,7 +116,7 @@ async function main() {
   const deployed = JSON.parse(check.body);
   const names = Object.keys(deployed.rules || {});
   console.log(`rules now: ${names.join(", ")}`);
-  const expected = ["users", "roles", "progress", "curriculum"];
+  const expected = ["roles", "profiles", "strands", "items", "guides", "sources", "attempts", "reviews", "mastery"];
   const missing = expected.filter((name) => !names.includes(name));
   if (missing.length) fail(`rules are missing ${missing.join(", ")}`);
 }

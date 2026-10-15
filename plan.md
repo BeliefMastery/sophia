@@ -1,152 +1,146 @@
 # Sophia plan
 
-This is the research and creation plan named in `sophiaplam.md`. That file stays the scope. This file says who the site is for, what it will and will not do, how study works, and the order to build it.
+This is the research and creation plan named in `sophiaplam.md`. That file stays the scope. This file says who the study is for, in what order ideas are taught, and when building the site is allowed to start. The database contract is `database.md`. Paths in that file are the ones to build against.
 
-Sophia is a school substitute for one student and her parent, covering the senior secondary years from the final term of 2026 through 2028. It is a React site with logins and a Firebase Realtime Database. The curriculum is built from a testing loop: a check of what she already knows, or a research task that makes her compare options and use precise words.
+Sophia is 15. In October 2026 she is still in Year 10 work, not in an NCEA year. Mathematics: the Year 10 Start Right project book is complete. English: she is halfway through the Year 10 Start Right course. Her homeschool work already includes basic essays and presentations. General science is well behind. Psychology and social management are ahead of the rest. She wants to understand Management 101, and she wants to walk through the Helios Energy essay in `sources/helios-strategic-execution.md`.
 
-## What Sophia is
+The site is the place that study happens. It is a React app with two logins and the Firebase Realtime Database already created for `sophia-138fe`. A session starts with a question. Long text stays collapsed. The screen is bezels: question, answer, research, words, and a parent note.
 
-Sophia is the place where daily study happens.
+## What this plan is protecting
 
-A study session shows a question first. A long explanation stays closed until she asks for it, or until a check shows she needs it. The screen is divided into bezels, so the question, her answer, the research, and the words she needs are separate zones.
+The course order and the database paths are fixed here so the app is not rebuilt around a different learner or a different tree. Question wording can change. A path name, a strand id, or a management item id should not.
 
-Two people sign in:
-
-- the student, who studies and answers
-- the parent, who writes and edits study material, reviews answers, and can see progress
+Her father's books are part of what she should eventually understand. Those files are not in the repository yet. When they are added, each one becomes a source record as described in `database.md`. They are not a reason to open a new curriculum structure.
 
 ## What Sophia is not
 
-Sophia does not award NCEA, University Entrance, or any other qualification. Those awards come from NZQA. Practice inside Sophia is practice. It is labeled as practice so it cannot be mistaken for an external assessment or a school's internal assessment.
+Sophia does not award NCEA or University Entrance. Practice on the site is labeled as practice. A link school, or Te Kura from age 16, is how a real assessment is entered. No school is obliged to be the link school.
 
-Sophia is not a school for other families, and it is not Te Aho o Te Kura Pounamu. It does not use Cloud Firestore. The database is the Firebase Realtime Database already created for project `sophia-138fe` in `asia-southeast1`.
+She is under 16, so home education needs a Ministry of Education Certificate of Exemption under section 38 of the Education and Training Act 2020 until she turns 16. Whether that certificate is already in force is still unknown. Her birthday is unknown, so the date she turns 16 is unknown.
 
-The database root stays closed. A signed-in student can read and write her own study record. The parent can read that record and can edit the curriculum. Nobody else can.
+The site is not Te Kura, and it is not a school for other families. The database is Realtime Database, not Firestore.
 
-## The three years
+## Where she is
 
-The scope covers the final semester of 2026, then 2027, and then 2028, as the senior secondary years. This plan treats those years as:
-
-| Calendar time | School year | Qualification aim |
+| Area | October 2026 | What that means for the course |
 | --- | --- | --- |
-| Term 4, 2026 (now through mid-December) | Year 11 | Find the gaps. Start NCEA Level 1 work. Do not try to finish a whole certificate in one term. |
-| 2027 | Year 12 | NCEA Level 2, and the start of University Entrance literacy. |
-| 2028 | Year 13 | NCEA Level 3 and University Entrance. |
+| Mathematics | Year 10 Start Right project book finished | Check that it still holds. Do not open a new mathematics course until that check is done |
+| English | Halfway through Year 10 Start Right | Finish that course. Essays and presentations stay the usual way she answers |
+| Geology | Very poor | Earth science comes after she can use evidence and a little chemistry |
+| Chemistry | pH and basic ion behaviour only | Continue from particles, ions, and pH. Do not start an NCEA chemistry course |
+| Biology | Very poor | Cells first, then systems |
+| Physics | Extremely poor | Force, motion, and energy are the first science teaching, after claims and evidence |
+| History, politics, technology | Poor | Taught only when a management case needs them, not as three extra textbooks |
+| Psychology | Advanced | A strength. Give the ideas names and tests. Do not assume the vocabulary is already precise |
+| Social management | Advanced | A strength in reading people and situations. Management 101 still has to be learned as theory |
+| Management | Keen to go ahead | First interest strand. The Helios essay is the worked case |
 
-If she is already ahead or behind that year level, the same shape moves with her. The first job is to record her actual year level and any credits she already has. Subject content waits on that.
+An NZQA Record of Achievement, if one exists, can override this table. Nothing in the placement says she already has NCEA credits. Treat the literacy and numeracy co-requisite as not yet met until a record says it is.
 
-## Qualifications the study prepares for
+## The three calendar years
 
-NCEA has three certificates. Each one needs 60 credits at that level or above, plus a one-off co-requisite of 10 literacy or te reo matatini credits and 10 numeracy or te pāngarau credits. Once the co-requisite is met, it counts for every level. Credits can be earned over more than one year. Source: [NCEA levels and certificates](https://www2.nzqa.govt.nz/ncea/about-ncea/ncea-levels-and-certificates/).
+Senior NCEA years do not start in Term 4 of 2026. She has Year 10 work open, and science is behind Year 10.
 
-Through the end of 2027, the co-requisite can be met either by the dedicated standards or by approved literacy and numeracy standards inside subjects. From 2028, only the dedicated standards count. Source: [NCEA co-requisite](https://ncea.education.govt.nz/overview-NCEA-corequisite-standards).
+| When | School year | Aim |
+| --- | --- | --- |
+| Term 4, 2026, about eight weeks | Finish Year 10 | Hold mathematics. Finish the English course. Start science at claims and physics. Walk the Helios tools. |
+| 2027 | Year 11 | NCEA Level 1 only where the foundation holds. English, mathematics for the numeracy co-requisite, and the start of a business or psychology pathway. Science Level 1 waits until the foundation probes are known. |
+| 2028 | Year 12 | NCEA Level 2, including the start of University Entrance reading and writing. |
 
-University Entrance is separate from the NCEA certificates. The 2026 rules require NCEA Level 3, 14 Level 3 credits in each of three approved subjects, 10 Level 2 or above literacy credits with at least 5 in reading and 5 in writing, and 10 numeracy or te pāngarau credits from the co-requisite standards or from NZQA's numeracy list. Source: Assessment and Examination for NCEA and New Zealand Scholarship Rules 2026, Schedule 2, clause 6.
+NCEA Level 3 and University Entrance sit in 2029 if this pace holds. Putting them into 2028 would skip the science gap and the unfinished Year 10 English. That is the rebuild this plan is avoiding.
 
-Sophia can teach toward those requirements. Entry into the real assessments has to go through a registered school.
+Each NCEA certificate needs 60 credits at that level or above, plus a one-off co-requisite of 10 literacy or te reo matatini credits and 10 numeracy or te pāngarau credits. Through 2027 the co-requisite can also be met by approved standards inside subjects. From 2028 only the dedicated standards count. University Entrance additionally needs Level 3, 14 Level 3 credits in each of three approved subjects, and its own reading, writing, and numeracy lists. Sources are at the end of this file.
 
-- Under 16, home education needs a Ministry of Education Certificate of Exemption under section 38 of the Education and Training Act 2020. The programme must teach at least as regularly and as well as a registered school. The certificate expires at 16, or earlier if she enrols in a school.
-- A home-schooled student can be assessed for NCEA only through a link school that has consent to assess. No school is obliged to be that link. Source: [NZQA home-school assessment](https://www2.nzqa.govt.nz/about-us/rules-fees-policies/nzqa-rules/administrative-guidelines/internal-and-external-assessment-of-home-school-students/).
-- From 16 to 19, Te Kura can be a free route into NCEA. Source: [Ministry of Education, qualifications for home-educated students](https://www.education.govt.nz/parents-and-caregivers/schools-year-0-13/home-education/qualifications-and-university-entry-home-educated-students).
-
-The parent confirms which of these already applies. Sophia's job is the teaching programme the exemption describes, plus practice that matches the standards the link school will enter.
+Likely later homes for her interests, not courses to start now: Business Studies for management, Psychology for internal processes, English for University Entrance literacy. Standard numbers are chosen from the NZQA lists when 2027 planning starts, not before the foundation probes exist.
 
 ## The learning loop
 
-Every topic is a test before it is a lesson. The test has two legal moves, and only these two:
+Every topic is a test before it is a lesson.
 
-1. She already has the knowledge or skill. The result is recorded and the topic is not taught again from the start.
-2. She does not. The failed check becomes a research task. She has to look outside the page, compare more than one option, and come back with a judgement.
+1. She already has the idea. Record it and do not teach it from the start.
+2. She does not. The failed check becomes research: look outside the page, compare more than one option, and judge.
 
-A research task always includes the words she needs. A difficult question is allowed to depend on a word she does not know yet. That word is revealed as part of the task, with a plain definition and one example, and a later question asks her to use it. Vocabulary is how the question gets harder. It is not a separate word list dumped on the screen.
+Words are part of the hard question. A term she needs is shown with a plain definition and one example. A later question asks her to use it. The Helios essay's words are the first set: macro-environment, strength, weakness, opportunity, threat, incentive, intrinsic motivation.
 
 The loop for one idea:
 
-1. Probe. A short question, or a small skill check, with no lesson above it.
-2. Result.
-   - Known: mark it mastered and move.
-   - Partly known: one short repair, then a new question. The new question is not the same item with the answer still in mind.
-   - Unknown: open a research brief.
-3. Research brief. One question she cannot answer from memory. At least two sources or two real options to compare. A short list of words she must use correctly. A written judgement in her own sentences.
-4. Retest. New questions that need the same idea and the same words.
-5. Parent review. The parent sees the probe, the research, and the retest, and can send it back.
+1. Probe, with no lesson above it.
+2. Result: known, partial, or unknown. Partial gets one short repair and a new question. Unknown opens research.
+3. Research brief: one question, at least two sources or two real options, the words she must use, a judgement in her own sentences.
+4. Retest with a new question that needs the same idea.
+5. Parent review. The parent sets the result. Opening a panel is not mastery.
 
-Mastery means she can answer a fresh question, not that she has opened the panel. A topic can return later in a mixed check. If the mixed check fails, it goes back through the same loop.
+Essays and presentation outlines are ordinary answers. A probe can ask for a sentence, a paragraph, an essay, or a presentation.
 
-Sophia practice is not the NZQA assessment. When a standard is the target, the on-screen work says which standard it is practising and that the official result happens only through the link school.
+## Weekly shape for Term 4
+
+Four blocks, so science and management are both real and English does not stop.
+
+1. English. The next section of the Year 10 Start Right course. The output is a paragraph, a short essay, or a few presentation slides.
+2. Management. The next Helios probe in `database.md`. One idea only.
+3. Science. The current foundation strand. One probe only. Order is claims, then physics, then chemistry from ions and pH, then biology, then earth science.
+4. The people strand inside management. When the item is about Leading, use her psychology and social management strength. Ask her to distinguish a pay incentive from intrinsic motivation before treating the idea as known.
+
+Mathematics gets one check in the first fortnight, drawn from the completed project book. If it holds, mathematics stops there until 2027. If a part fails, only that part reopens.
+
+History, politics, and technology appear when a PESTEL probe needs a fact she does not have. That probe becomes research. They do not become separate courses in 2026.
 
 ## The screen
 
-The study screen is a set of bezels. A bezel is a visible frame with one job. Five are enough:
+Five bezels.
 
-| Bezel | What it holds | When it is open |
+| Bezel | Holds | Opens |
 | --- | --- | --- |
 | Question | The probe or retest | Always |
-| Answer | Her response and the submit action | Always, once a question is on screen |
-| Research | Sources, the comparison, and her judgement | Only after a probe shows a gap |
-| Words | The few words this question depends on | Only when the question needs a word she may not know |
-| Parent | A note, or a request to redo | Parent account, and the student can read the note after it is sent |
+| Answer | Sentence, paragraph, essay, or presentation | With the question |
+| Research | Sources, comparison, judgement | After a gap |
+| Words | The few terms this question needs | When the question depends on them |
+| Parent | The review note | After the parent sends it |
 
-Anything longer than the question starts collapsed. A heading shows what is inside. She opens it. Passages, examples, and worked solutions do not sit open as a wall of text.
+Anything longer than the question starts collapsed. The Helios essay is a source she opens from a research or walkthrough bezel. It is not sitting above the first probe.
 
-The first screen she sees after login is the next probe, not a menu of readings.
+The first screen after login is the next probe.
 
-## Course shape
+## Management walkthrough
 
-Subjects are not frozen here. A default path keeps University Entrance reachable, and it can change once she says what she wants to study.
+She studies the tools in the order the essay uses them.
 
-- English, because Level 2 and 3 English can carry University Entrance reading and writing.
-- Mathematics, because numeracy has to be met, and some degrees ask for Level 3 mathematics beyond the minimum.
-- One science she is willing to stay with through Level 3.
-- One further approved subject she actually wants. That choice is hers.
+1. PESTEL letters, and what kind of fact each one takes.
+2. Sort sentences from the Helios essay into those letters. Political and Legal stay distinct.
+3. Build a SWOT from given facts. A strength is inside the firm. An opportunity is outside it.
+4. Find the missing SMART part when the number or the date is removed.
+5. Place one Helios action under Planning, Organising, Leading, or Controlling.
+6. In the Leading section, separate a pay incentive from intrinsic motivation.
+7. Research: an organisation she chooses. Her own PESTEL, SWOT, one SMART goal, and POLC, with those words doing the work.
 
-Term 4 of 2026 is about eight teaching weeks. It is used to:
+Item ids for these steps are listed in `database.md` and stay stable.
 
-- run a diagnostic in reading, writing, and number
-- see whether the literacy and numeracy co-requisite is already met
-- choose the 2027 subjects
-- run the full loop on one English idea and one mathematics idea, so the site is proven before it is filled with content
+## Database
 
-2027 carries the Level 2 programme and begins University Entrance literacy. 2028 carries Level 3, with 14 credits aimed at in each of three approved subjects, and finishes University Entrance numeracy if it is still open.
+`database.md` is the contract. The live rules already need to match it before any accounts or answers exist. Marking guides live under `guides`, which she cannot read. Her answers live under `attempts`. The parent's judgement lives under `reviews` and `mastery`, which she cannot overwrite.
 
-Standard numbers are chosen after the subjects are chosen, from the current NZQA lists. They are not invented in advance.
+Placement is written by the parent, from the table in this plan. She can change her display name. She cannot change the placement and she cannot grant herself the parent role.
 
-## Facts to confirm before content is written
+## Still unknown
 
-These five answers change the curriculum. Content writing starts after them.
+These do not change the 2026 course. They change how 2027 assessment is entered.
 
-1. Year level in October 2026, and the credits already on her NZQA Record of Achievement.
-2. Whether a section 38 exemption is in force, or she is already 16 or older.
-3. Whether a link school has agreed to assess her, or Te Kura is the route.
-4. The science and the fourth subject she wants.
-5. Whether the 20-credit co-requisite is already complete. If it is not, 2026 and 2027 use the transition routes, and 2028 must use the dedicated standards.
-
-## How the site is built
-
-The client is a React app. Sign-in is Firebase Authentication, email and password, with the student account and the parent account created by the parent. There is no public registration.
-
-The database is Realtime Database `https://sophia-138fe-default-rtdb.asia-southeast1.firebasedatabase.app`, project `sophia-138fe`. It is not Firestore.
-
-Records are split so that a security rule can match a person to her own data:
-
-- `users/{uid}` holds the display name and the role request. A client cannot grant itself the parent role.
-- `roles/{uid}/parent` is written only from an admin credential, after the parent account exists.
-- `progress/{uid}/...` holds probes, answers, research, and retests. The student and the parent can read and write that student's progress. No other account can.
-- `curriculum/...` holds the probes, research briefs, and word lists. Any signed-in account can read it. Only the parent can write it.
-
-The root has no read and no write. Admin access for deploying rules stays in a key held outside the repository, as a GitHub Actions secret. The credential that matches the admin account `firebase-adminsdk-fbsvc@sophia-138fe.iam.gserviceaccount.com` is the JSON private key from Firebase.
+- Whether the section 38 exemption is already granted.
+- The day she turns 16.
+- Whether a link school has agreed to assess her, or Te Kura will be the route after 16.
+- Any NZQA credits already on a Record of Achievement.
 
 ## Order of creation
 
-1. This plan.
-2. The five facts above, answered by the parent.
-3. The app shell: both logins, the five bezels, one probe, one research brief, one retest, saved under `progress/{uid}`.
-4. The parent review on that same piece of work.
-5. A real diagnostic in reading, writing, and number, using the same loop.
-6. The 2027 course, written only after the subjects and the credit record are known.
-7. The 2028 course, aimed at Level 3 and University Entrance.
+1. This plan, the database contract, and rules that match the contract.
+2. The parent checks the placement table. A correction changes a field. It does not add a new tree.
+3. The app, only after that: two logins, the five bezels, and the management probes through to `m101-own-case`, saved as attempts and reviews.
+4. The science claims probe, then physics, using the same screens.
+5. English remains in the Start Right course. The site stores the essay or presentation she produces from it. It does not replace the rest of that book in the first build.
+6. The mathematics hold check.
+7. 2027 Level 1 choices, after Term 4 shows what is actually known.
 
-Each creation step is finished when the student can do the loop on real material, not when a page merely renders.
+No step is finished because a page rendered. It is finished when she can do that loop on the real material.
 
 ## Sources
 
