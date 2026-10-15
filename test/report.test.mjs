@@ -21,13 +21,17 @@ test("the report scores the first answer and keeps later activity", () => {
     { id: "later", itemId: "check-math-1", selected: "six", matched: true, submittedAt: 20 },
     { id: "first", itemId: "check-math-1", selected: "two", matched: false, submittedAt: 10 },
     { id: "second", itemId: "check-math-2", selected: "ten", matched: true, submittedAt: 30 },
-  ], guides);
+  ], guides, {
+    "check-math-1": { answer: "y = 5. After dividing, y + 1 = 6.", submittedAt: 15 },
+  });
 
   assert.equal(report.answered, 2);
   assert.equal(report.correct, 1);
   assert.equal(report.incorrect, 1);
   assert.equal(report.questions[0].chosen, "x = 2");
   assert.equal(report.questions[0].answerText, "x = 6");
+  assert.equal(report.questions[0].repair, "y = 5. After dividing, y + 1 = 6.");
+  assert.equal(report.activity.find((row) => row.id === "first").repair, "y = 5. After dividing, y + 1 = 6.");
   assert.equal(report.verdicts[0].open, true);
   assert.equal(report.verdicts[0].answered, 2);
   assert.equal(report.activity[0].id, "second");

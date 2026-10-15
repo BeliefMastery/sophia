@@ -73,7 +73,23 @@ test("a signed-in student can finish the check and the notes are judged from the
       submittedAt: missed.order,
     });
     const guide = await get(ref(db, `guides/${missedId}`));
-    assert.equal(guide.val().answer, items.find((item) => item.id === missedId).answer);
+    const source = items.find((item) => item.id === missedId);
+    assert.equal(guide.val().answer, source.answer);
+    assert.equal(typeof guide.val().followPrompt, "string");
+    assert.notEqual(guide.val().followPrompt, source.prompt);
+    await set(ref(db, `repairs/${uid}/${missedId}`), {
+      answer: `Written after ${missedId}.`,
+      submittedAt: missed.order,
+    });
+  }
+  try {
+    await set(ref(db, `repairs/${uid}/check-math-3`), {
+      answer: "This item was not missed.",
+      submittedAt: 3,
+    });
+    assert.fail("a repair was saved without a miss");
+  } catch (error) {
+    assert.match(`${error.code || ""} ${error.message || ""}`, /permission/i);
   }
   try {
     await get(ref(db, "guides/check-math-3"));

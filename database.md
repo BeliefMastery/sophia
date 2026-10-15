@@ -6,9 +6,9 @@ The database URL is `https://sophia-138fe-default-rtdb.asia-southeast1.firebased
 
 ## Who can touch what
 
-A signed-in student reads her own profile, attempts, reviews, and mastery. She writes her name and her own attempts. She reads strands, items, and sources. After a wrong multiple-choice answer is stored, she can read that one guide.
+A signed-in student reads her own profile, attempts, reviews, mastery, and written repairs. She writes her name, her own attempts, and one written repair after a miss. She reads strands, items, and sources. After a wrong multiple-choice answer is stored, she can read that one guide.
 
-The parent does that, and also writes placement, strands, items, guides, sources, reviews, and mastery. The parent login is the admin report: it can read every profile and every attempt. Guides are marking notes. Sophia cannot read a guide before she has missed that question, and she cannot read the guide list.
+The parent does that, and also writes placement, strands, items, guides, sources, reviews, and mastery. The parent login is the admin report: it can read every profile, every attempt, and every written repair. Guides are marking notes. Sophia cannot read a guide before she has missed that question, and she cannot read the guide list.
 
 `roles/{uid}/parent` is true only for the parent. Clients cannot write `roles`. That value is set later with the admin credential, after the login exists.
 
@@ -23,8 +23,9 @@ The root is closed. Someone who is not signed in cannot read or write.
 | `profiles/{uid}/placement` | What is known as of a date | Read own | Read, write |
 | `strands/{strandId}` | A course strand | Read | Read, write |
 | `items/{itemId}` | A probe, repair, research task, retest, or placement check | Read | Read, write |
-| `guides/{itemId}` | What the parent looks for in an answer, including the choice id and the explanation | Read one guide after a miss on that item | Read, write |
+| `guides/{itemId}` | What the parent looks for in an answer, including the choice id, the explanation, the discovery resources, and the follow-up question | Read one guide after a miss on that item | Read, write |
 | `misses/{uid}/{itemId}` | The wrong choice that opens that guide. Create once. The rules accept it only when the choice is actually wrong | Create own | No |
+| `repairs/{uid}/{itemId}` | The written answer to the different question that follows a miss. Create once. The rules accept it only when that miss exists | Read, create own | Read all |
 | `sources/{sourceId}` | A text she is to understand | Read | Read, write |
 | `attempts/{uid}/{attemptId}` | Her answer. She can create one. She cannot edit or delete it | Read, create own | Read all |
 | `reviews/{uid}/{attemptId}` | Known, partial, or unknown, plus a note | Read own | Read, write |
@@ -231,7 +232,18 @@ Stable source ids, if a later year writes a record: `sovereign-of-mind`, `belief
 
 A placement-check attempt stores the chosen id and whether it matched the guide. She sends `matched`. The rules accept the write only when `matched` is the real comparison with `guides/{itemId}/answer`. A wrong `matched` is rejected, so the client cannot invent a correct answer.
 
-A miss uses the item id, not a push id. The rules accept it only when `matched` is false and that is also the real comparison. After that write, she can read `guides/{itemId}`. The guide holds the choice id, `lookFor`, and `misconceptions`. The screen shows the choice text and those lines. A correct answer does not open the guide.
+A miss uses the item id, not a push id. The rules accept it only when `matched` is false and that is also the real comparison. After that write, she can read `guides/{itemId}`. The guide holds the choice id, `lookFor`, `misconceptions`, `discover`, and `followPrompt`. `discover` is a list of links and search instructions. `followPrompt` is a different question from the multiple-choice prompt, and it does not quote the correct choice. The screen shows those resources and replaces the choices with a text box for `followPrompt`. It does not show the correct choice. A correct answer does not open the guide. The next multiple-choice question stays closed until `repairs/{uid}/{itemId}` has her written answer. That written answer is evidence of what she found. It does not change the first-attempt score.
+
+The repair record:
+
+```json
+{
+  "answer": "y = 5. After dividing, y + 1 = 6.",
+  "submittedAt": 1763200000000
+}
+```
+
+The miss record:
 
 ```json
 {

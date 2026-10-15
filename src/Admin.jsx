@@ -22,6 +22,7 @@ export function Admin({ user }) {
   const [attempts, setAttempts] = useState(null);
   const [items, setItems] = useState(null);
   const [guides, setGuides] = useState(null);
+  const [repairs, setRepairs] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export function Admin({ user }) {
       watch("attempts", setAttempts),
       watch("items", setItems),
       watch("guides", setGuides),
+      watch("repairs", setRepairs),
     ];
     return () => unsubs.forEach((unsub) => unsub());
   }, []);
@@ -48,7 +50,7 @@ export function Admin({ user }) {
     );
   }
 
-  if (!profiles || !attempts || !items || !guides) {
+  if (!profiles || !attempts || !items || !guides || !repairs) {
     return <p className="quiet">Loading the report…</p>;
   }
 
@@ -57,7 +59,7 @@ export function Admin({ user }) {
   const students = [...uids].map((uid) => ({
     uid,
     name: profiles[uid]?.name || "Student",
-    report: studentReport(list(items), list(attempts[uid]), guides),
+    report: studentReport(list(items), list(attempts[uid]), guides, repairs[uid]),
   })).sort((a, b) => a.name.localeCompare(b.name));
 
   if (!students.length) {
@@ -123,7 +125,8 @@ function StudentReport({ student }) {
                   <p>{row.matched ? "Matched the key." : "Did not match the key."}</p>
                   {row.matched ? null : (
                     <>
-                      <p>Answer: {row.answerText}</p>
+                      <p>Written answer: {row.repair || "Not written yet."}</p>
+                      <p>Key: {row.answerText}</p>
                       {row.explanation.map((line) => <p key={line}>{line}</p>)}
                     </>
                   )}

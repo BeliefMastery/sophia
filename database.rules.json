@@ -35,6 +35,16 @@
         ".read": "auth != null && root.child('misses').child(auth.uid).child($itemId).child('matched').val() == false"
       }
     },
+    "repairs": {
+      ".read": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('roles').child(auth.uid).child('parent').val() == true)",
+        "$itemId": {
+          ".write": "auth != null && auth.uid == $uid && !data.exists()",
+          ".validate": "newData.hasChildren(['answer','submittedAt']) && newData.child('answer').isString() && newData.child('answer').val().length > 0 && newData.child('answer').val().length <= 2000 && newData.child('submittedAt').isNumber() && root.child('misses').child($uid).child($itemId).child('matched').val() == false"
+        }
+      }
+    },
     "misses": {
       "$uid": {
         "$itemId": {

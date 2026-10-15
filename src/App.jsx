@@ -3,9 +3,9 @@ import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebas
 import { equalTo, get, onValue, orderByChild, push, query, ref, set } from "firebase/database";
 import { claims, judgePlacement } from "../lib/claims.mjs";
 import { recordChoice } from "../lib/recordChoice.mjs";
-import { checkRows, orderedChoices } from "../lib/records.mjs";
+import { checkRows, openRepair, orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
-import { explainMiss } from "../lib/explain.mjs";
+import { resourceList } from "../lib/explain.mjs";
 import { Admin } from "./Admin.jsx";
 
 const signInMessages = {
@@ -34,7 +34,10 @@ export function App() {
   const [selected, setSelected] = useState("");
   const [saving, setSaving] = useState(false);
   const [recordError, setRecordError] = useState("");
-  const [reveal, setReveal] = useState(null);
+  const [repairs, setRepairs] = useState(null);
+  const [guides, setGuides] = useState({});
+  const [pendingRepair, setPendingRepair] = useState(null);
+  const [repairDraft, setRepairDraft] = useState("");
   const savingRef = useRef(false);
   const headingRef = useRef(null);
 
@@ -50,11 +53,23 @@ export function App() {
     const unsubRole = onValue(ref(db, `roles/${user.uid}/parent`), (snapshot) => {
       setParent(snapshot.val() === true);
     });
+    const unsubRepairs = onValue(ref(db, `repairs/${user.uid}`), (snapshot) => {
+      setRepairs(snapshot.val() || {});
+    });
     return () => {
       unsubItems();
       unsubAttempts();
       unsubRole();
+      unsubRepairs();
     };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) return;
+    setPendingRepair(null);
+    setGuides({});
+    setRepairDraft("");
+    setRepairs(null);
   }, [user]);
 
   const progress = useMemo(() => {
@@ -62,9 +77,52 @@ export function App() {
     return checkRows(items, attempts || []);
   }, [items, attempts]);
 
+  const dueRepair = useMemo(() => {
+    if (!items || !attempts || repairs === null) return null;
+    return openRepair(items, attempts, repairs);
+  }, [items, attempts, repairs]);
+
+  const activeRepair = dueRepair
+    || (pendingRepair && !(typeof repairs?.[pendingRepair.item.id]?.answer === "string" && repairs[pendingRepair.item.id].answer.trim())
+      ? pendingRepair
+      : null);
+
+  useEffect(() => {
+    if (!pendingRepair || repairs === null) return;
+    const saved = repairs[pendingRepair.item.id]?.answer;
+    if (typeof saved === "string" && saved.trim()) setPendingRepair(null);
+  }, [repairs, pendingRepair]);
+
+  useEffect(() => {
+    const itemId = activeRepair?.item?.id;
+    if (!user || !itemId || guides[itemId]) return undefined;
+    let cancel = false;
+    let timer = 0;
+    async function load(attempt) {
+      try {
+        const snapshot = await get(ref(db, `guides/${itemId}`));
+        if (cancel) return;
+        setGuides((current) => ({ ...current, [itemId]: snapshot.val() || {} }));
+        setRecordError("");
+      } catch {
+        if (cancel) return;
+        if (attempt < 4) {
+          timer = window.setTimeout(() => load(attempt + 1), 200);
+          return;
+        }
+        setRecordError("The next question did not load. Try it again.");
+      }
+    }
+    load(0);
+    return () => {
+      cancel = true;
+      window.clearTimeout(timer);
+    };
+  }, [user, activeRepair?.item?.id, guides]);
+
   useEffect(() => {
     headingRef.current?.focus();
-  }, [progress?.next?.id, progress?.complete, user, reveal?.item?.id]);
+  }, [progress?.next?.id, progress?.complete, user, activeRepair?.item?.id]);
 
   async function onSignIn(event) {
     event.preventDefault();
@@ -81,7 +139,7 @@ export function App() {
   }
 
   async function onRecord() {
-    if (!progress?.next || !selected || savingRef.current) return;
+    if (!progress?.next || !selected || savingRef.current || activeRepair) return;
     savingRef.current = true;
     setSaving(true);
     setRecordError("");
@@ -98,20 +156,39 @@ export function App() {
     try {
       const matched = await recordChoice((body) => set(attemptRef, body), payload);
       if (!matched) {
-        setReveal({ item, selected, pending: true });
         const missRef = ref(db, `misses/${user.uid}/${item.id}`);
         try {
           await set(missRef, { selected, matched: false, submittedAt: payload.submittedAt });
         } catch (error) {
           if (error?.code !== "PERMISSION_DENIED") throw error;
         }
-        const guide = (await get(ref(db, `guides/${item.id}`))).val() || {};
-        setReveal({ item, selected, guide });
+        setRepairDraft("");
+        setPendingRepair({ item, selected });
       }
       setSelected("");
     } catch {
-      setReveal(null);
+      setPendingRepair(null);
       setRecordError("That answer was not recorded. Try it again.");
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
+    }
+  }
+
+  async function onRepair() {
+    const text = repairDraft.trim();
+    if (!activeRepair || !text || savingRef.current) return;
+    savingRef.current = true;
+    setSaving(true);
+    setRecordError("");
+    try {
+      await set(ref(db, `repairs/${user.uid}/${activeRepair.item.id}`), {
+        answer: text,
+        submittedAt: Date.now(),
+      });
+      setRepairDraft("");
+    } catch {
+      setRecordError("That written answer was not saved. Try it again.");
     } finally {
       savingRef.current = false;
       setSaving(false);
@@ -179,28 +256,7 @@ export function App() {
     );
   }
 
-  if (reveal) {
-    const explained = explainMiss(reveal.item, reveal.guide);
-    const chosen = reveal.item.choices?.[reveal.selected]?.text || "";
-    return (
-      <Shell user={user}>
-        <Bezel plate="Answer" aside="Explanation">
-          <h1 ref={headingRef} tabIndex={-1} className="prompt">{reveal.item.prompt}</h1>
-          {reveal.pending ? <p className="quiet">Loading the explanation…</p> : (
-            <>
-              <p>Your choice: {chosen}</p>
-              <p className="reveal-answer">Answer: {explained.answerText}</p>
-              {explained.explanation.map((line) => <p key={line}>{line}</p>)}
-              {explained.slips.map((line) => <p key={line} className="quiet">{line}</p>)}
-            </>
-          )}
-          <button type="button" className="primary" onClick={() => setReveal(null)} disabled={reveal.pending}>Continue</button>
-        </Bezel>
-      </Shell>
-    );
-  }
-
-  if (!items || !attempts || parent === null) {
+  if (!items || !attempts || repairs === null || parent === null) {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
 
@@ -210,6 +266,51 @@ export function App() {
         <Bezel plate="Placement" aside="Empty">
           <h1 ref={headingRef} tabIndex={-1}>The placement questions are not loaded.</h1>
           <p>The check has nowhere to read from yet.</p>
+        </Bezel>
+      </Shell>
+    );
+  }
+
+  if (activeRepair) {
+    const guide = guides[activeRepair.item.id];
+    const resources = resourceList(guide?.discover);
+    const chosen = activeRepair.item.choices?.[activeRepair.selected]?.text || "";
+    const follow = typeof guide?.followPrompt === "string" ? guide.followPrompt : "";
+    return (
+      <Shell user={user}>
+        <Bezel plate="Discovery" aside="Written answer">
+          <p>That choice did not match. The choices are closed.</p>
+          {chosen ? <p className="quiet">Your choice: {chosen}</p> : null}
+          {!follow ? <p className="quiet">Loading the next question…</p> : (
+            <>
+              <p>Use a resource, then answer the new question in your own words.</p>
+              <ul className="resources">
+                {resources.map((entry) => (
+                  <li key={entry.href || entry.label}>
+                    {entry.href ? (
+                      <a href={entry.href} target="_blank" rel="noopener noreferrer">{entry.label}</a>
+                    ) : (
+                      <p className="search-line">{entry.label}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <h1 ref={headingRef} tabIndex={-1} className="prompt">{follow}</h1>
+              <label>
+                Your answer
+                <textarea
+                  value={repairDraft}
+                  onChange={(event) => setRepairDraft(event.target.value)}
+                  maxLength={2000}
+                  rows={5}
+                />
+              </label>
+            </>
+          )}
+          {recordError ? <p className="alert" role="alert">{recordError}</p> : null}
+          <button type="button" className="primary" disabled={!follow || !repairDraft.trim() || saving} onClick={onRepair}>
+            {saving ? "Saving…" : "Save this answer"}
+          </button>
         </Bezel>
       </Shell>
     );

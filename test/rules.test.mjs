@@ -137,6 +137,36 @@ test("a paragraph attempt still saves without a choice key", async () => {
   }));
 });
 
+test("a written repair is allowed only after a real miss", async () => {
+  const student = testEnv.authenticatedContext("student").database();
+  const repair = {
+    answer: "The unit is the one used for energy.",
+    submittedAt: Date.now(),
+  };
+  await assertFails(set(ref(student, `repairs/student/${physics.id}`), repair));
+  await assertFails(set(ref(student, `repairs/student/${physics.id}`), { answer: "   ", submittedAt: Date.now() }));
+  await assertSucceeds(set(ref(student, `misses/student/${physics.id}`), {
+    selected: "newton",
+    matched: false,
+    submittedAt: Date.now(),
+  }));
+  await assertFails(set(ref(student, `repairs/student/${physics.id}`), { answer: "", submittedAt: Date.now() }));
+  await assertSucceeds(set(ref(student, `repairs/student/${physics.id}`), repair));
+  await assertFails(set(ref(student, `repairs/student/${physics.id}`), {
+    answer: "A second try.",
+    submittedAt: Date.now(),
+  }));
+  const own = await get(ref(student, `repairs/student/${physics.id}`));
+  assert.equal(own.val().answer, repair.answer);
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    await set(ref(context.database(), "roles/parent/parent"), true);
+  });
+  const parent = testEnv.authenticatedContext("parent").database();
+  const listed = await get(ref(parent, "repairs"));
+  assert.equal(listed.val().student[physics.id].answer, repair.answer);
+  await assertFails(get(ref(student, "repairs")));
+});
+
 test("a parent can read the key and a student cannot", async () => {
   await testEnv.withSecurityRulesDisabled(async (context) => {
     await set(ref(context.database(), "roles/parent/parent"), true);
