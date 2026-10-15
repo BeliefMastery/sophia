@@ -2,7 +2,7 @@
 
 This is the Realtime Database contract for project `sophia-138fe`. The live rules in `database.rules.json` match these paths. Study content and the app should use these paths as they are. Add fields when needed. Do not rename a path, and do not move marking guides into items Sophia can read.
 
-The database URL is `https://sophia-138fe-default-rtdb.asia-southeast1.firebasedatabase.app`. It is not Firestore. No study records have been written yet. Accounts do not exist yet, so this file is the design, not a dump of live data.
+The database URL is `https://sophia-138fe-default-rtdb.asia-southeast1.firebasedatabase.app`. It is not Firestore. Email sign-in is on, and the student and parent accounts exist. This file is the design, not a dump of live answers.
 
 ## Who can touch what
 
