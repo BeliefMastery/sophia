@@ -1,0 +1,3 @@
+this site is a school substitute designed for final semester 2026 and 2027 and 2028 - senior years of highschool in new zealand. a react site built with a a database backend in google firebase (not firestore, the simple database storage) used with client logins to take alternative schooling.
+the curriculum must be designed and shaped based on an inbuilt testing process that either tests inherent knowledge and skills or prompts to research them and critically think of options - including expanding their vocabulary to answer difficult questions.
+It will be built with interactivity in mind, concealing text walls with collapsable sections, and using bezels to create distinct visual zones. a thorough plan for research and creation is the next stage.
