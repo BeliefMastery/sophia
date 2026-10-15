@@ -2,6 +2,10 @@ name: Create parent login
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - scripts/create-parent-login.js
+      - .github/workflows/create-parent-login.yml
 
 permissions:
   contents: read
