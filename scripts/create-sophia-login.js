@@ -100,37 +100,33 @@ function postJson(path, token, payload) {
   });
 }
 
-async function initializeAuth(projectId, token) {
-  const response = await request({
-    method: "POST",
-    hostname: "identitytoolkit.googleapis.com",
-    path: `/v2/projects/${projectId}/identityPlatform:initializeAuth`,
-    headers: {
-      authorization: `Bearer ${token}`,
-      "content-length": 0,
-    },
-  });
-  if (response.status !== 200) {
-    fail(`Could not turn on Firebase Authentication (${response.status}: ${errorText(response.body)})`);
-  }
-  console.log("authentication initialized");
-}
-
 async function enableEmailPassword(projectId, token) {
   const body = JSON.stringify({ signIn: { email: { enabled: true, passwordRequired: true } } });
-  const response = await request({
-    method: "PATCH",
-    hostname: "identitytoolkit.googleapis.com",
-    path: `/v2/projects/${projectId}/config?updateMask=signIn.email.enabled,signIn.email.passwordRequired`,
-    headers: {
-      authorization: `Bearer ${token}`,
-      "content-type": "application/json",
-      "content-length": Buffer.byteLength(body),
-    },
-    body,
-  });
-  if (response.status !== 200) fail(`Could not enable email sign-in (${response.status}: ${errorText(response.body)})`);
-  console.log("email sign-in enabled");
+  const attempts = [
+    ["PUT", `/admin/v2/projects/${projectId}/config`, body],
+    ["PUT", `/v2/projects/${projectId}/config`, body],
+    ["PATCH", `/v2/projects/${projectId}/config?updateMask=signIn.email.enabled,signIn.email.passwordRequired`, body],
+  ];
+  const failures = [];
+  for (const [method, path, payload] of attempts) {
+    const response = await request({
+      method,
+      hostname: "identitytoolkit.googleapis.com",
+      path,
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+        "content-length": Buffer.byteLength(payload),
+      },
+      body: payload,
+    });
+    if (response.status === 200) {
+      console.log(`email sign-in enabled via ${method}`);
+      return;
+    }
+    failures.push(`${method} ${response.status}: ${errorText(response.body)}`);
+  }
+  fail(`Could not enable email sign-in (${failures.join(" | ")})`);
 }
 
 async function main() {
@@ -146,9 +142,8 @@ async function main() {
 
   let lookup = await postJson(`${base}/accounts:query`, token, { email: [email] });
   const lookupCode = errorText(lookup.body);
-  if (lookup.status !== 200 && (lookupCode === "CONFIGURATION_NOT_FOUND" || lookupCode === "OPERATION_NOT_ALLOWED")) {
-    if (lookupCode === "CONFIGURATION_NOT_FOUND") await initializeAuth(projectId, token);
-    else await enableEmailPassword(projectId, token);
+  if (lookup.status !== 200 && (lookupCode.startsWith("CONFIGURATION_NOT_FOUND") || lookupCode.startsWith("OPERATION_NOT_ALLOWED"))) {
+    await enableEmailPassword(projectId, token);
     lookup = await postJson(`${base}/accounts:query`, token, { email: [email] });
   }
   if (lookup.status !== 200) fail(`Account lookup failed (${lookup.status}: ${errorText(lookup.body)})`);
