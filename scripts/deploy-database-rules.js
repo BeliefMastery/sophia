@@ -106,8 +106,19 @@ async function main() {
     }
     fail(`rules deploy failed with HTTP ${response.status}${detail ? `: ${detail}` : ""}`);
   }
-  const deployed = JSON.parse(response.body);
-  console.log(`rules deployed: ${Object.keys(deployed.rules || {}).join(", ")}`);
+  const check = await request({
+    method: "GET",
+    hostname: "sophia-138fe-default-rtdb.asia-southeast1.firebasedatabase.app",
+    path: "/.settings/rules.json",
+    headers: { authorization: `Bearer ${token}` },
+  });
+  if (check.status !== 200) fail(`rules read-back failed with HTTP ${check.status}`);
+  const deployed = JSON.parse(check.body);
+  const names = Object.keys(deployed.rules || {});
+  console.log(`rules now: ${names.join(", ")}`);
+  const expected = ["users", "roles", "progress", "curriculum"];
+  const missing = expected.filter((name) => !names.includes(name));
+  if (missing.length) fail(`rules are missing ${missing.join(", ")}`);
 }
 
 main().catch((error) => fail(error.message || "rules deploy failed"));
