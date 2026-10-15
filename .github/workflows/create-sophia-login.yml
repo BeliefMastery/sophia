@@ -1,0 +1,25 @@
+name: Create Sophia login
+
+on:
+  push:
+    paths:
+      - scripts/create-sophia-login.js
+      - .github/workflows/create-sophia-login.yml
+
+permissions:
+  contents: read
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Create the student login
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
+          SOPHIA_AUTH_EMAIL: ${{ secrets.SOPHIA_AUTH_EMAIL }}
+          SOPHIA_AUTH_PASSWORD: ${{ secrets.SOPHIA_AUTH_PASSWORD }}
+        run: node scripts/create-sophia-login.js
