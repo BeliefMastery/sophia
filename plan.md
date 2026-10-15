@@ -10,7 +10,7 @@ The site is the place that study happens. It is a React app with two logins and 
 
 The course order and the database paths are fixed here so the app is not rebuilt around a different learner or a different tree. Question wording can change. A path name, a strand id, or a management item id should not.
 
-Her father's books are part of what she should eventually understand. Those files are not in the repository yet. When they are added, each one becomes a source record as described in `database.md`. They are not a reason to open a new curriculum structure.
+Her father's books are part of what she should eventually understand. They set content gates and the tone of the screen. They do not add a strand, and they do not change a path or an item id. The manuscripts stay out of this repository. The section Father's texts records which understandings can be named in 2026 and which texts wait.
 
 ## What Sophia is not
 
@@ -31,7 +31,7 @@ The site is not Te Kura, and it is not a school for other families. The database
 | Biology | Very poor | Cells first, then systems |
 | Physics | Extremely poor | Force, motion, and energy are the first science teaching, after claims and evidence |
 | History, politics, technology | Poor | Taught only when a management case needs them, not as three extra textbooks |
-| Psychology | Advanced | A strength. Give the ideas names and tests. Do not assume the vocabulary is already precise |
+| Psychology | Advanced | A strength. In 2026 the names are the four distinctions in Father's texts. The vocabulary is still treated as something to test |
 | Social management | Advanced | A strength in reading people and situations. Management 101 still has to be learned as theory |
 | Management | Keen to go ahead | First interest strand. The Helios essay is the worked case |
 
@@ -79,7 +79,7 @@ Four blocks, so science and management are both real and English does not stop.
 1. English. The next section of the Year 10 Start Right course. The output is a paragraph, a short essay, or a few presentation slides.
 2. Management. The next Helios probe in `database.md`. One idea only.
 3. Science. The current foundation strand. One probe only. Order is claims, then physics, then chemistry from ions and pH, then biology, then earth science.
-4. The people strand inside management. When the item is about Leading, use her psychology and social management strength. Ask her to distinguish a pay incentive from intrinsic motivation before treating the idea as known.
+4. The people strand inside management. When the item is about Leading, use her psychology and social management strength. Ask her to distinguish a pay incentive from intrinsic motivation before treating the idea as known. Projection against fact, and a need against a vice, belong to `psychology-insight` when that strand is built. They are labels for processes she already notices.
 
 Mathematics gets one check in the first fortnight, drawn from the completed project book. If it holds, mathematics stops there until 2027. If a part fails, only that part reopens.
 
@@ -99,7 +99,7 @@ Five bezels.
 
 Anything longer than the question starts collapsed. The Helios essay is a source she opens from a research or walkthrough bezel. It is not sitting above the first probe.
 
-The first time she logs in, the screen is a placement check: multiple-choice questions that validate or invalidate the October 2026 notes. She can leave and continue later. Answered questions stay answered. When every question has an attempt, the screen says, claim by claim, whether the note held. A majority of single-level claims must fit. English and chemistry are split notes, so they hold only when the earlier questions and the later question both fit. After that check is complete, the first screen of ordinary study is the next probe.
+The first time she logs in, the screen is a placement check: multiple-choice questions that validate or invalidate the October 2026 notes. She can leave and continue later. Answered questions stay answered. When every question has an attempt, the screen says, claim by claim, whether the note held. A majority of single-level claims must fit. English and chemistry are split notes, so they hold only when the earlier questions and the later question both fit. After that check is complete, the first screen of ordinary study is the next probe. Sovereign of Mind contains its own self-reviews. Those stay in the book. This check stays the October notes.
 
 ## Management walkthrough
 
@@ -141,6 +141,31 @@ These do not change the 2026 course. They change how 2027 assessment is entered.
 7. 2027 Level 1 choices, after Term 4 shows what is actually known.
 
 No step is finished because a page rendered. It is finished when she can do that loop on the real material.
+
+## Father's texts
+
+Five manuscripts were read for this plan in October 2026. Each one is copyright Warwick Marshall, 2025. They are source records in `database.md`. The files themselves are not stored here, and a passage from one of them is not an item. Belief Mastery, Sovereign of Mind, Sovereign Integral Devotionalism, and the Distortion Codex reserve all rights. The Peer-Counseling Manual allows unaltered non-commercial sharing. That manual is still omitted, because its examples come from real sessions and the school does not assign the practice.
+
+The screen stays the five bezels: question, answer, research, words, and a parent note. Long text stays collapsed. The parent note reviews the school answer. Management 101 stays the Helios order already fixed in this plan.
+
+In 2026, `psychology-insight` may name four distinctions, and only these, once that strand is built:
+
+- A projection is a guess about someone else. A fact is what was said or done.
+- A need is what the situation is missing. A vice is a habit that tries to fill that need from outside.
+- A public yes is a word said in the room. Commitment is the later action.
+- A pay incentive is a reward attached to the job. Intrinsic motivation is wanting the activity itself.
+
+The placement check already asks the third and fourth in its own items. The first two wait for `psychology-insight`. None of the four is a personal inventory, a counseling session, or a replacement for the October notes.
+
+These texts wait. They are not student-readable items in 2026, and they are not seeded into `sources/` while a signed-in student can read that path.
+
+- Sovereign of Mind, ISBN 9798291614921, 5 July 2025. The understandings that wait are sex-based manipulation, the dark tetrad, relationship repair applied to her own life, biological essentialism, sexual polarity, the subtle body, kinesiology, entities, possession, and the postscript. Chapter 5 avenue 6, chapter 7, chapters 8 to 10, the sex-based tactics in appendix 3, and appendix 1 section B stay in the book.
+- Belief Mastery, ISBN 9798289867742, 3 July 2025. The book describes itself as belief surgery and says it is not clinical advice. Case studies come from real dialogues. Journey Home, The Return, reparenting, belief inference back to an earliest memory, dismantling, and catharsis stay out of schoolwork. Where trauma is in view, the book points to professional support. The school does not provide that support and does not imitate it.
+- The Peer-Counseling Manual, ISBN 9798294770600, 30 July 2025, 42 pages. It is a group practice for circles of three to five, with timed roles, consent, eye contact, and discharge. One-to-one work is outside the manual's own scope. Themes include romantic and sexual relationships. School does not ask her to run this with family, friends, or classmates.
+- Sovereign Integral Devotionalism, version 1.2. The file has no ISBN. The text says it is not a religion, and it reworks worship, prayer, baptism, and named sacred figures. It also uses Sophia as the name of a sacred pattern. The whole addendum stays off her screens.
+- Distortion Codex, version 2.6. The ISBN field in the file is blank. Eighteen distortions are catalogued under historical demon names. The author calls them architectures. The diagnostic fields include possession signatures. The catalogue stays off her screens.
+
+A later year can open one of these only by a change to this plan. That change names the understanding, the age, and the strand. It still does not paste the book into an item.
 
 ## Sources
 

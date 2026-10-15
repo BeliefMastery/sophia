@@ -87,9 +87,9 @@ Stable strand ids:
 | `science-biology` | foundation | Cells, then systems |
 | `science-earth` | foundation | Rocks, change, and deep time, after claims and basic chemistry |
 | `management-101` | interest | The Helios walkthrough, then her own case |
-| `psychology-insight` | interest | Names for internal processes she already notices, tied to Leading |
+| `psychology-insight` | interest | Names for internal processes she already notices, tied to Leading. In 2026 the allowed names are in Father's texts in `plan.md` |
 | `decision-context` | foundation | History, politics, and technology only as far as a honest PESTEL needs them |
-| `placement-check` | foundation | First login. Multiple choice that validates or invalidates the October 2026 placement notes |
+| `placement-check` | foundation | First login. Multiple choice that validates or invalidates the October 2026 placement notes. The self-reviews inside Sovereign of Mind are a different battery |
 
 ## Item record
 
@@ -166,7 +166,54 @@ The guide key matches the item id. Sophia's login cannot read this path.
 }
 ```
 
-Her father's own books are further sources of this same shape. The repository does not contain those files yet. When a file is added, add a source record that says what understanding it is for. Do not paste a book into an item.
+Her father's books use this same shape. `file` is empty because the manuscripts are not in the repository. `whyItMatters` names the understanding a later probe may cite. These five records are the contract. They stay in this file in 2026 and are not written to `sources/`, because a signed-in student can read that path. The hold list lives in `plan.md`. An item never contains a passage from a book.
+
+```json
+{
+  "title": "Sovereign of Mind",
+  "by": "Warwick Marshall",
+  "whyItMatters": "A projection is a guess about someone else. A fact is what was said or done. The 2026 use is that distinction, inside psychology-insight, when that strand is built.",
+  "file": ""
+}
+```
+
+```json
+{
+  "title": "Belief Mastery",
+  "by": "Warwick Marshall",
+  "whyItMatters": "A need is what the situation is missing. A vice is a habit that tries to fill that need from outside. The 2026 use is that distinction only.",
+  "file": ""
+}
+```
+
+```json
+{
+  "title": "The Peer-Counseling Manual",
+  "by": "Warwick Marshall",
+  "whyItMatters": "A listener can leave the speaker in charge of the problem. The school loop already does that with a probe and a research brief. The group practice itself is not a school activity.",
+  "file": ""
+}
+```
+
+```json
+{
+  "title": "Sovereign Integral Devotionalism",
+  "by": "Warwick Marshall",
+  "whyItMatters": "Held. No 2026 probe cites it. The addendum is a devotional text, and it uses Sophia as the name of a sacred pattern.",
+  "file": ""
+}
+```
+
+```json
+{
+  "title": "Distortion Codex",
+  "by": "Warwick Marshall",
+  "whyItMatters": "Held. No 2026 probe cites it. The catalogue names distortions with historical demon names and includes possession signatures.",
+  "file": ""
+}
+```
+
+Stable source ids, if a later year writes a record: `sovereign-of-mind`, `belief-mastery`, `peer-counseling`, `sovereign-integral-devotionalism`, `distortion-codex`. Do not rename them. Do not point `file` at a manuscript.
 
 ## Attempt and review
 
