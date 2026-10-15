@@ -37,13 +37,19 @@ function request({ method, hostname, path, headers, body }) {
   });
 }
 
-function errorCode(body) {
+function errorText(body) {
+  let message = "";
   try {
-    const message = JSON.parse(body).error.message || "";
-    return String(message).split(":")[0].replace(/[^A-Z0-9_]/g, "").slice(0, 60);
+    const parsed = JSON.parse(body);
+    message = parsed.error?.message || parsed.error?.status || "";
   } catch {
-    return "";
+    message = "";
   }
+  const email = process.env.SOPHIA_AUTH_EMAIL || "";
+  const password = process.env.SOPHIA_AUTH_PASSWORD || "";
+  if (email) message = message.split(email).join("[email]");
+  if (password) message = message.split(password).join("[password]");
+  return message.replace(/\s+/g, " ").slice(0, 180);
 }
 
 function accessToken(serviceAccount) {
@@ -95,24 +101,19 @@ function postJson(path, token, payload) {
 }
 
 async function initializeAuth(projectId, token) {
-  const body = JSON.stringify({
-    signIn: { email: { enabled: true, passwordRequired: true } },
-  });
   const response = await request({
     method: "POST",
     hostname: "identitytoolkit.googleapis.com",
     path: `/v2/projects/${projectId}/identityPlatform:initializeAuth`,
     headers: {
       authorization: `Bearer ${token}`,
-      "content-type": "application/json",
-      "content-length": Buffer.byteLength(body),
+      "content-length": 0,
     },
-    body,
   });
   if (response.status !== 200) {
-    fail(`Could not turn on Firebase Authentication (${errorCode(response.body) || response.status})`);
+    fail(`Could not turn on Firebase Authentication (${response.status}: ${errorText(response.body)})`);
   }
-  console.log("email sign-in enabled");
+  console.log("authentication initialized");
 }
 
 async function enableEmailPassword(projectId, token) {
@@ -120,7 +121,7 @@ async function enableEmailPassword(projectId, token) {
   const response = await request({
     method: "PATCH",
     hostname: "identitytoolkit.googleapis.com",
-    path: `/admin/v2/projects/${projectId}/config?updateMask=signIn.email.enabled,signIn.email.passwordRequired`,
+    path: `/v2/projects/${projectId}/config?updateMask=signIn.email.enabled,signIn.email.passwordRequired`,
     headers: {
       authorization: `Bearer ${token}`,
       "content-type": "application/json",
@@ -128,7 +129,8 @@ async function enableEmailPassword(projectId, token) {
     },
     body,
   });
-  if (response.status !== 200) fail(`Could not enable email sign-in (${errorCode(response.body) || response.status})`);
+  if (response.status !== 200) fail(`Could not enable email sign-in (${response.status}: ${errorText(response.body)})`);
+  console.log("email sign-in enabled");
 }
 
 async function main() {
@@ -143,13 +145,13 @@ async function main() {
   const base = `/v1/projects/${projectId}`;
 
   let lookup = await postJson(`${base}/accounts:query`, token, { email: [email] });
-  const lookupCode = errorCode(lookup.body);
+  const lookupCode = errorText(lookup.body);
   if (lookup.status !== 200 && (lookupCode === "CONFIGURATION_NOT_FOUND" || lookupCode === "OPERATION_NOT_ALLOWED")) {
     if (lookupCode === "CONFIGURATION_NOT_FOUND") await initializeAuth(projectId, token);
     else await enableEmailPassword(projectId, token);
     lookup = await postJson(`${base}/accounts:query`, token, { email: [email] });
   }
-  if (lookup.status !== 200) fail(`Account lookup failed (${errorCode(lookup.body) || lookup.status})`);
+  if (lookup.status !== 200) fail(`Account lookup failed (${lookup.status}: ${errorText(lookup.body)})`);
 
   const existing = JSON.parse(lookup.body).userInfo?.[0]?.localId;
   let uid = existing;
@@ -159,7 +161,7 @@ async function main() {
       password,
       displayName: "Sophia",
     });
-    if (updated.status !== 200) fail(`Account update failed (${errorCode(updated.body) || updated.status})`);
+    if (updated.status !== 200) fail(`Account update failed (${updated.status}: ${errorText(updated.body)})`);
     console.log(`updated ${uid}`);
   } else {
     let created = await postJson(`${base}/accounts`, token, {
@@ -168,7 +170,7 @@ async function main() {
       displayName: "Sophia",
       emailVerified: false,
     });
-    if (created.status !== 200 && errorCode(created.body) === "OPERATION_NOT_ALLOWED") {
+    if (created.status !== 200 && errorText(created.body).startsWith("OPERATION_NOT_ALLOWED")) {
       await enableEmailPassword(projectId, token);
       created = await postJson(`${base}/accounts`, token, {
         email,
@@ -177,7 +179,7 @@ async function main() {
         emailVerified: false,
       });
     }
-    if (created.status !== 200) fail(`Account create failed (${errorCode(created.body) || created.status})`);
+    if (created.status !== 200) fail(`Account create failed (${created.status}: ${errorText(created.body)})`);
     uid = JSON.parse(created.body).localId;
     if (!uid) fail("Account create returned no id");
     console.log(`created ${uid}`);
