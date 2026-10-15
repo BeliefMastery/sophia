@@ -50,6 +50,7 @@ body {
   border-radius: 22px;
   padding: 12px;
   box-shadow: var(--shadow);
+  animation: bezel-in 0.45s ease;
 }
 
 .bezel-plate {
@@ -74,6 +75,24 @@ body {
 
 .bezel.is-validated .bezel-plate { color: #b7d7c6; }
 .bezel.is-invalidated .bezel-plate { color: #f0c2a4; }
+.bezel.is-achievement .bezel-plate { color: #f0e2c0; }
+.bezel.is-excellent .bezel-plate { color: #d7eccf; }
+
+.scene {
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 168px;
+  background: #e7dfd2;
+}
+
+.scene img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  animation: scene-in 0.7s ease;
+}
 
 h1, h2, p { margin: 0; }
 
@@ -112,6 +131,7 @@ h2 {
   display: block;
   height: 100%;
   background: var(--frame);
+  transition: width 0.45s ease;
 }
 
 details {
@@ -146,7 +166,10 @@ summary {
   color: var(--ink);
   cursor: pointer;
   min-height: 48px;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
+
+.choice:hover:not(:disabled) { transform: translateY(-2px); }
 
 .choice.is-selected {
   border-color: var(--frame);
@@ -277,6 +300,52 @@ textarea {
   gap: 4px;
   padding-top: 10px;
   border-top: 1px solid var(--line);
+}
+
+.reward {
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+}
+
+.reward.is-achievement { background: #efe6d4; }
+.reward.is-excellent { background: #e7f0e6; }
+
+.reward-title {
+  margin: 0;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: var(--good);
+}
+
+.files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  padding: 0 6px;
+}
+
+.files a {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@keyframes bezel-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes scene-in {
+  from { opacity: 0; transform: scale(1.04); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bezel, .scene img { animation: none; }
+  .choice, .meter span { transition: none; }
+  .choice:hover:not(:disabled), .choice.is-selected { transform: none; }
 }
 
 @media (max-width: 640px) {

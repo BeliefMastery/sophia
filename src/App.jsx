@@ -6,7 +6,10 @@ import { recordChoice } from "../lib/recordChoice.mjs";
 import { checkRows, openRepair, orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
 import { resourceList } from "../lib/explain.mjs";
+import { rewardFor } from "../lib/rewards.mjs";
 import { Admin } from "./Admin.jsx";
+import { Reward } from "./Reward.jsx";
+import { Scene, sceneFor } from "./scenes.jsx";
 
 const signInMessages = {
   "auth/invalid-credential": "That email or password did not match.",
@@ -202,7 +205,7 @@ export function App() {
   if (!useEmulators && !firebaseConfig.apiKey) {
     return (
       <Shell>
-        <Bezel plate="Sophia" aside="Sign in">
+        <Bezel plate="Sophia" aside="Sign in" scene="study">
           <h1 ref={headingRef} tabIndex={-1}>The web app key is not in this build yet.</h1>
           <p>The placement check is ready. Email sign-in needs the Firebase web key before a real login can open it.</p>
         </Bezel>
@@ -213,7 +216,7 @@ export function App() {
   if (!user) {
     return (
       <Shell>
-        <Bezel plate="Sophia" aside="Sign in">
+        <Bezel plate="Sophia" aside="Sign in" scene="study">
           <h1 ref={headingRef} tabIndex={-1}>Placement check</h1>
           <p>Sign in with the account made for you. The first session is a set of multiple-choice questions.</p>
           <form onSubmit={onSignIn} className="sign-in">
@@ -278,7 +281,7 @@ export function App() {
     const follow = typeof guide?.followPrompt === "string" ? guide.followPrompt : "";
     return (
       <Shell user={user}>
-        <Bezel plate="Discovery" aside="Written answer">
+        <Bezel plate="Discovery" aside="Written answer" scene="discovery">
           <p>That choice did not match. The choices are closed.</p>
           {chosen ? <p className="quiet">Your choice: {chosen}</p> : null}
           {!follow ? <p className="quiet">Loading the next question…</p> : (
@@ -323,7 +326,7 @@ export function App() {
     const choices = orderedChoices(item.choices);
     return (
       <Shell user={user}>
-        <Bezel plate={claim?.title || "Question"} aside={`${answered + 1} of ${items.length}`}>
+        <Bezel plate={claim?.title || "Question"} aside={`${answered + 1} of ${items.length}`} scene={sceneFor(item.claim)}>
           <div className="meter" aria-hidden="true">
             <span style={{ width: `${(answered / items.length) * 100}%` }} />
           </div>
@@ -364,25 +367,39 @@ export function App() {
 
   const verdicts = judgePlacement(claims, progress.byClaim);
   const validatedCount = verdicts.filter((verdict) => verdict.validated).length;
+  const rewards = verdicts.map((verdict) => rewardFor(verdict)).filter(Boolean);
+  const excellentCount = rewards.filter((reward) => reward.level === "excellent").length;
+  const achievementCount = rewards.filter((reward) => reward.level === "achievement").length;
 
   return (
     <Shell user={user}>
-      <Bezel plate="Placement check" aside="Result">
+      <Bezel plate="Placement check" aside="Result" scene="reward">
         <h1 ref={headingRef} tabIndex={-1}>
-          {validatedCount} {validatedCount === 1 ? "note" : "notes"} validated. {verdicts.length - validatedCount} {verdicts.length - validatedCount === 1 ? "note" : "notes"} invalidated.
+          {excellentCount} excellent {excellentCount === 1 ? "achievement" : "achievements"}. {achievementCount} {achievementCount === 1 ? "achievement" : "achievements"}.
         </h1>
         <p>
-          This reads the October 2026 notes against the first answer for each question.
-          It does not award NCEA. Management was not scored: it is an interest, not a claimed level.
+          Excellent achievement means the work is above the usual Year 10 level for age 15.
+          Achievement means the answers met the October note, or went past a note that sat below that Year 10 line.
+          A weak note that simply holds is not a reward.
+        </p>
+        <p className="quiet">
+          {validatedCount} {validatedCount === 1 ? "note still matches" : "notes still match"} October. {verdicts.length - validatedCount} {verdicts.length - validatedCount === 1 ? "does" : "do"} not.
+          This does not award NCEA. Management was not scored: it is an interest, not a claimed level.
         </p>
       </Bezel>
-      {verdicts.map((verdict) => (
+      {verdicts.map((verdict) => {
+        const reward = rewardFor(verdict);
+        const plate = reward ? reward.title : verdict.validated ? "Validated" : "Invalidated";
+        const tone = reward ? reward.level : verdict.validated ? "validated" : "invalidated";
+        return (
         <Bezel
           key={verdict.claimId}
-          plate={verdict.validated ? "Validated" : "Invalidated"}
+          plate={plate}
           aside={verdict.title}
-          tone={verdict.validated ? "validated" : "invalidated"}
+          tone={tone}
+          scene={sceneFor(verdict.claimId)}
         >
+          <Reward verdict={verdict} />
           <p className="note">Note: {verdict.assessment}</p>
           <h2>{verdict.text}</h2>
           <p className="quiet">{verdict.support} of {verdict.total} {verdict.support === 1 ? "answer fits" : "answers fit"} the note.</p>
@@ -403,7 +420,8 @@ export function App() {
             </ul>
           </details>
         </Bezel>
-      ))}
+        );
+      })}
     </Shell>
   );
 }
@@ -418,18 +436,25 @@ function Shell({ user, children }) {
         ) : null}
       </header>
       {children}
+      <footer className="files">
+        <a href="https://github.com/BeliefMastery/sophia">Project files on GitHub</a>
+        <a href="https://github.com/BeliefMastery/sophia/archive/refs/heads/cursor/sophia-learning-plan-88e9.zip">Download this copy</a>
+      </footer>
     </main>
   );
 }
 
-function Bezel({ plate, aside, tone, children }) {
+function Bezel({ plate, aside, tone, scene, children }) {
   return (
     <section className={tone ? `bezel is-${tone}` : "bezel"}>
       <div className="bezel-plate">
         <span>{plate}</span>
         <span>{aside}</span>
       </div>
-      <div className="bezel-screen">{children}</div>
+      <div className="bezel-screen">
+        {scene ? <Scene name={scene} /> : null}
+        {children}
+      </div>
     </section>
   );
 }

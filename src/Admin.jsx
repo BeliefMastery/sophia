@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { onValue, ref } from "firebase/database";
 import { db } from "./firebase.js";
 import { studentReport } from "../lib/report.mjs";
+import { rewardFor } from "../lib/rewards.mjs";
+import { Reward } from "./Reward.jsx";
+import { Scene, sceneFor } from "./scenes.jsx";
 
 function list(value) {
   if (!value) return [];
@@ -82,12 +85,16 @@ function StudentReport({ student }) {
   const validated = report.verdicts.filter((verdict) => verdict.open === false && verdict.validated).length;
   const invalidated = report.verdicts.filter((verdict) => verdict.open === false && !verdict.validated).length;
   const open = report.verdicts.filter((verdict) => verdict.open).length;
+  const rewards = report.verdicts.map((verdict) => rewardFor(verdict)).filter(Boolean);
+  const excellent = rewards.filter((reward) => reward.level === "excellent").length;
+  const achieved = rewards.filter((reward) => reward.level === "achievement").length;
 
   return (
     <>
       <section className="bezel">
         <div className="bezel-plate"><span>Admin</span><span>{student.name}</span></div>
         <div className="bezel-screen">
+          <Scene name="study" />
           <h1>{student.name}</h1>
           <p className="quiet">Last answer: {when(report.lastAt)}</p>
           <div className="stats">
@@ -97,21 +104,30 @@ function StudentReport({ student }) {
             <p className="stat"><b>{validated}</b><span>notes validated</span></p>
             <p className="stat"><b>{invalidated}</b><span>notes invalidated</span></p>
             <p className="stat"><b>{open}</b><span>notes still open</span></p>
+            <p className="stat"><b>{excellent}</b><span>excellent achievements</span></p>
+            <p className="stat"><b>{achieved}</b><span>achievements</span></p>
           </div>
         </div>
       </section>
-      {report.verdicts.map((verdict) => (
-        <section key={verdict.claimId} className={verdict.open ? "bezel" : `bezel is-${verdict.validated ? "validated" : "invalidated"}`}>
+      {report.verdicts.map((verdict) => {
+        const reward = rewardFor(verdict);
+        const plate = verdict.open ? "Open" : reward ? reward.title : verdict.validated ? "Validated" : "Invalidated";
+        const tone = verdict.open ? "" : reward ? reward.level : verdict.validated ? "validated" : "invalidated";
+        return (
+        <section key={verdict.claimId} className={tone ? `bezel is-${tone}` : "bezel"}>
           <div className="bezel-plate">
-            <span>{verdict.open ? "Open" : verdict.validated ? "Validated" : "Invalidated"}</span>
+            <span>{plate}</span>
             <span>{verdict.title}</span>
           </div>
           <div className="bezel-screen">
+            <Scene name={sceneFor(verdict.claimId)} />
+            <Reward verdict={verdict} />
             <p className="note">Note: {verdict.assessment}</p>
             <h2>{verdict.open ? `${verdict.answered} of ${verdict.total} questions answered.` : verdict.text}</h2>
           </div>
         </section>
-      ))}
+        );
+      })}
       <section className="bezel">
         <div className="bezel-plate"><span>Activity</span><span>{report.activity.length}</span></div>
         <div className="bezel-screen">
