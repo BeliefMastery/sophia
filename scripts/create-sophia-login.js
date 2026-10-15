@@ -94,6 +94,27 @@ function postJson(path, token, payload) {
   });
 }
 
+async function initializeAuth(projectId, token) {
+  const body = JSON.stringify({
+    signIn: { email: { enabled: true, passwordRequired: true } },
+  });
+  const response = await request({
+    method: "POST",
+    hostname: "identitytoolkit.googleapis.com",
+    path: `/v2/projects/${projectId}/identityPlatform:initializeAuth`,
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+      "content-length": Buffer.byteLength(body),
+    },
+    body,
+  });
+  if (response.status !== 200) {
+    fail(`Could not turn on Firebase Authentication (${errorCode(response.body) || response.status})`);
+  }
+  console.log("email sign-in enabled");
+}
+
 async function enableEmailPassword(projectId, token) {
   const body = JSON.stringify({ signIn: { email: { enabled: true, passwordRequired: true } } });
   const response = await request({
@@ -122,8 +143,10 @@ async function main() {
   const base = `/v1/projects/${projectId}`;
 
   let lookup = await postJson(`${base}/accounts:query`, token, { email: [email] });
-  if (lookup.status === 400 && errorCode(lookup.body) === "OPERATION_NOT_ALLOWED") {
-    await enableEmailPassword(projectId, token);
+  const lookupCode = errorCode(lookup.body);
+  if (lookup.status !== 200 && (lookupCode === "CONFIGURATION_NOT_FOUND" || lookupCode === "OPERATION_NOT_ALLOWED")) {
+    if (lookupCode === "CONFIGURATION_NOT_FOUND") await initializeAuth(projectId, token);
+    else await enableEmailPassword(projectId, token);
     lookup = await postJson(`${base}/accounts:query`, token, { email: [email] });
   }
   if (lookup.status !== 200) fail(`Account lookup failed (${errorCode(lookup.body) || lookup.status})`);
