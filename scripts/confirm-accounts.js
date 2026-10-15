@@ -178,10 +178,31 @@ async function main() {
     const parent = roles[uid]?.parent === true;
     console.log(`${label} ${uid} display=${user.displayName || ""} profile=${profileName} parent=${parent} providers=${providers(user)}`);
 
-    if (label === "student" && !profileName) {
+    if (label === "student" && parent) {
+      const removed = await request({
+        method: "DELETE",
+        hostname: databaseHost,
+        path: `/roles/${encodeURIComponent(uid)}/parent.json`,
+        headers: { authorization: `Bearer ${token}` },
+      });
+      if (removed.status !== 200) fail(`Student role removal failed with HTTP ${removed.status}`);
+      console.log(`student parent role removed ${uid}`);
+    }
+    if (label === "student" && profileName !== "Sophia") {
       const written = await putJson(`/profiles/${encodeURIComponent(uid)}/name.json`, token, "Sophia");
       if (written.status !== 200) fail(`Student profile write failed with HTTP ${written.status}`);
       console.log(`student profile set ${uid}`);
+    }
+    if (label === "student" && user.displayName !== "Sophia") {
+      const named = await googleJson({
+        method: "POST",
+        hostname: "identitytoolkit.googleapis.com",
+        path: `/v1/projects/${serviceAccount.project_id}/accounts:update`,
+        token,
+        payload: { localId: uid, displayName: "Sophia" },
+      });
+      if (named.status !== 200) fail(`Student display name failed (${named.status}: ${errorText(named.body)})`);
+      console.log(`student display name set ${uid}`);
     }
     if (label === "parent" && !parent) {
       const written = await putJson(`/roles/${encodeURIComponent(uid)}/parent.json`, token, true);
