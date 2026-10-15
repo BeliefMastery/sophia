@@ -67,6 +67,19 @@ test("a signed-in student can finish the check and the notes are judged from the
       submittedAt: missed.order,
     });
     assert.equal(missedMatch, false, missedId);
+    await set(ref(db, `misses/${uid}/${missedId}`), {
+      selected,
+      matched: false,
+      submittedAt: missed.order,
+    });
+    const guide = await get(ref(db, `guides/${missedId}`));
+    assert.equal(guide.val().answer, items.find((item) => item.id === missedId).answer);
+  }
+  try {
+    await get(ref(db, "guides/check-math-3"));
+    assert.fail("an unmissed guide was readable");
+  } catch (error) {
+    assert.match(`${error.code || ""} ${error.message || ""}`, /permission/i);
   }
 
   for (const source of items) {

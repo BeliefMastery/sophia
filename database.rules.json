@@ -7,6 +7,7 @@
       }
     },
     "profiles": {
+      ".read": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
       "$uid": {
         ".read": "auth != null && (auth.uid == $uid || root.child('roles').child(auth.uid).child('parent').val() == true)",
         "name": {
@@ -29,13 +30,25 @@
     },
     "guides": {
       ".read": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
-      ".write": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true"
+      ".write": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
+      "$itemId": {
+        ".read": "auth != null && root.child('misses').child(auth.uid).child($itemId).child('matched').val() == false"
+      }
+    },
+    "misses": {
+      "$uid": {
+        "$itemId": {
+          ".write": "auth != null && auth.uid == $uid && !data.exists()",
+          ".validate": "newData.hasChildren(['selected','matched','submittedAt']) && newData.child('selected').isString() && root.child('items').child($itemId).child('choices').child(newData.child('selected').val()).exists() && root.child('guides').child($itemId).child('answer').isString() && newData.child('matched').val() == false && newData.child('matched').val() == (newData.child('selected').val() == root.child('guides').child($itemId).child('answer').val()) && newData.child('submittedAt').isNumber()"
+        }
+      }
     },
     "sources": {
       ".read": "auth != null",
       ".write": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true"
     },
     "attempts": {
+      ".read": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
       "$uid": {
         ".read": "auth != null && (auth.uid == $uid || root.child('roles').child(auth.uid).child('parent').val() == true)",
         ".indexOn": ["strandId", "itemId", "submittedAt"],

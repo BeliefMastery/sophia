@@ -211,6 +211,31 @@ input {
   color: var(--bad);
 }
 
+.reveal-answer {
+  font-family: Palatino, Georgia, serif;
+  font-size: 1.25rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.stat b {
+  font-family: Palatino, Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.stat span { color: var(--muted); font-size: 14px; }
+
 .answer-list {
   list-style: none;
   margin: 0;
@@ -231,4 +256,5 @@ input {
   h1, .prompt { font-size: 1.35rem; }
   .bezel-screen { padding: 16px; }
   .bezel-plate { letter-spacing: 0.08em; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

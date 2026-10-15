@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { equalTo, onValue, orderByChild, push, query, ref, set } from "firebase/database";
+import { equalTo, get, onValue, orderByChild, push, query, ref, set } from "firebase/database";
 import { claims, judgePlacement } from "../lib/claims.mjs";
 import { recordChoice } from "../lib/recordChoice.mjs";
 import { checkRows, orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
+import { explainMiss } from "../lib/explain.mjs";
+import { Admin } from "./Admin.jsx";
 
 const signInMessages = {
   "auth/invalid-credential": "That email or password did not match.",
@@ -32,6 +34,7 @@ export function App() {
   const [selected, setSelected] = useState("");
   const [saving, setSaving] = useState(false);
   const [recordError, setRecordError] = useState("");
+  const [reveal, setReveal] = useState(null);
   const savingRef = useRef(false);
   const headingRef = useRef(null);
 
@@ -61,7 +64,7 @@ export function App() {
 
   useEffect(() => {
     headingRef.current?.focus();
-  }, [progress?.next?.id, progress?.complete, user]);
+  }, [progress?.next?.id, progress?.complete, user, reveal?.item?.id]);
 
   async function onSignIn(event) {
     event.preventDefault();
@@ -93,9 +96,21 @@ export function App() {
       submittedAt: Date.now(),
     };
     try {
-      await recordChoice((body) => set(attemptRef, body), payload);
+      const matched = await recordChoice((body) => set(attemptRef, body), payload);
+      if (!matched) {
+        setReveal({ item, selected, pending: true });
+        const missRef = ref(db, `misses/${user.uid}/${item.id}`);
+        try {
+          await set(missRef, { selected, matched: false, submittedAt: payload.submittedAt });
+        } catch (error) {
+          if (error?.code !== "PERMISSION_DENIED") throw error;
+        }
+        const guide = (await get(ref(db, `guides/${item.id}`))).val() || {};
+        setReveal({ item, selected, guide });
+      }
       setSelected("");
     } catch {
+      setReveal(null);
       setRecordError("That answer was not recorded. Try it again.");
     } finally {
       savingRef.current = false;
@@ -159,9 +174,27 @@ export function App() {
   if (parent) {
     return (
       <Shell user={user}>
-        <Bezel plate="Parent" aside="Review">
-          <h1 ref={headingRef} tabIndex={-1}>This check runs on the student login.</h1>
-          <p>The answer key stays on the parent login. Sophia’s first screen asks the questions and reads the notes.</p>
+        <Admin user={user} />
+      </Shell>
+    );
+  }
+
+  if (reveal) {
+    const explained = explainMiss(reveal.item, reveal.guide);
+    const chosen = reveal.item.choices?.[reveal.selected]?.text || "";
+    return (
+      <Shell user={user}>
+        <Bezel plate="Answer" aside="Explanation">
+          <h1 ref={headingRef} tabIndex={-1} className="prompt">{reveal.item.prompt}</h1>
+          {reveal.pending ? <p className="quiet">Loading the explanation…</p> : (
+            <>
+              <p>Your choice: {chosen}</p>
+              <p className="reveal-answer">Answer: {explained.answerText}</p>
+              {explained.explanation.map((line) => <p key={line}>{line}</p>)}
+              {explained.slips.map((line) => <p key={line} className="quiet">{line}</p>)}
+            </>
+          )}
+          <button type="button" className="primary" onClick={() => setReveal(null)} disabled={reveal.pending}>Continue</button>
         </Bezel>
       </Shell>
     );

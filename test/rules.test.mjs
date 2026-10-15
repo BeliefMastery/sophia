@@ -89,6 +89,42 @@ test("a student cannot read the guide or write placement", async () => {
   await assertFails(get(ref(stranger, `items/${physics.id}`)));
 });
 
+test("a wrong choice opens that guide and a correct choice does not", async () => {
+  const student = testEnv.authenticatedContext("student").database();
+  await assertFails(set(ref(student, `misses/student/${physics.id}`), {
+    selected: physics.answer,
+    matched: false,
+    submittedAt: Date.now(),
+  }));
+  await assertFails(get(ref(student, `guides/${physics.id}`)));
+  await assertSucceeds(set(ref(student, `misses/student/${physics.id}`), {
+    selected: "newton",
+    matched: false,
+    submittedAt: Date.now(),
+  }));
+  const guide = await get(ref(student, `guides/${physics.id}`));
+  assert.equal(guide.val().answer, physics.answer);
+  assert.equal(guide.val().lookFor[0].length > 0, true);
+  await assertFails(get(ref(student, "guides")));
+});
+
+test("a parent can list attempts and profiles", async () => {
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    const db = context.database();
+    await set(ref(db, "roles/parent/parent"), true);
+    await set(ref(db, "profiles/student/name"), "Sophia");
+    await set(ref(db, "attempts/student/one"), choiceAttempt("newton", false));
+  });
+  const parent = testEnv.authenticatedContext("parent").database();
+  const attempts = await get(ref(parent, "attempts"));
+  assert.equal(attempts.val().student.one.selected, "newton");
+  const profiles = await get(ref(parent, "profiles"));
+  assert.equal(profiles.val().student.name, "Sophia");
+  const student = testEnv.authenticatedContext("student").database();
+  await assertFails(get(ref(student, "attempts")));
+  await assertFails(get(ref(student, "profiles")));
+});
+
 test("a paragraph attempt still saves without a choice key", async () => {
   const student = testEnv.authenticatedContext("student").database();
   await assertSucceeds(set(ref(student, "attempts/student/essay"), {

@@ -6,9 +6,9 @@ The database URL is `https://sophia-138fe-default-rtdb.asia-southeast1.firebased
 
 ## Who can touch what
 
-A signed-in student reads her own profile, attempts, reviews, and mastery. She writes her name and her own attempts. She reads strands, items, and sources.
+A signed-in student reads her own profile, attempts, reviews, and mastery. She writes her name and her own attempts. She reads strands, items, and sources. After a wrong multiple-choice answer is stored, she can read that one guide.
 
-The parent does that, and also writes placement, strands, items, guides, sources, reviews, and mastery. Guides are marking notes. Sophia cannot read them.
+The parent does that, and also writes placement, strands, items, guides, sources, reviews, and mastery. The parent login is the admin report: it can read every profile and every attempt. Guides are marking notes. Sophia cannot read a guide before she has missed that question, and she cannot read the guide list.
 
 `roles/{uid}/parent` is true only for the parent. Clients cannot write `roles`. That value is set later with the admin credential, after the login exists.
 
@@ -23,9 +23,10 @@ The root is closed. Someone who is not signed in cannot read or write.
 | `profiles/{uid}/placement` | What is known as of a date | Read own | Read, write |
 | `strands/{strandId}` | A course strand | Read | Read, write |
 | `items/{itemId}` | A probe, repair, research task, retest, or placement check | Read | Read, write |
-| `guides/{itemId}` | What the parent looks for in an answer | No | Read, write |
+| `guides/{itemId}` | What the parent looks for in an answer, including the choice id and the explanation | Read one guide after a miss on that item | Read, write |
+| `misses/{uid}/{itemId}` | The wrong choice that opens that guide. Create once. The rules accept it only when the choice is actually wrong | Create own | No |
 | `sources/{sourceId}` | A text she is to understand | Read | Read, write |
-| `attempts/{uid}/{attemptId}` | Her answer. She can create one. She cannot edit or delete it | Read, create own | Read |
+| `attempts/{uid}/{attemptId}` | Her answer. She can create one. She cannot edit or delete it | Read, create own | Read all |
 | `reviews/{uid}/{attemptId}` | Known, partial, or unknown, plus a note | Read own | Read, write |
 | `mastery/{uid}/{strandId}/{ideaId}` | Whether an idea is currently known | Read own | Read, write |
 
@@ -228,7 +229,17 @@ Stable source ids, if a later year writes a record: `sovereign-of-mind`, `belief
 }
 ```
 
-A placement-check attempt stores the chosen id and whether it matched the guide. She sends `matched`. The rules accept the write only when `matched` is the real comparison with `guides/{itemId}/answer`. A wrong `matched` is rejected, so the client cannot invent a correct answer. The guide itself stays unreadable.
+A placement-check attempt stores the chosen id and whether it matched the guide. She sends `matched`. The rules accept the write only when `matched` is the real comparison with `guides/{itemId}/answer`. A wrong `matched` is rejected, so the client cannot invent a correct answer.
+
+A miss uses the item id, not a push id. The rules accept it only when `matched` is false and that is also the real comparison. After that write, she can read `guides/{itemId}`. The guide holds the choice id, `lookFor`, and `misconceptions`. The screen shows the choice text and those lines. A correct answer does not open the guide.
+
+```json
+{
+  "selected": "newton",
+  "matched": false,
+  "submittedAt": 1763200000000
+}
+```
 
 ```json
 {
