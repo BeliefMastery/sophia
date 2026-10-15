@@ -95,11 +95,15 @@ function walk(dir) {
 function gzipBody(file) {
   return new Promise((resolve, reject) => {
     const zlib = require("zlib");
-    zlib.gzip(fs.readFileSync(file), (error, compressed) => {
+    zlib.gzip(fs.readFileSync(file), { level: 9 }, (error, compressed) => {
       if (error) reject(error);
       else resolve(compressed);
     });
   });
+}
+
+function shortError(body) {
+  return body.toString("utf8").replace(/[A-Za-z0-9_-]{20,}/g, "[redacted]").slice(0, 180);
 }
 
 async function main() {
@@ -135,8 +139,8 @@ async function main() {
       },
     }),
   });
-  if (created.status !== 200) {
-    fail(`Hosting version create failed with HTTP ${created.status}: ${created.body.toString("utf8").slice(0, 180)}`);
+    if (created.status !== 200) {
+    fail(`Hosting version create failed with HTTP ${created.status}: ${shortError(created.body)}`);
   }
   const versionName = JSON.parse(created.body.toString("utf8")).name;
   if (!versionName) fail("Hosting version create returned no name");
@@ -152,7 +156,7 @@ async function main() {
     body: JSON.stringify({ files: hashes }),
   });
   if (populate.status !== 200) {
-    fail(`Hosting file populate failed with HTTP ${populate.status}: ${populate.body.toString("utf8").slice(0, 180)}`);
+    fail(`Hosting file populate failed with HTTP ${populate.status}: ${shortError(populate.body)}`);
   }
   const uploadUrl = JSON.parse(populate.body.toString("utf8")).uploadUrl;
   const required = JSON.parse(populate.body.toString("utf8")).uploadRequiredHashes || [];
@@ -170,12 +174,11 @@ async function main() {
       headers: {
         authorization: `Bearer ${token}`,
         "content-type": "application/octet-stream",
-        "content-encoding": "gzip",
         "content-length": compressed.length,
       },
       body: compressed,
     });
-    if (upload.status !== 200) fail(`Hosting upload failed with HTTP ${upload.status}`);
+    if (upload.status !== 200) fail(`Hosting upload failed with HTTP ${upload.status}: ${shortError(upload.body)}`);
   }
 
   const finalized = await request({
@@ -189,7 +192,7 @@ async function main() {
     body: JSON.stringify({ status: "FINALIZED" }),
   });
   if (finalized.status !== 200) {
-    fail(`Hosting finalize failed with HTTP ${finalized.status}: ${finalized.body.toString("utf8").slice(0, 180)}`);
+    fail(`Hosting finalize failed with HTTP ${finalized.status}: ${shortError(finalized.body)}`);
   }
 
   const release = await request({
@@ -203,7 +206,7 @@ async function main() {
     body: "{}",
   });
   if (release.status !== 200) {
-    fail(`Hosting release failed with HTTP ${release.status}: ${release.body.toString("utf8").slice(0, 180)}`);
+    fail(`Hosting release failed with HTTP ${release.status}: ${shortError(release.body)}`);
   }
 
   console.log(`site deployed: https://${site}.web.app (${files.length} files)`);
