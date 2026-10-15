@@ -49,7 +49,11 @@ function errorText(body) {
   const password = process.env.SOPHIA_AUTH_PASSWORD || "";
   if (email) message = message.split(email).join("[email]");
   if (password) message = message.split(password).join("[password]");
-  return message.replace(/\s+/g, " ").slice(0, 180);
+  return message.replace(/-----BEGIN[\s\S]*?-----END[^\s]*/g, "[key]").replace(/\s+/g, " ").slice(0, 180);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function accessToken(serviceAccount) {
@@ -57,7 +61,12 @@ function accessToken(serviceAccount) {
   const header = Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString("base64url");
   const claim = Buffer.from(JSON.stringify({
     iss: serviceAccount.client_email,
-    scope: "https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/identitytoolkit https://www.googleapis.com/auth/firebase.database",
+    scope: [
+      "https://www.googleapis.com/auth/cloud-platform",
+      "https://www.googleapis.com/auth/firebase",
+      "https://www.googleapis.com/auth/identitytoolkit",
+      "https://www.googleapis.com/auth/firebase.database",
+    ].join(" "),
     aud: "https://oauth2.googleapis.com/token",
     iat: now,
     exp: now + 3600,
@@ -85,48 +94,126 @@ function accessToken(serviceAccount) {
   });
 }
 
+function googleJson({ method, hostname, path, token, payload }) {
+  const body = payload === undefined ? undefined : JSON.stringify(payload);
+  const headers = {};
+  if (token) headers.authorization = `Bearer ${token}`;
+  if (body !== undefined) {
+    headers["content-type"] = "application/json";
+    headers["content-length"] = Buffer.byteLength(body);
+  }
+  return request({ method, hostname, path, headers, body });
+}
+
 function postJson(path, token, payload) {
-  const body = JSON.stringify(payload);
-  return request({
+  return googleJson({
     method: "POST",
     hostname: "identitytoolkit.googleapis.com",
     path,
-    headers: {
-      authorization: `Bearer ${token}`,
-      "content-type": "application/json",
-      "content-length": Buffer.byteLength(body),
-    },
-    body,
+    token,
+    payload,
   });
 }
 
-async function enableEmailPassword(projectId, token) {
-  const body = JSON.stringify({ signIn: { email: { enabled: true, passwordRequired: true } } });
-  const attempts = [
-    ["PUT", `/admin/v2/projects/${projectId}/config`, body],
-    ["PUT", `/v2/projects/${projectId}/config`, body],
-    ["PATCH", `/v2/projects/${projectId}/config?updateMask=signIn.email.enabled,signIn.email.passwordRequired`, body],
-  ];
-  const failures = [];
-  for (const [method, path, payload] of attempts) {
-    const response = await request({
-      method,
-      hostname: "identitytoolkit.googleapis.com",
-      path,
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-        "content-length": Buffer.byteLength(payload),
-      },
-      body: payload,
+async function pollOperation(name, token) {
+  const operationName = String(name || "").replace(/^\//, "");
+  if (!operationName) fail("Firebase operation had no name");
+  const deadline = Date.now() + 180000;
+  let wait = 1000;
+  while (Date.now() < deadline) {
+    const response = await googleJson({
+      method: "GET",
+      hostname: "firebase.googleapis.com",
+      path: `/v1beta1/${operationName}`,
+      token,
     });
-    if (response.status === 200) {
-      console.log(`email sign-in enabled via ${method}`);
-      return;
+    if (response.status !== 200) fail(`Operation poll failed (${response.status}: ${errorText(response.body)})`);
+    const operation = JSON.parse(response.body);
+    if (operation.error) {
+      fail(`Operation failed (${operation.error.status || operation.error.code}: ${errorText(JSON.stringify({ error: operation.error }))})`);
     }
-    failures.push(`${method} ${response.status}: ${errorText(response.body)}`);
+    if (operation.done) return operation.response || {};
+    await sleep(wait);
+    wait = Math.min(wait * 2, 5000);
   }
-  fail(`Could not enable email sign-in (${failures.join(" | ")})`);
+  fail("Firebase operation timed out");
+}
+
+async function ensureWebApp(projectId, token) {
+  const listed = await googleJson({
+    method: "GET",
+    hostname: "firebase.googleapis.com",
+    path: `/v1beta1/projects/${projectId}/webApps`,
+    token,
+  });
+  if (listed.status !== 200) fail(`Web app list failed (${listed.status}: ${errorText(listed.body)})`);
+  const existing = (JSON.parse(listed.body).apps || []).find((app) => app.appId);
+  if (existing) {
+    console.log("web app present");
+    return existing.appId;
+  }
+
+  const created = await googleJson({
+    method: "POST",
+    hostname: "firebase.googleapis.com",
+    path: `/v1beta1/projects/${projectId}/webApps`,
+    token,
+    payload: { displayName: "Sophia" },
+  });
+  if (created.status !== 200) fail(`Web app create failed (${created.status}: ${errorText(created.body)})`);
+  const operation = JSON.parse(created.body);
+  const result = operation.done ? operation.response || {} : await pollOperation(operation.name, token);
+  if (!result.appId) fail("Web app create returned no app id");
+  console.log("web app created");
+  return result.appId;
+}
+
+async function enableEmailPassword(projectId, token) {
+  const appId = await ensureWebApp(projectId, token);
+  const response = await googleJson({
+    method: "POST",
+    hostname: "firebase.googleapis.com",
+    path: "/v1alpha/firebase:provisionFirebaseApp",
+    token,
+    payload: {
+      appNamespace: appId,
+      parent: `projects/${projectId}`,
+      webInput: {},
+      firebaseAuthInput: { emailAuthProviderMode: "PROVIDER_ENABLED" },
+    },
+  });
+  if (response.status !== 200) {
+    fail(`Could not enable email sign-in (${response.status}: ${errorText(response.body)})`);
+  }
+  const operation = JSON.parse(response.body);
+  if (operation.error) {
+    fail(`Could not enable email sign-in (${errorText(JSON.stringify(operation))})`);
+  }
+  if (!operation.done && operation.name) await pollOperation(operation.name, token);
+  console.log("email sign-in enabled");
+  return appId;
+}
+
+async function verifyPassword(projectId, appId, token, email, password, uid) {
+  const config = await googleJson({
+    method: "GET",
+    hostname: "firebase.googleapis.com",
+    path: `/v1beta1/projects/${projectId}/webApps/${encodeURIComponent(appId)}/config`,
+    token,
+  });
+  if (config.status !== 200) fail(`Web config read failed (${config.status}: ${errorText(config.body)})`);
+  const apiKey = JSON.parse(config.body).apiKey;
+  if (!apiKey) fail("Web config had no api key");
+  const signedIn = await googleJson({
+    method: "POST",
+    hostname: "identitytoolkit.googleapis.com",
+    path: `/v1/accounts:signInWithPassword?key=${encodeURIComponent(apiKey)}`,
+    payload: { email, password, returnSecureToken: true },
+  });
+  if (signedIn.status !== 200) fail(`Sign-in check failed (${signedIn.status}: ${errorText(signedIn.body)})`);
+  const localId = JSON.parse(signedIn.body).localId;
+  if (!localId || localId !== uid) fail("Sign-in check did not match the account");
+  console.log(`sign-in verified ${localId}`);
 }
 
 async function main() {
@@ -142,8 +229,9 @@ async function main() {
 
   let lookup = await postJson(`${base}/accounts:query`, token, { email: [email] });
   const lookupCode = errorText(lookup.body);
+  let appId = "";
   if (lookup.status !== 200 && (lookupCode.startsWith("CONFIGURATION_NOT_FOUND") || lookupCode.startsWith("OPERATION_NOT_ALLOWED"))) {
-    await enableEmailPassword(projectId, token);
+    appId = await enableEmailPassword(projectId, token);
     lookup = await postJson(`${base}/accounts:query`, token, { email: [email] });
   }
   if (lookup.status !== 200) fail(`Account lookup failed (${lookup.status}: ${errorText(lookup.body)})`);
@@ -166,7 +254,7 @@ async function main() {
       emailVerified: false,
     });
     if (created.status !== 200 && errorText(created.body).startsWith("OPERATION_NOT_ALLOWED")) {
-      await enableEmailPassword(projectId, token);
+      appId = await enableEmailPassword(projectId, token);
       created = await postJson(`${base}/accounts`, token, {
         email,
         password,
@@ -194,6 +282,9 @@ async function main() {
   });
   if (profile.status !== 200) fail(`Profile name write failed with HTTP ${profile.status}`);
   console.log("profile name set");
+
+  if (!appId) appId = await ensureWebApp(projectId, token);
+  await verifyPassword(projectId, appId, token, email, password, uid);
 }
 
 main().catch((error) => fail(error.message || "login setup failed"));
