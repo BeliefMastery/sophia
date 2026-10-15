@@ -63,6 +63,7 @@ function accessToken(serviceAccount) {
       "https://www.googleapis.com/auth/firebase",
       "https://www.googleapis.com/auth/identitytoolkit",
       "https://www.googleapis.com/auth/firebase.database",
+      "https://www.googleapis.com/auth/userinfo.email",
     ].join(" "),
     aud: "https://oauth2.googleapis.com/token",
     iat: now,
@@ -176,14 +177,14 @@ async function main() {
       hostname: "identitytoolkit.googleapis.com",
       path: `/v1/projects/${projectId}/accounts:update`,
       token,
-      payload: { localId: uid, displayName },
+      payload: { localId: uid, displayName, password },
     });
-    if (named.status !== 200) fail(`Display name update failed (${named.status}: ${errorText(named.body)})`);
+    if (named.status !== 200) fail(`Account update failed (${named.status}: ${errorText(named.body)})`);
     console.log(`account present ${uid}`);
   }
 
   const role = await putJson(`/roles/${encodeURIComponent(uid)}/parent.json`, token, true);
-  if (role.status !== 200) fail(`Parent role write failed with HTTP ${role.status}`);
+  if (role.status !== 200) fail(`Parent role write failed with HTTP ${role.status}: ${errorText(role.body)}`);
   const profile = await putJson(`/profiles/${encodeURIComponent(uid)}/name.json`, token, displayName);
   if (profile.status !== 200) fail(`Profile name write failed with HTTP ${profile.status}`);
   console.log("parent role set");
