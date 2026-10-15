@@ -1,0 +1,26 @@
+name: Deploy database rules
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - database.rules.json
+      - scripts/deploy-database-rules.js
+      - .github/workflows/deploy-database-rules.yml
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Deploy Realtime Database rules
+        env:
+          # The secret was created under this spelling.
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
+        run: node scripts/deploy-database-rules.js
