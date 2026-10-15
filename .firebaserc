@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "demo-sophia"
+    "default": "demo-sophia",
+    "production": "sophia-138fe"
   }
 }

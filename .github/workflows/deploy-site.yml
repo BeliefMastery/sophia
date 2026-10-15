@@ -1,0 +1,36 @@
+name: Deploy site
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - src/**
+      - lib/**
+      - index.html
+      - package.json
+      - package-lock.json
+      - vite.config.js
+      - firebase.json
+      - .firebaserc
+      - scripts/deploy-hosting.js
+      - .github/workflows/deploy-site.yml
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Deploy Firebase Hosting
+        env:
+          # The secret was created under this spelling.
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
+        run: node scripts/deploy-hosting.js
