@@ -120,9 +120,10 @@ async function main() {
 
   for (const file of files) {
     const relative = `/${path.relative(dist, file).split(path.sep).join("/")}`;
-    const hash = crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
+    const compressed = await gzipBody(file);
+    const hash = crypto.createHash("sha256").update(compressed).digest("hex");
     hashes[relative] = hash;
-    byHash.set(hash, file);
+    byHash.set(hash, compressed);
   }
 
   const created = await request({
@@ -162,9 +163,8 @@ async function main() {
   const required = JSON.parse(populate.body.toString("utf8")).uploadRequiredHashes || [];
 
   for (const hash of required) {
-    const file = byHash.get(hash);
-    if (!file) fail("Hosting asked for a file hash that was not in dist");
-    const compressed = await gzipBody(file);
+    const compressed = byHash.get(hash);
+    if (!compressed) fail("Hosting asked for a file hash that was not in dist");
     const endpoint = new URL(uploadUrl);
     endpoint.pathname = `${endpoint.pathname.replace(/\/$/, "")}/${hash}`;
     const upload = await request({
