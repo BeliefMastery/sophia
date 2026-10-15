@@ -219,6 +219,14 @@ async function main() {
   const labels = users.map((user) => labelFor(user.email));
   if (!labels.includes("student")) console.log("student account missing");
   if (!labels.includes("parent")) console.log("parent account missing");
+
+  const profilesAfter = (await readJson("/profiles.json", token)) || {};
+  const rolesAfter = (await readJson("/roles.json", token)) || {};
+  for (const user of users) {
+    const uid = user.localId || "";
+    const label = labelFor(user.email);
+    console.log(`now ${label} ${uid} profile=${profilesAfter[uid]?.name || ""} parent=${rolesAfter[uid]?.parent === true}`);
+  }
 }
 
 main().catch((error) => fail(error.message || "account check failed"));
