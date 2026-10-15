@@ -1,6 +1,7 @@
 name: Create Sophia login
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - scripts/create-sophia-login.js

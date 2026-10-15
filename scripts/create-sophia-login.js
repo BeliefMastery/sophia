@@ -127,16 +127,79 @@ async function pollOperation(name, token) {
       path: `/v1beta1/${operationName}`,
       token,
     });
-    if (response.status !== 200) fail(`Operation poll failed (${response.status}: ${errorText(response.body)})`);
+    if (response.status !== 200) {
+      throw new Error(`Operation poll failed (${response.status}: ${errorText(response.body)})`);
+    }
     const operation = JSON.parse(response.body);
     if (operation.error) {
-      fail(`Operation failed (${operation.error.status || operation.error.code}: ${errorText(JSON.stringify({ error: operation.error }))})`);
+      throw new Error(`Operation failed (${operation.error.status || operation.error.code}: ${errorText(JSON.stringify({ error: operation.error }))})`);
     }
     if (operation.done) return operation.response || {};
     await sleep(wait);
     wait = Math.min(wait * 2, 5000);
   }
-  fail("Firebase operation timed out");
+  throw new Error("Firebase operation timed out");
+}
+
+async function pollServiceOperation(name, token) {
+  const operationName = String(name || "").replace(/^\//, "");
+  const deadline = Date.now() + 180000;
+  let wait = 1000;
+  while (Date.now() < deadline) {
+    const response = await googleJson({
+      method: "GET",
+      hostname: "serviceusage.googleapis.com",
+      path: `/v1/${operationName}`,
+      token,
+    });
+    if (response.status !== 200) return `poll ${response.status}: ${errorText(response.body)}`;
+    const operation = JSON.parse(response.body);
+    if (operation.error) return errorText(JSON.stringify({ error: operation.error }));
+    if (operation.done) return "";
+    await sleep(wait);
+    wait = Math.min(wait * 2, 5000);
+  }
+  return "timed out";
+}
+
+async function tryEnableIdentityToolkit(projectId, token) {
+  const response = await googleJson({
+    method: "POST",
+    hostname: "serviceusage.googleapis.com",
+    path: `/v1/projects/${projectId}/services:batchEnable`,
+    token,
+    payload: { serviceIds: ["identitytoolkit.googleapis.com", "securetoken.googleapis.com"] },
+  });
+  if (response.status !== 200) {
+    console.log(`service enable skipped (${response.status}: ${errorText(response.body)})`);
+    return false;
+  }
+  const operation = JSON.parse(response.body);
+  if (operation.name && !operation.done) {
+    const problem = await pollServiceOperation(operation.name, token);
+    if (problem) {
+      console.log(`service enable skipped (${problem})`);
+      return false;
+    }
+  }
+  console.log("identity toolkit service enabled");
+  return true;
+}
+
+async function tryPatchEmailProvider(projectId, token) {
+  const response = await googleJson({
+    method: "PATCH",
+    hostname: "identitytoolkit.googleapis.com",
+    path: `/admin/v2/projects/${projectId}/config?updateMask=signIn.email.enabled,signIn.email.passwordRequired`,
+    token,
+    payload: { signIn: { email: { enabled: true, passwordRequired: true } } },
+  });
+  if (response.status === 200) {
+    console.log("email sign-in enabled via config");
+    return true;
+  }
+  console.log(`config update skipped (${response.status}: ${errorText(response.body)})`);
+  return false;
 }
 
 async function ensureWebApp(projectId, token) {
@@ -170,6 +233,7 @@ async function ensureWebApp(projectId, token) {
 
 async function enableEmailPassword(projectId, token) {
   const appId = await ensureWebApp(projectId, token);
+  await tryEnableIdentityToolkit(projectId, token);
   const response = await googleJson({
     method: "POST",
     hostname: "firebase.googleapis.com",
@@ -183,18 +247,27 @@ async function enableEmailPassword(projectId, token) {
     },
   });
   if (response.status !== 200) {
-    fail(`Could not enable email sign-in (${response.status}: ${errorText(response.body)})`);
+    console.log(`provision skipped (${response.status}: ${errorText(response.body)})`);
+  } else {
+    const operation = JSON.parse(response.body);
+    if (operation.error) {
+      console.log(`provision skipped (${errorText(JSON.stringify(operation))})`);
+    } else if (!operation.done && operation.name) {
+      try {
+        await pollOperation(operation.name, token);
+        console.log("email sign-in enabled");
+      } catch (error) {
+        console.log(`provision skipped (${error.message})`);
+      }
+    } else {
+      console.log("email sign-in enabled");
+    }
   }
-  const operation = JSON.parse(response.body);
-  if (operation.error) {
-    fail(`Could not enable email sign-in (${errorText(JSON.stringify(operation))})`);
-  }
-  if (!operation.done && operation.name) await pollOperation(operation.name, token);
-  console.log("email sign-in enabled");
+  await tryPatchEmailProvider(projectId, token);
   return appId;
 }
 
-async function verifyPassword(projectId, appId, token, email, password, uid) {
+async function webApiKey(projectId, appId, token) {
   const config = await googleJson({
     method: "GET",
     hostname: "firebase.googleapis.com",
@@ -204,6 +277,40 @@ async function verifyPassword(projectId, appId, token, email, password, uid) {
   if (config.status !== 200) fail(`Web config read failed (${config.status}: ${errorText(config.body)})`);
   const apiKey = JSON.parse(config.body).apiKey;
   if (!apiKey) fail("Web config had no api key");
+  return apiKey;
+}
+
+async function clientAccount(projectId, appId, token, email, password) {
+  const apiKey = await webApiKey(projectId, appId, token);
+  let response = await googleJson({
+    method: "POST",
+    hostname: "identitytoolkit.googleapis.com",
+    path: `/v1/accounts:signUp?key=${encodeURIComponent(apiKey)}`,
+    payload: { email, password, returnSecureToken: true },
+  });
+  if (response.status !== 200 && errorText(response.body).includes("EMAIL_EXISTS")) {
+    response = await googleJson({
+      method: "POST",
+      hostname: "identitytoolkit.googleapis.com",
+      path: `/v1/accounts:signInWithPassword?key=${encodeURIComponent(apiKey)}`,
+      payload: { email, password, returnSecureToken: true },
+    });
+  }
+  if (response.status !== 200) return { error: `${response.status}: ${errorText(response.body)}` };
+  const parsed = JSON.parse(response.body);
+  if (!parsed.localId || !parsed.idToken) return { error: "client auth returned no account" };
+  const named = await googleJson({
+    method: "POST",
+    hostname: "identitytoolkit.googleapis.com",
+    path: `/v1/accounts:update?key=${encodeURIComponent(apiKey)}`,
+    payload: { idToken: parsed.idToken, displayName: "Sophia", returnSecureToken: false },
+  });
+  if (named.status !== 200) return { error: `display name update failed (${named.status}: ${errorText(named.body)})` };
+  return { uid: parsed.localId };
+}
+
+async function verifyPassword(projectId, appId, token, email, password, uid) {
+  const apiKey = await webApiKey(projectId, appId, token);
   const signedIn = await googleJson({
     method: "POST",
     hostname: "identitytoolkit.googleapis.com",
@@ -234,11 +341,17 @@ async function main() {
     appId = await enableEmailPassword(projectId, token);
     lookup = await postJson(`${base}/accounts:query`, token, { email: [email] });
   }
-  if (lookup.status !== 200) fail(`Account lookup failed (${lookup.status}: ${errorText(lookup.body)})`);
-
-  const existing = JSON.parse(lookup.body).userInfo?.[0]?.localId;
-  let uid = existing;
-  if (uid) {
+  let uid = "";
+  if (lookup.status === 200) uid = JSON.parse(lookup.body).userInfo?.[0]?.localId || "";
+  if (!uid && lookup.status !== 200) {
+    if (!appId) appId = await ensureWebApp(projectId, token);
+    const client = await clientAccount(projectId, appId, token, email, password);
+    if (client.error) {
+      fail(`Account lookup failed (${lookup.status}: ${errorText(lookup.body)}). Client sign-up failed (${client.error})`);
+    }
+    uid = client.uid;
+    console.log(`created ${uid}`);
+  } else if (uid) {
     const updated = await postJson(`${base}/accounts:update`, token, {
       localId: uid,
       password,
