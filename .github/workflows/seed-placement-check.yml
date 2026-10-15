@@ -25,7 +25,3 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
         run: node scripts/seed-placement-check.js
-      - name: Print the public web config
-        env:
-          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
-        run: node scripts/print-web-config.js

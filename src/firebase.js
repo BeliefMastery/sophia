@@ -13,11 +13,11 @@ const firebaseConfig = useEmulators
       appId: "demo",
     }
   : {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
+      apiKey: "AIzaSyAyH4VOmH2axRfRPYh9pXpajxRE6RZ6V0A",
       authDomain: "sophia-138fe.firebaseapp.com",
       databaseURL: "https://sophia-138fe-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "sophia-138fe",
-      appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
+      appId: "1:40898573497:web:78bcffb4123b7b65a11768",
     };
 
 const app = initializeApp(firebaseConfig);
