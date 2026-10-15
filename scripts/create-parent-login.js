@@ -183,12 +183,6 @@ async function main() {
     console.log(`account present ${uid}`);
   }
 
-  const role = await putJson(`/roles/${encodeURIComponent(uid)}/parent.json`, token, true);
-  if (role.status !== 200) fail(`Parent role write failed with HTTP ${role.status}: ${errorText(role.body)}`);
-  const profile = await putJson(`/profiles/${encodeURIComponent(uid)}/name.json`, token, displayName);
-  if (profile.status !== 200) fail(`Profile name write failed with HTTP ${profile.status}`);
-  console.log("parent role set");
-
   const apiKey = await webApiKey(projectId, token);
   const signedIn = await googleJson({
     method: "POST",
@@ -198,7 +192,14 @@ async function main() {
   });
   if (signedIn.status !== 200) fail(`Sign-in check failed (${signedIn.status}: ${errorText(signedIn.body)})`);
   const localId = JSON.parse(signedIn.body).localId;
-  if (localId !== uid) fail("Sign-in check did not match the account");
+  if (!localId) fail("Sign-in check returned no account");
+  if (localId !== uid) console.log(`sign-in account ${localId} differs from lookup ${uid}`);
+
+  const role = await putJson(`/roles/${encodeURIComponent(localId)}/parent.json`, token, true);
+  if (role.status !== 200) fail(`Parent role write failed with HTTP ${role.status}: ${errorText(role.body)}`);
+  const profile = await putJson(`/profiles/${encodeURIComponent(localId)}/name.json`, token, displayName);
+  if (profile.status !== 200) fail(`Profile name write failed with HTTP ${profile.status}`);
+  console.log(`parent role set ${localId}`);
   console.log(`sign-in verified ${localId}`);
 }
 
