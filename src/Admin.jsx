@@ -3,7 +3,17 @@ import { onValue, ref } from "firebase/database";
 import { db } from "./firebase.js";
 import { studentReport } from "../lib/report.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
+import {
+  applyModules,
+  expansionPrompt,
+  fieldMarks,
+  moduleOutcomes,
+  modulePrompt,
+  placementItems,
+  sectionStatus,
+} from "../lib/expansion.mjs";
 import { Reward } from "./Reward.jsx";
+import { DepthChart, ExpansionPrompt } from "./Depth.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
 
 function list(value) {
@@ -26,6 +36,7 @@ export function Admin({ user }) {
   const [items, setItems] = useState(null);
   const [guides, setGuides] = useState(null);
   const [repairs, setRepairs] = useState(null);
+  const [strands, setStrands] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -40,6 +51,7 @@ export function Admin({ user }) {
       watch("items", setItems),
       watch("guides", setGuides),
       watch("repairs", setRepairs),
+      watch("strands", setStrands),
     ];
     return () => unsubs.forEach((unsub) => unsub());
   }, []);
@@ -53,16 +65,20 @@ export function Admin({ user }) {
     );
   }
 
-  if (!profiles || !attempts || !items || !guides || !repairs) {
+  if (!profiles || !attempts || !items || !guides || !repairs || !strands) {
     return <p className="quiet">Loading the report…</p>;
   }
 
+  const itemList = list(items);
+  const survey = placementItems(itemList);
   const uids = new Set([...Object.keys(profiles), ...Object.keys(attempts)]);
   uids.delete(user.uid);
   const students = [...uids].map((uid) => ({
     uid,
     name: profiles[uid]?.name || "Student",
-    report: studentReport(list(items), list(attempts[uid]), guides, repairs[uid]),
+    attempts: list(attempts[uid]),
+    repairs: repairs[uid] || {},
+    report: studentReport(survey, list(attempts[uid]), guides, repairs[uid]),
   })).sort((a, b) => a.name.localeCompare(b.name));
 
   if (!students.length) {
@@ -77,11 +93,26 @@ export function Admin({ user }) {
     );
   }
 
-  return students.map((student) => <StudentReport key={student.uid} student={student} />);
+  return students.map((student) => (
+    <StudentReport key={student.uid} student={student} items={survey} strands={strands} allItems={itemList} />
+  ));
 }
 
-function StudentReport({ student }) {
+function StudentReport({ student, items, strands, allItems }) {
   const { report } = student;
+  const status = sectionStatus(items, student.attempts, student.repairs, { id: "placement-check", ...strands["placement-check"] });
+  const surveyMarks = fieldMarks(report.verdicts, items, student.attempts, student.repairs);
+  const modules = moduleOutcomes(strands, allItems, student.attempts, student.repairs);
+  const marks = applyModules(surveyMarks, modules);
+  const prompt = expansionPrompt({
+    name: student.name,
+    uid: student.uid,
+    status,
+    marks: surveyMarks,
+  });
+  const pending = status.total
+    ? `${status.answered} of ${status.total} questions answered.${status.repairsDue ? ` ${status.repairsDue} written ${status.repairsDue === 1 ? "answer is" : "answers are"} still due.` : ""} The expansion prompt appears when the section is finished.`
+    : "The expansion prompt appears when a section is finished.";
   const validated = report.verdicts.filter((verdict) => verdict.open === false && verdict.validated).length;
   const invalidated = report.verdicts.filter((verdict) => verdict.open === false && !verdict.validated).length;
   const open = report.verdicts.filter((verdict) => verdict.open).length;
@@ -109,7 +140,33 @@ function StudentReport({ student }) {
           </div>
         </div>
       </section>
+      <section className="bezel">
+        <div className="bezel-plate"><span>Depth</span><span>Age tiers</span></div>
+        <div className="bezel-screen">
+          <Scene name="reward" />
+          <h2>How far each field goes</h2>
+          <DepthChart marks={marks} />
+        </div>
+      </section>
+      <section className="bezel">
+        <div className="bezel-plate"><span>Expansion</span><span>{status.complete ? "Ready" : "Open"}</span></div>
+        <div className="bezel-screen">
+          <ExpansionPrompt prompt={prompt} pending={pending} />
+        </div>
+      </section>
+      {modules.filter((outcome) => outcome.complete).map((outcome) => (
+        <section key={outcome.strandId} className="bezel">
+          <div className="bezel-plate"><span>Next module</span><span>{outcome.title}</span></div>
+          <div className="bezel-screen">
+            <ExpansionPrompt
+              prompt={modulePrompt({ name: student.name, uid: student.uid, outcome })}
+              pending=""
+            />
+          </div>
+        </section>
+      ))}
       {report.verdicts.map((verdict) => {
+        const mark = marks.find((entry) => entry.claimId === verdict.claimId);
         const reward = rewardFor(verdict);
         const plate = verdict.open ? "Open" : reward ? reward.title : verdict.validated ? "Validated" : "Invalidated";
         const tone = verdict.open ? "" : reward ? reward.level : verdict.validated ? "validated" : "invalidated";
@@ -122,6 +179,7 @@ function StudentReport({ student }) {
           <div className="bezel-screen">
             <Scene name={sceneFor(verdict.claimId)} />
             <Reward verdict={verdict} />
+            {mark ? <p className="quiet">Depth {mark.depth}. {mark.label}. The peer line is Year 10, age 15.</p> : null}
             <p className="note">Note: {verdict.assessment}</p>
             <h2>{verdict.open ? `${verdict.answered} of ${verdict.total} questions answered.` : verdict.text}</h2>
           </div>

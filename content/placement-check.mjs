@@ -4,6 +4,9 @@ const strand = {
   phase: "foundation",
   order: 0,
   summary: "First login. Multiple choice that validates or invalidates the October 2026 notes.",
+  depth: 1,
+  role: "survey",
+  ageTier: "year10",
 };
 
 function item(fields) {

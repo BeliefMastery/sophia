@@ -15,6 +15,8 @@ npm ci
 
 The live site links to both of those from the footer, so the files can be fetched without hunting for the repository.
 
+When a section is finished, the parent login shows a depth chart and a prompt for the next short module. The rules for adding that module are in `plan.md` and `database.md`. A new topic is a new strand. Existing ids stay.
+
 ## Run it locally
 
 ```bash

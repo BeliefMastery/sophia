@@ -101,6 +101,46 @@ Anything longer than the question starts collapsed. The Helios essay is a source
 
 The first time she logs in, the screen is a placement check: multiple-choice questions that validate or invalidate the October 2026 notes. She can leave and continue later. Answered questions stay answered. When every question has an attempt, the screen says, claim by claim, whether the note held. A majority of single-level claims must fit. English and chemistry are split notes, so they hold only when the earlier questions and the later question both fit. After that check is complete, the first screen of ordinary study is the next probe. Sovereign of Mind contains its own self-reviews. Those stay in the book. This check stays the October notes.
 
+## Study modules
+
+The placement check is depth 1, a survey across fields. Later study is short modules, one field at a time. A finished section is what allows the next module. A section is finished only when every question has a first attempt and every miss has a written repair.
+
+The parent login then shows two things.
+
+- A depth chart. Each field has a depth, which is how many modules in that field are finished. The bar is the age tier those results support. The tiers are Year 9 at age 14, Year 10 at age 15, Year 11 at age 16, Year 12 at age 17, and Year 13 at age 18. The peer line is Year 10, age 15. A weak note that simply holds stays left of that line. Meeting the Year 10 mathematics note sits on the line. An advanced note that holds sits above the line, toward Year 11, and is not called Year 12, Year 13, or NCEA. Passing a note that sat below Year 10 moves toward the line and does not cross it.
+- An expansion prompt. It names the finished section, the student id, the missed item ids, and the next strand id and difficulty for each field. Warwick copies that prompt into Cursor. The agent fetches `attempts/{uid}`, `repairs/{uid}`, and the guides for the missed ids, then writes one new module. The prompt is computed on the admin screen. It is not stored as its own database path, and it is not emailed.
+
+The next module follows the grade already on the screen.
+
+| What the section showed | Next module |
+| --- | --- |
+| The note did not hold, or a weak note held | Same difficulty. A foundation module. Not a deeper dive |
+| The answers passed a below-year note | Still age 15. One step further, toward the Year 10 line. Not a Year 11 module |
+| The note held at the expected Year 10 place | More practice at this difficulty, or one step deeper if a deeper dive is requested |
+| An advanced note held, or a later module held at its age tier | A deeper module at the next age tier |
+
+Naming one topic is the whole request. The agent creates one strand of about six to ten questions for that field. It does not generate the rest of the curriculum in the same step. `placement-check` stays the survey. Its item ids, prompts, choices, answers, predicts, and orders stay. A new module uses a new strand id. If the reserved strand for that field has no items yet, the module uses that id. If the id already has items, those items stay, and the next id is the one named in the latest module prompt.
+
+Reserved homes for the first module after the survey:
+
+| Field | Same-difficulty strand | Deeper strand |
+| --- | --- | --- |
+| Mathematics | `mathematics-hold` | `mathematics-depth-2` |
+| English | `english-year10` | `english-depth-2` |
+| Physics | `science-physics` | `physics-depth-2` |
+| Chemistry | `science-chemistry` | `chemistry-depth-2` |
+| Biology | `science-biology` | `biology-depth-2` |
+| Geology | `science-earth` | `geology-depth-2` |
+| History, politics, technology | `decision-context` | `decision-context-depth-2` |
+| Psychology | `psychology-insight` | `psychology-insight` |
+| Social management | `social-management` | `social-management-depth-2` |
+
+History, politics, and technology stay one strand. They do not become three textbooks. `psychology-insight` in 2026 may name only the four distinctions in Father's texts. Management stays `management-101` and the Helios order, and it is generated only when the named topic is management.
+
+A later module that holds moves that field's bar to the module's age tier and raises the depth. A later module that does not hold keeps the next module at the same difficulty. The wording is produced by `lib/expansion.mjs`. A future agent should follow that file rather than invent a second scoring rule.
+
+The student sees the same depth chart on the finished placement result. She does not see the expansion prompt. The prompt is the parent's copy for the next Cursor session.
+
 ## Management walkthrough
 
 She studies the tools in the order the essay uses them.
@@ -133,7 +173,7 @@ These do not change the 2026 course. They change how 2027 assessment is entered.
 ## Order of creation
 
 1. This plan, the database contract, and rules that match the contract.
-2. Her first login runs the placement check in `database.md`. The result validates or invalidates each note. A correction changes the placement field. It does not add a new tree.
+2. Her first login runs the placement check in `database.md`. The result validates or invalidates each note. A correction changes the placement field. It does not add a new tree. When the check is finished, the parent login shows the depth chart and the expansion prompt from Study modules. The next session names one field and adds one strand.
 3. The rest of the app, after that check: two logins, the five bezels, and the management probes through to `m101-own-case`, saved as attempts and reviews.
 4. The science claims probe, then physics, using the same screens.
 5. English remains in the Start Right course. The site stores the essay or presentation she produces from it. It does not replace the rest of that book in the first build.

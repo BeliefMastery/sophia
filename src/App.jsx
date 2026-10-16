@@ -7,8 +7,10 @@ import { checkRows, openRepair, orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
 import { resourceList } from "../lib/explain.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
+import { fieldMarks } from "../lib/expansion.mjs";
 import { Admin } from "./Admin.jsx";
 import { Reward } from "./Reward.jsx";
+import { DepthChart } from "./Depth.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
 
 const signInMessages = {
@@ -366,6 +368,7 @@ export function App() {
   }
 
   const verdicts = judgePlacement(claims, progress.byClaim);
+  const marks = fieldMarks(verdicts, items, attempts, repairs);
   const validatedCount = verdicts.filter((verdict) => verdict.validated).length;
   const rewards = verdicts.map((verdict) => rewardFor(verdict)).filter(Boolean);
   const excellentCount = rewards.filter((reward) => reward.level === "excellent").length;
@@ -387,7 +390,12 @@ export function App() {
           This does not award NCEA. Management was not scored: it is an interest, not a claimed level.
         </p>
       </Bezel>
+      <Bezel plate="Depth" aside="Age tiers" scene="reward">
+        <h2>How far each field goes</h2>
+        <DepthChart marks={marks} />
+      </Bezel>
       {verdicts.map((verdict) => {
+        const mark = marks.find((entry) => entry.claimId === verdict.claimId);
         const reward = rewardFor(verdict);
         const plate = reward ? reward.title : verdict.validated ? "Validated" : "Invalidated";
         const tone = reward ? reward.level : verdict.validated ? "validated" : "invalidated";
@@ -400,6 +408,7 @@ export function App() {
           scene={sceneFor(verdict.claimId)}
         >
           <Reward verdict={verdict} />
+          {mark ? <p className="quiet">Depth {mark.depth}. {mark.label}. The peer line is Year 10, age 15.</p> : null}
           <p className="note">Note: {verdict.assessment}</p>
           <h2>{verdict.text}</h2>
           <p className="quiet">{verdict.support} of {verdict.total} {verdict.support === 1 ? "answer fits" : "answers fit"} the note.</p>

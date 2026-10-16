@@ -75,6 +75,8 @@ Placement is the parent's record of where she is. It is not a score she sets. Th
 
 `domain` is one of `english`, `mathematics`, `science`, `social`, `management`, `psychology`, `placement`. `placement` is only the first-login check.
 
+A strand may also carry `depth`, `role`, `ageTier`, `field`, and `continues`. `placement-check` is `depth` 1, `role` `survey`, `ageTier` `year10`. It has no single `field`. A later module sets `role` to `module`, `field` to one claim id, `depth` to the next integer, `ageTier` to `year9`, `year10`, `year11`, `year12`, or `year13`, and `continues` to the strand it follows. Add these fields. Do not rename the strand id to carry them.
+
 `phase` is one of `foundation`, `year10`, `ncea-l1`, `interest`.
 
 Stable strand ids:
@@ -325,6 +327,16 @@ These ids stay. Three questions for each October 2026 note. `predict` follows th
 | `check-social-1` `check-social-2` `check-social-3` | `socialManagement` | Advanced | all `known` |
 
 Management is an interest, not a claimed level, so the check does not score it.
+
+## Study modules
+
+A section is one strand. It is complete when every item has a first attempt and every miss has a written repair. The parent screen then shows a depth chart and a prompt Warwick can paste into Cursor. The prompt is computed from attempts, repairs, and the October verdicts. It is not a database path. Do not add `expansionPrompts` or a second progress tree to store it.
+
+The prompt tells the next agent to read `attempts/{uid}`, `repairs/{uid}`, and `guides/{itemId}` for the missed ids, then add one strand. The answer, `discover`, and `followPrompt` stay on the guide. The student still does not see the correct choice. The rules for same difficulty and a deeper dive, the age tiers, and the strand ids are in `plan.md` under Study modules. `lib/expansion.mjs` is the wording the screen uses.
+
+A module item uses a new id. `kind` is `probe`, not `check`. `check` stays the placement survey. A choice module still uses `answerKind` `choice`, a guide, a miss, and a repair. It does not use `predict`. `predict` belongs to the October notes. A finished module holds when a majority of its first attempts match. That moves the field's depth to the module's `depth` and the bar to the module's `ageTier`. If it does not hold, the next strand id is `{strandId}-practice` and the difficulty stays the same. If it holds, the next strand id is `{strandId}-depth-{depth + 1}`.
+
+The placement report scores only `placement-check` items. Module items do not change an October verdict. The student screen keeps asking the placement check until that section is complete. The next session that adds a module also opens that strand on her screen after the check, using strand `order`. It does not fold the new questions into `placement-check`.
 
 ## What not to add
 
