@@ -356,6 +356,7 @@ async function main() {
       localId: uid,
       password,
       displayName: "Sophia",
+      disableUser: false,
     });
     if (updated.status !== 200) fail(`Account update failed (${updated.status}: ${errorText(updated.body)})`);
     console.log(`updated ${uid}`);

@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Confirm the logins and fill missing profile data
+      - name: Confirm the student and parent labels
         env:
           # The Firebase secret was created under this spelling.
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
