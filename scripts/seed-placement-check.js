@@ -128,7 +128,10 @@ async function putEmulator(dbPath, value) {
 
 async function main() {
   const { strand, items } = await import("../content/placement-check.mjs");
-  const { strands: moduleStrands, items: moduleItems } = await import("../content/modules.mjs");
+  const { strands: firstStrands, items: firstItems } = await import("../content/modules.mjs");
+  const { strands: secondStrands, items: secondItems } = await import("../content/modules-part2.mjs");
+  const moduleStrands = [...firstStrands, ...secondStrands];
+  const moduleItems = [...firstItems, ...secondItems];
   const { checkContent } = await import("../lib/checkContent.mjs");
   const { checkModules } = await import("../lib/checkModules.mjs");
   const { publicItem, guideRecord } = await import("../lib/records.mjs");

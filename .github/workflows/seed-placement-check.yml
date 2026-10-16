@@ -6,6 +6,7 @@ on:
     paths:
       - content/placement-check.mjs
       - content/modules.mjs
+      - content/modules-part2.mjs
       - lib/checkContent.mjs
       - lib/checkModules.mjs
       - lib/records.mjs

@@ -7,7 +7,7 @@ import { checkRows, openRepair, orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
 import { resourceList } from "../lib/explain.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
-import { applyModules, fieldMarks, moduleOutcomes, nextOpenModule, studyQueue } from "../lib/expansion.mjs";
+import { applyModules, chartMarks, fieldMarks, moduleOutcomes, nextOpenModule, studyQueue } from "../lib/expansion.mjs";
 import { Admin } from "./Admin.jsx";
 import { Reward } from "./Reward.jsx";
 import { DepthChart } from "./Depth.jsx";
@@ -36,6 +36,7 @@ export function App() {
   const [library, setLibrary] = useState(null);
   const [strands, setStrands] = useState(null);
   const [studying, setStudying] = useState(false);
+  const [armedStrand, setArmedStrand] = useState("");
   const [attempts, setAttempts] = useState(null);
   const [parent, setParent] = useState(null);
   const [selected, setSelected] = useState("");
@@ -79,6 +80,7 @@ export function App() {
     setRepairDraft("");
     setRepairs(null);
     setStudying(false);
+    setArmedStrand("");
   }, [user]);
 
   const survey = useMemo(() => (library || []).filter((item) => item.strandId === "placement-check"), [library]);
@@ -95,6 +97,8 @@ export function App() {
   const upcoming = useMemo(() => nextOpenModule(queue, attempts || [], repairs || {}), [queue, attempts, repairs]);
   const moduleTouched = (attempts || []).some((attempt) => attempt.strandId && attempt.strandId !== "placement-check");
   const inModule = placementDone && Boolean(upcoming) && (studying || moduleTouched);
+  const strandStarted = Boolean(upcoming) && (attempts || []).some((attempt) => attempt.strandId === upcoming.strand.id);
+  const atPartGate = inModule && !strandStarted && armedStrand !== upcoming.strand.id;
   const items = inModule ? upcoming.items : survey;
 
   const dueRepair = useMemo(() => {
@@ -382,6 +386,21 @@ export function App() {
     );
   }
 
+  if (inModule && atPartGate) {
+    return (
+      <Shell user={user}>
+        <Bezel plate={upcoming.strand.title} aside="Next block" scene={sceneFor(upcoming.strand.field || upcoming.items[0]?.claim)}>
+          <h1 ref={headingRef} tabIndex={-1}>{upcoming.strand.title}</h1>
+          <p>{upcoming.strand.summary}</p>
+          <p>The block before this one is saved. You can sign out and start this part later.</p>
+          <button type="button" className="primary" onClick={() => setArmedStrand(upcoming.strand.id)}>
+            Start this block
+          </button>
+        </Bezel>
+      </Shell>
+    );
+  }
+
   if (inModule) {
     const moduleProgress = checkRows(items, attempts);
     const item = moduleProgress.next;
@@ -428,9 +447,10 @@ export function App() {
   }
 
   const verdicts = judgePlacement(claims, progress.byClaim);
-  const marks = applyModules(
-    fieldMarks(verdicts, survey, attempts, repairs),
-    moduleOutcomes(strands, library, attempts, repairs),
+  const modules = moduleOutcomes(strands, library, attempts, repairs);
+  const marks = chartMarks(
+    applyModules(fieldMarks(verdicts, survey, attempts, repairs), modules),
+    modules,
   );
   const validatedCount = verdicts.filter((verdict) => verdict.validated).length;
   const rewards = verdicts.map((verdict) => rewardFor(verdict)).filter(Boolean);
@@ -453,7 +473,7 @@ export function App() {
           This does not award NCEA. Management was not scored: it is an interest, not a claimed level.
         </p>
         {upcoming && !inModule ? (
-          <button type="button" className="primary" onClick={() => setStudying(true)}>
+          <button type="button" className="primary" onClick={() => { setArmedStrand(upcoming.strand.id); setStudying(true); }}>
             Start {upcoming.strand.title}
           </button>
         ) : null}

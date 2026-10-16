@@ -10,7 +10,7 @@ function q(entry) {
 const strands = [
   {
     id: "mathematics-hold",
-    title: "Mathematics hold",
+    title: "Mathematics hold, part 1",
     domain: "mathematics",
     phase: "year10",
     order: 2,
@@ -23,7 +23,7 @@ const strands = [
   },
   {
     id: "english-year10",
-    title: "English, the rest of Year 10",
+    title: "English, part 1",
     domain: "english",
     phase: "year10",
     order: 3,
@@ -36,7 +36,7 @@ const strands = [
   },
   {
     id: "science-claims",
-    title: "Claims and evidence",
+    title: "Claims and evidence, part 1",
     domain: "science",
     phase: "foundation",
     order: 4,
@@ -49,7 +49,7 @@ const strands = [
   },
   {
     id: "science-physics",
-    title: "Physics foundation",
+    title: "Physics, part 1",
     domain: "science",
     phase: "foundation",
     order: 5,
@@ -62,7 +62,7 @@ const strands = [
   },
   {
     id: "science-chemistry",
-    title: "Chemistry from particles",
+    title: "Chemistry, part 1",
     domain: "science",
     phase: "foundation",
     order: 6,
@@ -75,7 +75,7 @@ const strands = [
   },
   {
     id: "science-biology",
-    title: "Cells, then a first system",
+    title: "Biology, part 1",
     domain: "science",
     phase: "foundation",
     order: 7,
@@ -88,7 +88,7 @@ const strands = [
   },
   {
     id: "science-earth",
-    title: "Earth science foundation",
+    title: "Earth science, part 1",
     domain: "science",
     phase: "foundation",
     order: 8,
@@ -101,7 +101,7 @@ const strands = [
   },
   {
     id: "decision-context",
-    title: "History, politics, and technology",
+    title: "History, politics, and technology, part 1",
     domain: "social",
     phase: "foundation",
     order: 9,
@@ -113,7 +113,7 @@ const strands = [
   },
   {
     id: "psychology-insight",
-    title: "Psychology insight",
+    title: "Psychology, part 1",
     domain: "psychology",
     phase: "interest",
     order: 12,
@@ -126,7 +126,7 @@ const strands = [
   },
   {
     id: "social-management-depth-2",
-    title: "Social management, a deeper pass",
+    title: "Social management, part 1",
     domain: "social",
     phase: "interest",
     order: 13,

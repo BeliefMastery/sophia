@@ -5,6 +5,7 @@ import { studentReport } from "../lib/report.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
 import {
   applyModules,
+  chartMarks,
   expansionPrompt,
   fieldMarks,
   moduleOutcomes,
@@ -103,7 +104,7 @@ function StudentReport({ student, items, strands, allItems }) {
   const status = sectionStatus(items, student.attempts, student.repairs, { id: "placement-check", ...strands["placement-check"] });
   const surveyMarks = fieldMarks(report.verdicts, items, student.attempts, student.repairs);
   const modules = moduleOutcomes(strands, allItems, student.attempts, student.repairs);
-  const marks = applyModules(surveyMarks, modules);
+  const marks = chartMarks(applyModules(surveyMarks, modules), modules);
   const prompt = expansionPrompt({
     name: student.name,
     uid: student.uid,

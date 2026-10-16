@@ -17,6 +17,9 @@ const scenes = {
 
 function sceneFor(claimId) {
   if (claimId === "socialManagement") return "social";
+  if (claimId === "electronics") return "technology";
+  if (claimId === "economics") return "politics";
+  if (claimId === "finance") return "mathematics";
   return scenes[claimId] ? claimId : "study";
 }
 
