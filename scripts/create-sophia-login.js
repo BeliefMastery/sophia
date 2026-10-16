@@ -66,6 +66,7 @@ function accessToken(serviceAccount) {
       "https://www.googleapis.com/auth/firebase",
       "https://www.googleapis.com/auth/identitytoolkit",
       "https://www.googleapis.com/auth/firebase.database",
+      "https://www.googleapis.com/auth/userinfo.email",
     ].join(" "),
     aud: "https://oauth2.googleapis.com/token",
     iat: now,
