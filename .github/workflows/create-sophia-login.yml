@@ -3,6 +3,8 @@ name: Create Sophia login
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - scripts/create-sophia-login.js
       - .github/workflows/create-sophia-login.yml

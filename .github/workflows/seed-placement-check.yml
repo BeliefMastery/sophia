@@ -3,6 +3,8 @@ name: Seed placement check
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - content/placement-check.mjs
       - content/modules.mjs

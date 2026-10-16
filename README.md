@@ -7,15 +7,31 @@ Download it from another computer with the green Code button, or with:
 ```bash
 git clone https://github.com/BeliefMastery/sophia.git
 cd sophia
-git checkout cursor/sophia-learning-plan-88e9
 npm ci
 ```
 
-`cursor/sophia-learning-plan-88e9` is the branch that has the current site. A zip of that same copy is at https://github.com/BeliefMastery/sophia/archive/refs/heads/cursor/sophia-learning-plan-88e9.zip
+A zip of `main` is at https://github.com/BeliefMastery/sophia/archive/refs/heads/main.zip
 
-The live site links to both of those from the footer, so the files can be fetched without hunting for the repository.
+The live site is Firebase Hosting: https://sophia-138fe.web.app
 
 When a section is finished, the parent login shows a depth chart and a prompt for the next short module. The rules for adding that module are in `plan.md` and `database.md`. A new topic is a new strand. Existing ids stay.
+
+## How the system is split
+
+| Concern | Home | Notes |
+| --- | --- | --- |
+| App, images, plan docs, curriculum authoring | **This GitHub repo** | Edit here; push updates the site and seeds content |
+| Auth logins | **Firebase Authentication** | Project `sophia-138fe` |
+| Questions the student sees, answers/guides, attempts | **Firebase Realtime Database** | Seeded from `content/`; student progress stays in the DB only |
+| Built site | **Firebase Hosting** | Deployed from `dist` by CI |
+
+Git is the source of truth for curriculum. Edit `content/*.mjs`, then let the seed workflow write `strands`, `items`, and `guides` into the live database. Do not hand-edit live questions in the Firebase console except for emergencies. Do not commit student attempts, passwords, or service-account keys.
+
+Push to `main` is the production path:
+
+- Site files under `src/`, `lib/`, and the Vite config → deploy Hosting
+- `content/*.mjs` and seed helpers → seed Realtime Database
+- `database.rules.json` → deploy database rules
 
 ## Run it locally
 

@@ -3,6 +3,8 @@ name: Confirm accounts
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - scripts/confirm-accounts.js
       - .github/workflows/confirm-accounts.yml

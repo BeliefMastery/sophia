@@ -412,7 +412,7 @@ function Shell({ user, children }) {
       {children}
       <footer className="files">
         <a href="https://github.com/BeliefMastery/sophia">Project files on GitHub</a>
-        <a href="https://github.com/BeliefMastery/sophia/archive/refs/heads/cursor/sophia-learning-plan-88e9.zip">Download this copy</a>
+        <a href="https://github.com/BeliefMastery/sophia/archive/refs/heads/main.zip">Download this copy</a>
       </footer>
     </main>
   );
