@@ -6,6 +6,8 @@ import {
   applyModules,
   expansionPrompt,
   fieldMarks,
+  fieldPlace,
+  fieldProgress,
   moduleOutcome,
   modulePrompt,
   peerAt,
@@ -294,4 +296,40 @@ test("a later module that misses stays at the same difficulty", () => {
   assert.equal(outcome.label, "Short of Year 10");
   assert.ok(outcome.position < peerAt);
   assert.equal(outcome.nextStrandId, "science-physics-practice");
+});
+
+test("question counts stay with each field across every block", () => {
+  const strands = {
+    "placement-check": { order: 0 },
+    "mathematics-hold": { order: 2, field: "mathematics" },
+    "decision-context": { order: 9 },
+    electronics: { order: 14, field: "electronics" },
+  };
+  const items = [
+    { id: "check-math-1", strandId: "placement-check", claim: "mathematics", order: 1 },
+    { id: "check-eng-1", strandId: "placement-check", claim: "english", order: 2 },
+    { id: "check-hist-1", strandId: "placement-check", claim: "history", order: 3 },
+    { id: "math-1", strandId: "mathematics-hold", claim: "mathematics", order: 1 },
+    { id: "ctx-hist-1", strandId: "decision-context", claim: "history", order: 1 },
+    { id: "ctx-pol-1", strandId: "decision-context", claim: "politics", order: 2 },
+    { id: "elec-1", strandId: "electronics", claim: "electronics", order: 1 },
+  ];
+  const attempts = [{ itemId: "check-math-1", submittedAt: 1, matched: true }];
+  const fields = fieldProgress(strands, items, attempts);
+  const math = fields.find((field) => field.id === "mathematics");
+  const history = fields.find((field) => field.id === "history");
+  const politics = fields.find((field) => field.id === "politics");
+  const electronics = fields.find((field) => field.id === "electronics");
+  assert.equal(math.answered, 1);
+  assert.equal(math.total, 2);
+  assert.equal(history.total, 2);
+  assert.equal(politics.total, 1);
+  assert.equal(electronics.title, "Electronics");
+  assert.equal(electronics.answered, 0);
+  assert.equal(electronics.total, 1);
+  assert.equal(fields.some((field) => field.total === items.length), false);
+  const place = fieldPlace(strands, items, items[3]);
+  assert.equal(place.title, "Mathematics");
+  assert.equal(place.index, 2);
+  assert.equal(place.total, 2);
 });

@@ -7,10 +7,10 @@ import { checkRows, openRepair, orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
 import { resourceList } from "../lib/explain.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
-import { applyModules, chartMarks, fieldMarks, moduleOutcomes, nextOpenModule, studyQueue } from "../lib/expansion.mjs";
+import { applyModules, chartMarks, fieldMarks, fieldPlace, fieldProgress, moduleOutcomes, nextOpenModule, studyQueue } from "../lib/expansion.mjs";
 import { Admin } from "./Admin.jsx";
 import { Reward } from "./Reward.jsx";
-import { DepthChart } from "./Depth.jsx";
+import { DepthChart, FieldCounts } from "./Depth.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
 
 const signInMessages = {
@@ -99,6 +99,10 @@ export function App() {
   const inModule = placementDone && Boolean(upcoming) && (studying || moduleTouched);
   const strandStarted = Boolean(upcoming) && (attempts || []).some((attempt) => attempt.strandId === upcoming.strand.id);
   const atPartGate = inModule && !strandStarted && armedStrand !== upcoming.strand.id;
+  const fields = useMemo(
+    () => fieldProgress(strands || {}, library || [], attempts || []),
+    [strands, library, attempts],
+  );
   const items = inModule ? upcoming.items : survey;
 
   const dueRepair = useMemo(() => {
@@ -343,20 +347,20 @@ export function App() {
   if (!progress.complete) {
     const item = progress.next;
     const claim = claims.find((entry) => entry.id === item.claim);
-    const answered = items.filter((entry) => entry.order < item.order).length;
+    const place = fieldPlace(strands, library, item);
     const choices = orderedChoices(item.choices);
     return (
       <Shell user={user}>
-        <Bezel plate={claim?.title || "Question"} aside={`${answered + 1} of ${items.length}`} scene={sceneFor(item.claim)}>
+        <Bezel plate={claim?.title || "Question"} aside={`${place.index} of ${place.total}`} scene={sceneFor(item.claim)}>
           <div className="meter" aria-hidden="true">
-            <span style={{ width: `${(answered / items.length) * 100}%` }} />
+            <span style={{ width: `${((place.index - 1) / place.total) * 100}%` }} />
           </div>
-          {answered === 0 ? (
+          {place.index === 1 ? (
             <details>
               <summary>What this check is</summary>
               <p>
-                Thirty-three questions, three for each note from October 2026. They ask what you know.
-                The result says whether each note still fits. You can sign out and continue later.
+                The count is {place.title} only, across every block in that field.
+                The result says whether the October note still fits. You can sign out and continue later.
                 Answered questions stay answered.
               </p>
             </details>
@@ -392,6 +396,7 @@ export function App() {
         <Bezel plate={upcoming.strand.title} aside="Next block" scene={sceneFor(upcoming.strand.field || upcoming.items[0]?.claim)}>
           <h1 ref={headingRef} tabIndex={-1}>{upcoming.strand.title}</h1>
           <p>{upcoming.strand.summary}</p>
+          <FieldCounts fields={fields.filter((field) => upcoming.items.some((item) => fieldPlace(strands, library, item).id === field.id))} />
           <p>The block before this one is saved. You can sign out and start this part later.</p>
           <button type="button" className="primary" onClick={() => setArmedStrand(upcoming.strand.id)}>
             Start this block
@@ -405,13 +410,13 @@ export function App() {
     const moduleProgress = checkRows(items, attempts);
     const item = moduleProgress.next;
     if (item) {
-      const answered = items.filter((entry) => entry.order < item.order).length;
+      const place = fieldPlace(strands, library, item);
       const choices = orderedChoices(item.choices);
       return (
         <Shell user={user}>
-          <Bezel plate={upcoming.strand.title} aside={`${answered + 1} of ${items.length}`} scene={sceneFor(item.claim)}>
+          <Bezel plate={upcoming.strand.title} aside={`${place.index} of ${place.total}`} scene={sceneFor(item.claim)}>
             <div className="meter" aria-hidden="true">
-              <span style={{ width: `${(answered / items.length) * 100}%` }} />
+              <span style={{ width: `${((place.index - 1) / place.total) * 100}%` }} />
             </div>
             {answered === 0 ? (
               <details>
@@ -480,6 +485,7 @@ export function App() {
       </Bezel>
       <Bezel plate="Depth" aside="Age tiers" scene="reward">
         <h2>How far each field goes</h2>
+        <FieldCounts fields={fields} />
         <DepthChart marks={marks} />
       </Bezel>
       {verdicts.map((verdict) => {

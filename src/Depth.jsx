@@ -43,6 +43,19 @@ export function DepthChart({ marks }) {
   );
 }
 
+export function FieldCounts({ fields }) {
+  return (
+    <ul className="field-counts">
+      {(fields || []).map((field) => (
+        <li key={field.id}>
+          <span>{field.title}</span>
+          <b>{field.answered} of {field.total}</b>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function ExpansionPrompt({ prompt, pending }) {
   const areaRef = useRef(null);
   const [copied, setCopied] = useState(false);

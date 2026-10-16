@@ -9,12 +9,13 @@ import {
   expansionPrompt,
   fieldMarks,
   moduleOutcomes,
+  fieldProgress,
   modulePrompt,
   placementItems,
   sectionStatus,
 } from "../lib/expansion.mjs";
 import { Reward } from "./Reward.jsx";
-import { DepthChart, ExpansionPrompt } from "./Depth.jsx";
+import { DepthChart, ExpansionPrompt, FieldCounts } from "./Depth.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
 
 function list(value) {
@@ -111,9 +112,12 @@ function StudentReport({ student, items, strands, allItems }) {
     status,
     marks: surveyMarks,
   });
-  const pending = status.total
-    ? `${status.answered} of ${status.total} questions answered.${status.repairsDue ? ` ${status.repairsDue} written ${status.repairsDue === 1 ? "answer is" : "answers are"} still due.` : ""} The expansion prompt appears when the section is finished.`
-    : "The expansion prompt appears when a section is finished.";
+  const fields = fieldProgress(strands, allItems, student.attempts);
+  const pending = status.complete
+    ? ""
+    : status.repairsDue
+      ? `${status.repairsDue} written ${status.repairsDue === 1 ? "answer is" : "answers are"} still due on the placement check. The counts below are by field.`
+      : "The placement check is still open. The counts below are by field, across every block in that field.";
   const validated = report.verdicts.filter((verdict) => verdict.open === false && verdict.validated).length;
   const invalidated = report.verdicts.filter((verdict) => verdict.open === false && !verdict.validated).length;
   const open = report.verdicts.filter((verdict) => verdict.open).length;
@@ -130,7 +134,6 @@ function StudentReport({ student, items, strands, allItems }) {
           <h1>{student.name}</h1>
           <p className="quiet">Last answer: {when(report.lastAt)}</p>
           <div className="stats">
-            <p className="stat"><b>{report.answered}</b><span>of {report.total} answered</span></p>
             <p className="stat"><b>{report.correct}</b><span>matched the key</span></p>
             <p className="stat"><b>{report.incorrect}</b><span>did not match</span></p>
             <p className="stat"><b>{validated}</b><span>notes validated</span></p>
@@ -146,6 +149,7 @@ function StudentReport({ student, items, strands, allItems }) {
         <div className="bezel-screen">
           <Scene name="reward" />
           <h2>How far each field goes</h2>
+          <FieldCounts fields={fields} />
           <DepthChart marks={marks} />
         </div>
       </section>
@@ -168,6 +172,7 @@ function StudentReport({ student, items, strands, allItems }) {
       ))}
       {report.verdicts.map((verdict) => {
         const mark = marks.find((entry) => entry.claimId === verdict.claimId);
+        const field = fields.find((entry) => entry.id === verdict.claimId);
         const reward = rewardFor(verdict);
         const plate = verdict.open ? "Open" : reward ? reward.title : verdict.validated ? "Validated" : "Invalidated";
         const tone = verdict.open ? "" : reward ? reward.level : verdict.validated ? "validated" : "invalidated";
@@ -182,7 +187,8 @@ function StudentReport({ student, items, strands, allItems }) {
             <Reward verdict={verdict} />
             {mark ? <p className="quiet">Depth {mark.depth}. {mark.label}. The peer line is Year 10, age 15.</p> : null}
             <p className="note">Note: {verdict.assessment}</p>
-            <h2>{verdict.open ? `${verdict.answered} of ${verdict.total} questions answered.` : verdict.text}</h2>
+            {field ? <p className="quiet">{field.answered} of {field.total} questions in this field.</p> : null}
+            {verdict.open ? null : <h2>{verdict.text}</h2>}
           </div>
         </section>
         );
