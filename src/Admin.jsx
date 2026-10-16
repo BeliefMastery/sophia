@@ -7,9 +7,10 @@ import {
   applyModules,
   chartMarks,
   expansionPrompt,
+  fieldClusterPrompt,
   fieldMarks,
+  fieldStudy,
   moduleOutcomes,
-  fieldProgress,
   modulePrompt,
   placementItems,
   sectionStatus,
@@ -112,12 +113,8 @@ function StudentReport({ student, items, strands, allItems }) {
     status,
     marks: surveyMarks,
   });
-  const fields = fieldProgress(strands, allItems, student.attempts);
-  const pending = status.complete
-    ? ""
-    : status.repairsDue
-      ? `${status.repairsDue} written ${status.repairsDue === 1 ? "answer is" : "answers are"} still due on the placement check. The counts below are by field.`
-      : "The placement check is still open. The counts below are by field, across every block in that field.";
+  const fields = fieldStudy(strands, allItems, student.attempts, student.repairs);
+  const ready = fields.filter((field) => field.complete);
   const validated = report.verdicts.filter((verdict) => verdict.open === false && verdict.validated).length;
   const invalidated = report.verdicts.filter((verdict) => verdict.open === false && !verdict.validated).length;
   const open = report.verdicts.filter((verdict) => verdict.open).length;
@@ -154,9 +151,19 @@ function StudentReport({ student, items, strands, allItems }) {
         </div>
       </section>
       <section className="bezel">
-        <div className="bezel-plate"><span>Expansion</span><span>{status.complete ? "Ready" : "Open"}</span></div>
+        <div className="bezel-plate"><span>Next cluster</span><span>{ready.length ? "Ready" : "Open"}</span></div>
         <div className="bezel-screen">
-          <ExpansionPrompt prompt={prompt} pending={pending} />
+          <h2>Fields ready for more questions</h2>
+          {ready.length ? ready.map((field) => (
+            <ExpansionPrompt
+              key={field.id}
+              prompt={fieldClusterPrompt({ name: student.name, uid: student.uid, field })}
+              pending=""
+            />
+          )) : (
+            <p>A prompt appears when Sophia finishes every current question in a field. That is the signal to write the next cluster in a field she is advancing through.</p>
+          )}
+          {prompt ? <ExpansionPrompt prompt={prompt} pending="" /> : null}
         </div>
       </section>
       {modules.filter((outcome) => outcome.complete).map((outcome) => (

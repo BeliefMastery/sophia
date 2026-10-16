@@ -395,7 +395,7 @@ async function main() {
     },
     body: nameBody,
   });
-  if (profile.status !== 200) fail(`Profile name write failed with HTTP ${profile.status}`);
+  if (profile.status !== 200) fail(`Profile name write failed with HTTP ${profile.status}: ${errorText(profile.body)}`);
   console.log("profile name set");
 
   if (!appId) appId = await ensureWebApp(projectId, token);

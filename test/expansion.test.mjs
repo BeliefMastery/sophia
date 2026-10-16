@@ -6,9 +6,12 @@ import {
   applyModules,
   expansionPrompt,
   fieldMarks,
+  fieldClusterPrompt,
   fieldPlace,
   fieldProgress,
+  fieldStudy,
   moduleOutcome,
+  nextFieldStep,
   modulePrompt,
   peerAt,
   sectionStatus,
@@ -332,4 +335,42 @@ test("question counts stay with each field across every block", () => {
   assert.equal(place.title, "Mathematics");
   assert.equal(place.index, 2);
   assert.equal(place.total, 2);
+});
+
+test("a finished field asks for the next cluster and leaves other fields open", () => {
+  const strands = {
+    "placement-check": { order: 0 },
+    "mathematics-hold": { order: 2, field: "mathematics", depth: 2, ageTier: "year10", title: "Mathematics hold, part 1" },
+    electronics: { order: 14, field: "electronics", depth: 2, ageTier: "year10", title: "Electronics, part 1" },
+  };
+  const items = [
+    { id: "check-math-1", strandId: "placement-check", claim: "mathematics", order: 1 },
+    { id: "math-1", strandId: "mathematics-hold", claim: "mathematics", order: 1 },
+    { id: "elec-1", strandId: "electronics", claim: "electronics", order: 1 },
+  ];
+  const attempts = [
+    { itemId: "check-math-1", matched: true, submittedAt: 1 },
+    { itemId: "math-1", matched: false, submittedAt: 2 },
+  ];
+  const open = fieldStudy(strands, items, attempts, {});
+  const openMath = open.find((field) => field.id === "mathematics");
+  assert.equal(openMath.complete, false);
+  assert.equal(openMath.repairsDue, 1);
+  assert.equal(fieldClusterPrompt({ name: "Sophia", uid: "uid-1", field: openMath }), "");
+  assert.equal(nextFieldStep(strands, items, attempts, {}, "mathematics").kind, "repair");
+  assert.equal(nextFieldStep(strands, items, attempts, {}, "electronics").item.id, "elec-1");
+
+  const repairs = { "math-1": { answer: "I checked the working." } };
+  const doneAttempts = [...attempts, { itemId: "elec-1", matched: true, submittedAt: 3 }];
+  const done = fieldStudy(strands, items, doneAttempts, repairs);
+  const math = done.find((field) => field.id === "mathematics");
+  const electronics = done.find((field) => field.id === "electronics");
+  assert.equal(math.complete, true);
+  assert.equal(electronics.complete, true);
+  assert.equal(nextFieldStep(strands, items, doneAttempts, repairs, "mathematics").kind, "done");
+  const prompt = fieldClusterPrompt({ name: "Sophia", uid: "uid-1", field: math });
+  assert.match(prompt, /Field complete: mathematics/);
+  assert.match(prompt, /next cluster/i);
+  assert.match(prompt, /does not award NCEA/);
+  assert.doesNotMatch(prompt, /electronics/);
 });

@@ -1,16 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { get, onValue, push, ref, set } from "firebase/database";
-import { claims, judgePlacement } from "../lib/claims.mjs";
 import { recordChoice } from "../lib/recordChoice.mjs";
-import { checkRows, openRepair, orderedChoices } from "../lib/records.mjs";
+import { orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
 import { resourceList } from "../lib/explain.mjs";
-import { rewardFor } from "../lib/rewards.mjs";
-import { applyModules, chartMarks, fieldMarks, fieldPlace, fieldProgress, moduleOutcomes, nextOpenModule, studyQueue } from "../lib/expansion.mjs";
+import { fieldPlace, fieldStudy, nextFieldStep } from "../lib/expansion.mjs";
 import { Admin } from "./Admin.jsx";
-import { Reward } from "./Reward.jsx";
-import { DepthChart, FieldCounts } from "./Depth.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
 
 const signInMessages = {
@@ -35,8 +31,7 @@ export function App() {
   const [signingIn, setSigningIn] = useState(false);
   const [library, setLibrary] = useState(null);
   const [strands, setStrands] = useState(null);
-  const [studying, setStudying] = useState(false);
-  const [armedStrand, setArmedStrand] = useState("");
+  const [chosenField, setChosenField] = useState("");
   const [attempts, setAttempts] = useState(null);
   const [parent, setParent] = useState(null);
   const [selected, setSelected] = useState("");
@@ -79,41 +74,22 @@ export function App() {
     setGuides({});
     setRepairDraft("");
     setRepairs(null);
-    setStudying(false);
-    setArmedStrand("");
+    setChosenField("");
   }, [user]);
 
-  const survey = useMemo(() => (library || []).filter((item) => item.strandId === "placement-check"), [library]);
-  const progress = useMemo(() => {
-    if (!library) return null;
-    return checkRows(survey, attempts || []);
-  }, [library, survey, attempts]);
-  const placementRepair = useMemo(() => {
-    if (!library || !attempts || repairs === null) return null;
-    return openRepair(survey, attempts, repairs);
-  }, [library, survey, attempts, repairs]);
-  const placementDone = Boolean(progress?.complete) && !placementRepair;
-  const queue = useMemo(() => studyQueue(strands || {}, library || []), [strands, library]);
-  const upcoming = useMemo(() => nextOpenModule(queue, attempts || [], repairs || {}), [queue, attempts, repairs]);
-  const moduleTouched = (attempts || []).some((attempt) => attempt.strandId && attempt.strandId !== "placement-check");
-  const inModule = placementDone && Boolean(upcoming) && (studying || moduleTouched);
-  const strandStarted = Boolean(upcoming) && (attempts || []).some((attempt) => attempt.strandId === upcoming.strand.id);
-  const atPartGate = inModule && !strandStarted && armedStrand !== upcoming.strand.id;
   const fields = useMemo(
-    () => fieldProgress(strands || {}, library || [], attempts || []),
-    [strands, library, attempts],
+    () => fieldStudy(strands || {}, library || [], attempts || [], repairs || {}),
+    [strands, library, attempts, repairs],
   );
-  const items = inModule ? upcoming.items : survey;
-
-  const dueRepair = useMemo(() => {
-    if (!library || !attempts || repairs === null) return null;
-    return openRepair(items, attempts, repairs);
-  }, [library, items, attempts, repairs]);
-
-  const activeRepair = dueRepair
-    || (pendingRepair && !(typeof repairs?.[pendingRepair.item.id]?.answer === "string" && repairs[pendingRepair.item.id].answer.trim())
-      ? pendingRepair
-      : null);
+  const step = useMemo(() => {
+    if (!chosenField || !library) return null;
+    return nextFieldStep(strands || {}, library, attempts || [], repairs || {}, chosenField);
+  }, [chosenField, strands, library, attempts, repairs]);
+  const fieldRepair = step?.kind === "repair" ? { item: step.item, selected: step.selected } : null;
+  const pendingHere = pendingRepair
+    && fieldPlace(strands || {}, library || [], pendingRepair.item).id === chosenField
+    && !(typeof repairs?.[pendingRepair.item.id]?.answer === "string" && repairs[pendingRepair.item.id].answer.trim());
+  const activeRepair = chosenField ? (pendingHere ? pendingRepair : fieldRepair) : null;
 
   useEffect(() => {
     if (!pendingRepair || repairs === null) return;
@@ -150,7 +126,7 @@ export function App() {
 
   useEffect(() => {
     headingRef.current?.focus();
-  }, [progress?.next?.id, progress?.complete, user, activeRepair?.item?.id, inModule, upcoming?.outcome?.answered]);
+  }, [user, chosenField, step?.item?.id, step?.kind, activeRepair?.item?.id]);
 
   async function onSignIn(event) {
     event.preventDefault();
@@ -167,7 +143,7 @@ export function App() {
   }
 
   async function onRecord() {
-    const item = inModule ? checkRows(items, attempts || []).next : progress?.next;
+    const item = step?.kind === "question" ? step.item : null;
     if (!item || !selected || savingRef.current || activeRepair) return;
     savingRef.current = true;
     setSaving(true);
@@ -242,8 +218,8 @@ export function App() {
     return (
       <Shell>
         <Bezel plate="Sophia" aside="Sign in" scene="study">
-          <h1 ref={headingRef} tabIndex={-1}>Placement check</h1>
-          <p>Sign in with the account made for you. The first session is a set of multiple-choice questions.</p>
+          <h1 ref={headingRef} tabIndex={-1}>Sophia</h1>
+          <p>Sign in with the account made for you. Then choose a field to study.</p>
           <form onSubmit={onSignIn} className="sign-in">
             <label>
               Email
@@ -288,12 +264,41 @@ export function App() {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
 
-  if (survey.length === 0) {
+  if (!library.length) {
     return (
       <Shell user={user}>
-        <Bezel plate="Placement" aside="Empty">
-          <h1 ref={headingRef} tabIndex={-1}>The placement questions are not loaded.</h1>
-          <p>The check has nowhere to read from yet.</p>
+        <Bezel plate="Fields" aside="Empty">
+          <h1 ref={headingRef} tabIndex={-1}>The questions are not loaded.</h1>
+          <p>There is no field to open yet.</p>
+        </Bezel>
+      </Shell>
+    );
+  }
+
+  const current = fields.find((field) => field.id === chosenField);
+  if (!current) {
+    return (
+      <Shell user={user}>
+        <Bezel plate="Fields" aside="Choose one" scene="study">
+          <h1 ref={headingRef} tabIndex={-1}>Choose a field</h1>
+          <p>Work in one field at a time. Your place in each field is saved.</p>
+          <ul className="domains">
+            {fields.map((field) => (
+              <li key={field.id}>
+                <button type="button" className="domain" onClick={() => { setSelected(""); setChosenField(field.id); }}>
+                  <span className="domain-title">{field.title}</span>
+                  <span className="domain-meta">
+                    {field.depth ? `Depth ${field.depth}. ` : ""}
+                    {field.complete ? "Section finished" : field.label}
+                  </span>
+                  <span className="domain-count">{field.answered} of {field.total}</span>
+                  <span className="meter" aria-hidden="true">
+                    <span style={{ width: `${field.total ? (field.answered / field.total) * 100 : 0}%` }} />
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
         </Bezel>
       </Shell>
     );
@@ -339,32 +344,21 @@ export function App() {
           <button type="button" className="primary" disabled={!follow || !repairDraft.trim() || saving} onClick={onRepair}>
             {saving ? "Saving…" : "Save this answer"}
           </button>
+          <button type="button" className="text" onClick={() => setChosenField("")}>All fields</button>
         </Bezel>
       </Shell>
     );
   }
 
-  if (!progress.complete) {
-    const item = progress.next;
-    const claim = claims.find((entry) => entry.id === item.claim);
-    const place = fieldPlace(strands, library, item);
+  if (step?.kind === "question" && step.item) {
+    const item = step.item;
     const choices = orderedChoices(item.choices);
     return (
       <Shell user={user}>
-        <Bezel plate={claim?.title || "Question"} aside={`${place.index} of ${place.total}`} scene={sceneFor(item.claim)}>
+        <Bezel plate={current.title} aside={`${step.index} of ${step.total}`} scene={sceneFor(current.id)}>
           <div className="meter" aria-hidden="true">
-            <span style={{ width: `${((place.index - 1) / place.total) * 100}%` }} />
+            <span style={{ width: `${((step.index - 1) / step.total) * 100}%` }} />
           </div>
-          {place.index === 1 ? (
-            <details>
-              <summary>What this check is</summary>
-              <p>
-                The count is {place.title} only, across every block in that field.
-                The result says whether the October note still fits. You can sign out and continue later.
-                Answered questions stay answered.
-              </p>
-            </details>
-          ) : null}
           <h1 ref={headingRef} tabIndex={-1} className="prompt">{item.prompt}</h1>
           <div className="choices" role="group" aria-label="Choices">
             {choices.map((choice, index) => (
@@ -385,146 +379,23 @@ export function App() {
           <button type="button" className="primary" disabled={!selected || saving} onClick={onRecord}>
             {saving ? "Recording…" : "Record this answer"}
           </button>
+          <button type="button" className="text" onClick={() => { setSelected(""); setChosenField(""); }}>All fields</button>
         </Bezel>
       </Shell>
     );
   }
-
-  if (inModule && atPartGate) {
-    return (
-      <Shell user={user}>
-        <Bezel plate={upcoming.strand.title} aside="Next block" scene={sceneFor(upcoming.strand.field || upcoming.items[0]?.claim)}>
-          <h1 ref={headingRef} tabIndex={-1}>{upcoming.strand.title}</h1>
-          <p>{upcoming.strand.summary}</p>
-          <FieldCounts fields={fields.filter((field) => upcoming.items.some((item) => fieldPlace(strands, library, item).id === field.id))} />
-          <p>The block before this one is saved. You can sign out and start this part later.</p>
-          <button type="button" className="primary" onClick={() => setArmedStrand(upcoming.strand.id)}>
-            Start this block
-          </button>
-        </Bezel>
-      </Shell>
-    );
-  }
-
-  if (inModule) {
-    const moduleProgress = checkRows(items, attempts);
-    const item = moduleProgress.next;
-    if (item) {
-      const place = fieldPlace(strands, library, item);
-      const choices = orderedChoices(item.choices);
-      return (
-        <Shell user={user}>
-          <Bezel plate={upcoming.strand.title} aside={`${place.index} of ${place.total}`} scene={sceneFor(item.claim)}>
-            <div className="meter" aria-hidden="true">
-              <span style={{ width: `${((place.index - 1) / place.total) * 100}%` }} />
-            </div>
-            {answered === 0 ? (
-              <details>
-                <summary>What this module is</summary>
-                <p>{upcoming.strand.summary}</p>
-                <p>A wrong choice closes the options and asks a different question in your own words. This does not award NCEA.</p>
-              </details>
-            ) : null}
-            <h1 ref={headingRef} tabIndex={-1} className="prompt">{item.prompt}</h1>
-            <div className="choices" role="group" aria-label="Choices">
-              {choices.map((choice, index) => (
-                <button
-                  key={choice.id}
-                  type="button"
-                  className={selected === choice.id ? "choice is-selected" : "choice"}
-                  aria-pressed={selected === choice.id}
-                  disabled={saving}
-                  onClick={() => setSelected(choice.id)}
-                >
-                  <span className="choice-mark">{String.fromCharCode(65 + index)}</span>
-                  <span>{choice.text}</span>
-                </button>
-              ))}
-            </div>
-            {recordError ? <p className="alert" role="alert">{recordError}</p> : null}
-            <button type="button" className="primary" disabled={!selected || saving} onClick={onRecord}>
-              {saving ? "Recording…" : "Record this answer"}
-            </button>
-          </Bezel>
-        </Shell>
-      );
-    }
-  }
-
-  const verdicts = judgePlacement(claims, progress.byClaim);
-  const modules = moduleOutcomes(strands, library, attempts, repairs);
-  const marks = chartMarks(
-    applyModules(fieldMarks(verdicts, survey, attempts, repairs), modules),
-    modules,
-  );
-  const validatedCount = verdicts.filter((verdict) => verdict.validated).length;
-  const rewards = verdicts.map((verdict) => rewardFor(verdict)).filter(Boolean);
-  const excellentCount = rewards.filter((reward) => reward.level === "excellent").length;
-  const achievementCount = rewards.filter((reward) => reward.level === "achievement").length;
 
   return (
     <Shell user={user}>
-      <Bezel plate="Placement check" aside="Result" scene="reward">
-        <h1 ref={headingRef} tabIndex={-1}>
-          {excellentCount} excellent {excellentCount === 1 ? "achievement" : "achievements"}. {achievementCount} {achievementCount === 1 ? "achievement" : "achievements"}.
-        </h1>
+      <Bezel plate={current.title} aside="Section finished" scene={sceneFor(current.id)}>
+        <h1 ref={headingRef} tabIndex={-1}>{current.title} is finished</h1>
         <p>
-          Excellent achievement means the work is above the usual Year 10 level for age 15.
-          Achievement means the answers met the October note, or went past a note that sat below that Year 10 line.
-          A weak note that simply holds is not a reward.
+          {current.answered} of {current.total} questions are answered.
+          {current.depth ? ` Depth ${current.depth}. ${current.label}.` : ""}
         </p>
-        <p className="quiet">
-          {validatedCount} {validatedCount === 1 ? "note still matches" : "notes still match"} October. {verdicts.length - validatedCount} {verdicts.length - validatedCount === 1 ? "does" : "do"} not.
-          This does not award NCEA. Management was not scored: it is an interest, not a claimed level.
-        </p>
-        {upcoming && !inModule ? (
-          <button type="button" className="primary" onClick={() => { setArmedStrand(upcoming.strand.id); setStudying(true); }}>
-            Start {upcoming.strand.title}
-          </button>
-        ) : null}
+        <p>There is no further question in this field until a new cluster is added.</p>
+        <button type="button" className="primary" onClick={() => setChosenField("")}>All fields</button>
       </Bezel>
-      <Bezel plate="Depth" aside="Age tiers" scene="reward">
-        <h2>How far each field goes</h2>
-        <FieldCounts fields={fields} />
-        <DepthChart marks={marks} />
-      </Bezel>
-      {verdicts.map((verdict) => {
-        const mark = marks.find((entry) => entry.claimId === verdict.claimId);
-        const reward = rewardFor(verdict);
-        const plate = reward ? reward.title : verdict.validated ? "Validated" : "Invalidated";
-        const tone = reward ? reward.level : verdict.validated ? "validated" : "invalidated";
-        return (
-        <Bezel
-          key={verdict.claimId}
-          plate={plate}
-          aside={verdict.title}
-          tone={tone}
-          scene={sceneFor(verdict.claimId)}
-        >
-          <Reward verdict={verdict} />
-          {mark ? <p className="quiet">Depth {mark.depth}. {mark.label}. The peer line is Year 10, age 15.</p> : null}
-          <p className="note">Note: {verdict.assessment}</p>
-          <h2>{verdict.text}</h2>
-          <p className="quiet">{verdict.support} of {verdict.total} {verdict.support === 1 ? "answer fits" : "answers fit"} the note.</p>
-          <details>
-            <summary>The three answers</summary>
-            <ul className="answer-list">
-              {(progress.byClaim.get(verdict.claimId) || []).map((row) => {
-                const fits = row.predict === "known" ? row.matched : !row.matched;
-                const chosen = row.item.choices?.[row.selected]?.text || "No choice recorded";
-                return (
-                  <li key={row.item.id}>
-                    <p className="prompt-small">{row.item.prompt}</p>
-                    <p>Chosen: {chosen}</p>
-                    <p>{row.matched ? "Matched the key." : "Did not match the key."} {fits ? "Fits the note." : "Does not fit the note."}</p>
-                  </li>
-                );
-              })}
-            </ul>
-          </details>
-        </Bezel>
-        );
-      })}
     </Shell>
   );
 }
