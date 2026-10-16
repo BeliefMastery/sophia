@@ -5,18 +5,21 @@ import { studentReport } from "../lib/report.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
 import {
   applyModules,
+  avoidedFields,
   chartMarks,
   expansionPrompt,
   fieldClusterPrompt,
   fieldMarks,
   fieldStudy,
+  interestVotePrompt,
   moduleOutcomes,
   modulePrompt,
   placementItems,
   sectionStatus,
+  voteSummary,
 } from "../lib/expansion.mjs";
 import { Reward } from "./Reward.jsx";
-import { DepthChart, ExpansionPrompt, FieldCounts } from "./Depth.jsx";
+import { DepthChart, ExpansionPrompt, FieldCounts, InterestReport } from "./Depth.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
 
 function list(value) {
@@ -40,6 +43,8 @@ export function Admin({ user }) {
   const [guides, setGuides] = useState(null);
   const [repairs, setRepairs] = useState(null);
   const [strands, setStrands] = useState(null);
+  const [catalog, setCatalog] = useState(null);
+  const [votes, setVotes] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -55,6 +60,8 @@ export function Admin({ user }) {
       watch("guides", setGuides),
       watch("repairs", setRepairs),
       watch("strands", setStrands),
+      watch("catalog/domains", setCatalog),
+      watch("votes", setVotes),
     ];
     return () => unsubs.forEach((unsub) => unsub());
   }, []);
@@ -68,19 +75,20 @@ export function Admin({ user }) {
     );
   }
 
-  if (!profiles || !attempts || !items || !guides || !repairs || !strands) {
+  if (!profiles || !attempts || !items || !guides || !repairs || !strands || !catalog || !votes) {
     return <p className="quiet">Loading the report…</p>;
   }
 
   const itemList = list(items);
   const survey = placementItems(itemList);
-  const uids = new Set([...Object.keys(profiles), ...Object.keys(attempts)]);
+  const uids = new Set([...Object.keys(profiles), ...Object.keys(attempts), ...Object.keys(votes)]);
   uids.delete(user.uid);
   const students = [...uids].map((uid) => ({
     uid,
     name: profiles[uid]?.name || "Student",
     attempts: list(attempts[uid]),
     repairs: repairs[uid] || {},
+    vote: votes[uid] || null,
     report: studentReport(survey, list(attempts[uid]), guides, repairs[uid]),
   })).sort((a, b) => a.name.localeCompare(b.name));
 
@@ -90,18 +98,25 @@ export function Admin({ user }) {
         <div className="bezel-plate"><span>Admin</span><span>Report</span></div>
         <div className="bezel-screen">
           <h1>No student activity yet.</h1>
-          <p>Answers appear here after Sophia signs in and records one.</p>
+          <p>Answers and interest votes appear here after a student signs in.</p>
         </div>
       </section>
     );
   }
 
   return students.map((student) => (
-    <StudentReport key={student.uid} student={student} items={survey} strands={strands} allItems={itemList} />
+    <StudentReport
+      key={student.uid}
+      student={student}
+      items={survey}
+      strands={strands}
+      allItems={itemList}
+      catalog={catalog}
+    />
   ));
 }
 
-function StudentReport({ student, items, strands, allItems }) {
+function StudentReport({ student, items, strands, allItems, catalog }) {
   const { report } = student;
   const status = sectionStatus(items, student.attempts, student.repairs, { id: "placement-check", ...strands["placement-check"] });
   const surveyMarks = fieldMarks(report.verdicts, items, student.attempts, student.repairs);
@@ -114,7 +129,11 @@ function StudentReport({ student, items, strands, allItems }) {
     marks: surveyMarks,
   });
   const fields = fieldStudy(strands, allItems, student.attempts, student.repairs);
+  const vote = voteSummary(student.vote, catalog);
+  const avoided = avoidedFields(catalog, fields, student.attempts, strands, allItems, student.vote);
   const ready = fields.filter((field) => field.complete);
+  const voteReady = Boolean(vote?.field) && !ready.some((field) => field.id === vote.field);
+  const interestPrompt = voteReady ? interestVotePrompt({ name: student.name, uid: student.uid, vote, avoided }) : "";
   const validated = report.verdicts.filter((verdict) => verdict.open === false && verdict.validated).length;
   const invalidated = report.verdicts.filter((verdict) => verdict.open === false && !verdict.validated).length;
   const open = report.verdicts.filter((verdict) => verdict.open).length;
@@ -148,21 +167,29 @@ function StudentReport({ student, items, strands, allItems }) {
           <h2>How far each field goes</h2>
           <FieldCounts fields={fields} />
           <DepthChart marks={marks} />
+          <InterestReport vote={vote} avoided={avoided} />
         </div>
       </section>
       <section className="bezel">
-        <div className="bezel-plate"><span>Next cluster</span><span>{ready.length ? "Ready" : "Open"}</span></div>
+        <div className="bezel-plate"><span>Next cluster</span><span>{ready.length || interestPrompt ? "Ready" : "Open"}</span></div>
         <div className="bezel-screen">
           <h2>Fields ready for more questions</h2>
           {ready.length ? ready.map((field) => (
             <ExpansionPrompt
               key={field.id}
-              prompt={fieldClusterPrompt({ name: student.name, uid: student.uid, field })}
+              prompt={fieldClusterPrompt({
+                name: student.name,
+                uid: student.uid,
+                field,
+                vote,
+                avoided,
+              })}
               pending=""
             />
           )) : (
-            <p>A prompt appears when Sophia finishes every current question in a field. That is the signal to write the next cluster in a field she is advancing through.</p>
+            <p>A prompt appears when a student finishes every current question in a field, or when they cast an interest vote for a subfield that still needs a cluster.</p>
           )}
+          {interestPrompt ? <ExpansionPrompt prompt={interestPrompt} pending="" /> : null}
           {prompt ? <ExpansionPrompt prompt={prompt} pending="" /> : null}
         </div>
       </section>

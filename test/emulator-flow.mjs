@@ -126,4 +126,16 @@ test("a signed-in student can finish the check and the notes are judged from the
   for (const verdict of verdicts) {
     if (verdict.claimId !== "mathematics") assert.equal(verdict.validated, true, verdict.claimId);
   }
+
+  const catalog = await get(ref(db, "catalog/domains"));
+  assert.ok(catalog.val()?.science?.subfields?.electronics);
+  const vote = {
+    domainId: "science",
+    subfieldId: "electronics",
+    field: "electronics",
+    submittedAt: Date.now(),
+  };
+  await set(ref(db, `votes/${uid}`), vote);
+  const saved = await get(ref(db, `votes/${uid}`));
+  assert.equal(saved.val().field, "electronics");
 });

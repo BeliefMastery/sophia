@@ -105,10 +105,11 @@ The first time she logs in, the screen is a placement check: multiple-choice que
 
 The placement check is depth 1, a survey across fields. Later study is short modules, one field at a time. A finished section is what allows the next module. A section is finished only when every question has a first attempt and every miss has a written repair.
 
-The parent login then shows two things.
+The parent login then shows three things.
 
 - A depth chart. Each field has a depth, which is how many modules in that field are finished. The bar is the age tier those results support. The tiers are Year 9 at age 14, Year 10 at age 15, Year 11 at age 16, Year 12 at age 17, and Year 13 at age 18. The peer line is Year 10, age 15. A weak note that simply holds stays left of that line. Meeting the Year 10 mathematics note sits on the line. An advanced note that holds sits above the line, toward Year 11, and is not called Year 12, Year 13, or NCEA. Passing a note that sat below Year 10 moves toward the line and does not cross it.
-- An expansion prompt. It names the finished section, the student id, the missed item ids, and the next strand id and difficulty for each field. Warwick copies that prompt into Cursor. The agent fetches `attempts/{uid}`, `repairs/{uid}`, and the guides for the missed ids, then writes one new module. The prompt is computed on the admin screen. It is not stored as its own database path, and it is not emailed.
+- Interest vote and fields avoided. The student picks one subfield from the curated tree in `content/interest-tree.mjs` (seeded to `catalog/domains`). That vote is stored at `votes/{uid}`. Fields avoided are catalog subfields with no attempts and no finished module, excluding the current vote. The parent sees both next to the depth chart so pursuit and neglect stay visible.
+- An expansion prompt. It names the finished section, the student id, the missed item ids, the interest vote when present, the avoided list, and the next strand id and difficulty for each field. Warwick copies that prompt into Cursor. The agent fetches `attempts/{uid}`, `repairs/{uid}`, and the guides for the missed ids, then writes one new module. The prompt is computed on the admin screen. It is not stored as its own database path, and it is not emailed. New modules stay shared once seeded.
 
 The next module follows the grade already on the screen.
 

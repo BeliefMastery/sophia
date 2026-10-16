@@ -177,3 +177,37 @@ test("a parent can read the key and a student cannot", async () => {
   const student = testEnv.authenticatedContext("student").database();
   await assertFails(get(ref(student, `guides/${physics.id}`)));
 });
+
+test("a student can vote on the catalog and cannot write another vote or the catalog", async () => {
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    const db = context.database();
+    await set(ref(db, "roles/parent/parent"), true);
+    await set(ref(db, "catalog/domains/science"), {
+      title: "Science",
+      order: 1,
+      subfields: {
+        electronics: { title: "Electronics", field: "electronics", order: 1 },
+      },
+    });
+  });
+  const vote = {
+    domainId: "science",
+    subfieldId: "electronics",
+    field: "electronics",
+    submittedAt: Date.now(),
+  };
+  const student = testEnv.authenticatedContext("student").database();
+  await assertSucceeds(get(ref(student, "catalog/domains")));
+  await assertSucceeds(set(ref(student, "votes/student"), vote));
+  await assertFails(set(ref(student, "votes/other"), vote));
+  await assertFails(set(ref(student, "catalog/domains/science/title"), "Hack"));
+  await assertFails(set(ref(student, "votes/student"), {
+    domainId: "science",
+    subfieldId: "electronics",
+    field: "biology",
+    submittedAt: Date.now(),
+  }));
+  const parent = testEnv.authenticatedContext("parent").database();
+  const listed = await get(ref(parent, "votes"));
+  assert.equal(listed.val().student.field, "electronics");
+});

@@ -56,6 +56,31 @@ export function FieldCounts({ fields }) {
   );
 }
 
+export function InterestReport({ vote, avoided }) {
+  return (
+    <div className="interest-report">
+      <h2>Interest vote and fields avoided</h2>
+      {vote ? (
+        <p>Current vote: {vote.domainTitle} / {vote.title} (field {vote.field}).</p>
+      ) : (
+        <p>No interest vote yet.</p>
+      )}
+      <p className="quiet">Avoided means no attempts and no finished module in that catalog subfield.</p>
+      {avoided?.length ? (
+        <ul className="avoided-list">
+          {avoided.map((entry) => (
+            <li key={`${entry.domainId}-${entry.subfieldId}`}>
+              {entry.domainTitle} / {entry.title}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="quiet">No avoided catalog subfields right now.</p>
+      )}
+    </div>
+  );
+}
+
 export function ExpansionPrompt({ prompt, pending }) {
   const areaRef = useRef(null);
   const [copied, setCopied] = useState(false);

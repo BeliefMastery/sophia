@@ -6,9 +6,9 @@ The database URL is `https://sophia-138fe-default-rtdb.asia-southeast1.firebased
 
 ## Who can touch what
 
-A signed-in student reads her own profile, attempts, reviews, mastery, and written repairs. She writes her name, her own attempts, and one written repair after a miss. She reads strands, items, and sources. After a wrong multiple-choice answer is stored, she can read that one guide.
+A signed-in student reads her own profile, attempts, reviews, mastery, written repairs, and the interest catalog. She writes her name, her own attempts, one written repair after a miss, and one replaceable interest vote. She reads strands, items, and sources. After a wrong multiple-choice answer is stored, she can read that one guide.
 
-The parent does that, and also writes placement, strands, items, guides, sources, reviews, and mastery. The parent login is the admin report: it can read every profile, every attempt, and every written repair. Guides are marking notes. Sophia cannot read a guide before she has missed that question, and she cannot read the guide list.
+The parent does that, and also writes placement, strands, items, guides, sources, reviews, mastery, and the interest catalog. The parent login is the admin report: it can read every profile, every attempt, every written repair, and every interest vote. Guides are marking notes. Sophia cannot read a guide before she has missed that question, and she cannot read the guide list.
 
 `roles/{uid}/parent` is true only for the parent. Clients cannot write `roles`. That value is set later with the admin credential, after the login exists.
 
@@ -30,8 +30,27 @@ The root is closed. Someone who is not signed in cannot read or write.
 | `attempts/{uid}/{attemptId}` | Her answer. She can create one. She cannot edit or delete it | Read, create own | Read all |
 | `reviews/{uid}/{attemptId}` | Known, partial, or unknown, plus a note | Read own | Read, write |
 | `mastery/{uid}/{strandId}/{ideaId}` | Whether an idea is currently known | Read own | Read, write |
+| `catalog/domains` | Curated domain → subfield tree for interest votes | Read | Read, write |
+| `votes/{uid}` | Current interest vote (one record; overwrite to change) | Read, write own | Read all |
 
 `attemptId` is a Realtime Database push id. Do not use the item id as the attempt id. She will answer the same idea more than once, and the earlier answer has to remain.
+
+## Interest catalog and votes
+
+The branching list of general domains and subfields lives in git as `content/interest-tree.mjs`. The seed job writes it to `catalog/domains`. Grow the tree by editing that file and re-seeding. Do not hand-edit the live catalog in the Firebase console except for emergencies.
+
+A vote is the student's current request for the next education cluster:
+
+```json
+{
+  "domainId": "science",
+  "subfieldId": "electronics",
+  "field": "electronics",
+  "submittedAt": 0
+}
+```
+
+`field` must match the catalog subfield's `field`. Changing the vote overwrites `votes/{uid}`. Votes do not create strands. The parent expansion prompt uses the vote, and the avoided list (catalog subfields with no attempts and no finished module, excluding the current vote), when writing the next shared module.
 
 ## Placement
 

@@ -80,6 +80,20 @@
         ".read": "auth != null && (auth.uid == $uid || root.child('roles').child(auth.uid).child('parent').val() == true)",
         ".write": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true"
       }
+    },
+    "catalog": {
+      "domains": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true"
+      }
+    },
+    "votes": {
+      ".read": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('roles').child(auth.uid).child('parent').val() == true)",
+        ".write": "auth != null && auth.uid == $uid",
+        ".validate": "newData.hasChildren(['domainId','subfieldId','field','submittedAt']) && newData.child('domainId').isString() && newData.child('subfieldId').isString() && newData.child('field').isString() && newData.child('field').val().length > 0 && newData.child('field').val().length <= 80 && newData.child('submittedAt').isNumber() && root.child('catalog').child('domains').child(newData.child('domainId').val()).child('subfields').child(newData.child('subfieldId').val()).exists() && newData.child('field').val() == root.child('catalog').child('domains').child(newData.child('domainId').val()).child('subfields').child(newData.child('subfieldId').val()).child('field').val()"
+      }
     }
   }
 }

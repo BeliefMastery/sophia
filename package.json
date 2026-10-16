@@ -5,7 +5,7 @@
     "dev": "vite",
     "dev:emulator": "VITE_USE_EMULATORS=true vite",
     "build": "vite build",
-    "test": "node --test test/content.test.mjs test/verdict.test.mjs test/recordChoice.test.mjs test/records.test.mjs test/report.test.mjs test/rewards.test.mjs test/expansion.test.mjs",
+    "test": "node --test test/content.test.mjs test/verdict.test.mjs test/recordChoice.test.mjs test/records.test.mjs test/report.test.mjs test/rewards.test.mjs test/expansion.test.mjs test/interest.test.mjs",
     "test:rules": "firebase emulators:exec --only database --project demo-sophia \"node --test test/rules.test.mjs\"",
     "test:flow": "firebase emulators:exec --only auth,database --project demo-sophia \"node scripts/seed-placement-check.js && node --test --test-force-exit test/emulator-flow.mjs\""
   },

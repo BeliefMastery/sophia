@@ -7,6 +7,7 @@ import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
 import { resourceList } from "../lib/explain.mjs";
 import { fieldPlace, fieldStudy, nextFieldStep } from "../lib/expansion.mjs";
 import { Admin } from "./Admin.jsx";
+import { InterestVote } from "./InterestVote.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
 
 const signInMessages = {
@@ -41,6 +42,10 @@ export function App() {
   const [guides, setGuides] = useState({});
   const [pendingRepair, setPendingRepair] = useState(null);
   const [repairDraft, setRepairDraft] = useState("");
+  const [catalog, setCatalog] = useState(null);
+  const [vote, setVote] = useState(null);
+  const [voteSaving, setVoteSaving] = useState(false);
+  const [voteError, setVoteError] = useState("");
   const savingRef = useRef(false);
   const headingRef = useRef(null);
 
@@ -59,12 +64,20 @@ export function App() {
     const unsubRepairs = onValue(ref(db, `repairs/${user.uid}`), (snapshot) => {
       setRepairs(snapshot.val() || {});
     });
+    const unsubCatalog = onValue(ref(db, "catalog/domains"), (snapshot) => {
+      setCatalog(snapshot.val() || {});
+    });
+    const unsubVote = onValue(ref(db, `votes/${user.uid}`), (snapshot) => {
+      setVote(snapshot.val() || null);
+    });
     return () => {
       unsubItems();
       unsubStrands();
       unsubAttempts();
       unsubRole();
       unsubRepairs();
+      unsubCatalog();
+      unsubVote();
     };
   }, [user]);
 
@@ -75,6 +88,9 @@ export function App() {
     setRepairDraft("");
     setRepairs(null);
     setChosenField("");
+    setCatalog(null);
+    setVote(null);
+    setVoteError("");
   }, [user]);
 
   const fields = useMemo(
@@ -199,6 +215,19 @@ export function App() {
     }
   }
 
+  async function onVoteSave(nextVote) {
+    if (!user || voteSaving) return;
+    setVoteSaving(true);
+    setVoteError("");
+    try {
+      await set(ref(db, `votes/${user.uid}`), nextVote);
+    } catch {
+      setVoteError("That vote was not saved. Try it again.");
+    } finally {
+      setVoteSaving(false);
+    }
+  }
+
   if (user === undefined) {
     return <Shell><p className="quiet">Loading…</p></Shell>;
   }
@@ -260,9 +289,20 @@ export function App() {
     );
   }
 
-  if (!library || !strands || !attempts || repairs === null || parent === null) {
+  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null) {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
+
+  const anyComplete = fields.some((field) => field.complete);
+  const votePanel = (
+    <InterestVote
+      catalog={catalog}
+      vote={vote}
+      onSave={onVoteSave}
+      saving={voteSaving}
+      error={voteError}
+    />
+  );
 
   if (!library.length) {
     return (
@@ -281,7 +321,7 @@ export function App() {
       <Shell user={user}>
         <Bezel plate="Fields" aside="Choose one" scene="study">
           <h1 ref={headingRef} tabIndex={-1}>Choose a field</h1>
-          <p>Work in one field at a time. Your place in each field is saved.</p>
+          <p>Work in one field at a time. Your place in each field is saved. Fields with no answers yet stay visible as not started.</p>
           <ul className="domains">
             {fields.map((field) => (
               <li key={field.id}>
@@ -290,6 +330,7 @@ export function App() {
                   <span className="domain-meta">
                     {field.depth ? `Depth ${field.depth}. ` : ""}
                     {field.complete ? "Section finished" : field.label}
+                    {!field.answered ? " · Not started" : ""}
                   </span>
                   <span className="domain-count">{field.answered} of {field.total}</span>
                   <span className="meter" aria-hidden="true">
@@ -299,6 +340,7 @@ export function App() {
               </li>
             ))}
           </ul>
+          {anyComplete ? votePanel : null}
         </Bezel>
       </Shell>
     );
@@ -393,7 +435,8 @@ export function App() {
           {current.answered} of {current.total} questions are answered.
           {current.depth ? ` Depth ${current.depth}. ${current.label}.` : ""}
         </p>
-        <p>There is no further question in this field until a new cluster is added.</p>
+        <p>There is no further question in this field until a new cluster is added. Vote for the next subfield to deepen.</p>
+        {votePanel}
         <button type="button" className="primary" onClick={() => setChosenField("")}>All fields</button>
       </Bezel>
     </Shell>
