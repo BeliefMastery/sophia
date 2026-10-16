@@ -5,7 +5,9 @@ on:
   push:
     paths:
       - content/placement-check.mjs
+      - content/modules.mjs
       - lib/checkContent.mjs
+      - lib/checkModules.mjs
       - lib/records.mjs
       - scripts/seed-placement-check.js
       - .github/workflows/seed-placement-check.yml

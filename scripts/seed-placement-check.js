@@ -72,9 +72,17 @@ function accessToken(serviceAccount) {
   });
 }
 
-function databaseWrites(strand, items, publicItem, guideRecord) {
+function databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, moduleItems) {
   const writes = [[`/strands/placement-check`, strand]];
   for (const item of items) {
+    writes.push([`/items/${item.id}`, publicItem(item)]);
+    writes.push([`/guides/${item.id}`, guideRecord(item)]);
+  }
+  for (const moduleStrand of moduleStrands) {
+    const { id, ...record } = moduleStrand;
+    writes.push([`/strands/${id}`, record]);
+  }
+  for (const item of moduleItems) {
     writes.push([`/items/${item.id}`, publicItem(item)]);
     writes.push([`/guides/${item.id}`, guideRecord(item)]);
   }
@@ -120,11 +128,13 @@ async function putEmulator(dbPath, value) {
 
 async function main() {
   const { strand, items } = await import("../content/placement-check.mjs");
+  const { strands: moduleStrands, items: moduleItems } = await import("../content/modules.mjs");
   const { checkContent } = await import("../lib/checkContent.mjs");
+  const { checkModules } = await import("../lib/checkModules.mjs");
   const { publicItem, guideRecord } = await import("../lib/records.mjs");
-  const errors = checkContent(strand, items);
+  const errors = checkContent(strand, items).concat(checkModules(moduleStrands, moduleItems, items));
   if (errors.length) fail(errors.join("; "));
-  const writes = databaseWrites(strand, items, publicItem, guideRecord);
+  const writes = databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, moduleItems);
   if (process.env.FIREBASE_DATABASE_EMULATOR_HOST) {
     for (const [dbPath, value] of writes) await putEmulator(dbPath, value);
   } else {
@@ -132,7 +142,7 @@ async function main() {
     const token = await accessToken(serviceAccount);
     for (const [dbPath, value] of writes) await putProduction(token, dbPath, value);
   }
-  console.log(`placement check seeded: ${items.length} questions`);
+  console.log(`placement check seeded: ${items.length} questions; modules seeded: ${moduleItems.length}`);
 }
 
 main().catch((error) => fail(error.message || "placement seed failed"));

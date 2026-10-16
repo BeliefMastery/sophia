@@ -119,7 +119,7 @@ The next module follows the grade already on the screen.
 | The note held at the expected Year 10 place | More practice at this difficulty, or one step deeper if a deeper dive is requested |
 | An advanced note held, or a later module held at its age tier | A deeper module at the next age tier |
 
-Naming one topic is the whole request. The agent creates one strand of about six to ten questions for that field. It does not generate the rest of the curriculum in the same step. `placement-check` stays the survey. Its item ids, prompts, choices, answers, predicts, and orders stay. A new module uses a new strand id. If the reserved strand for that field has no items yet, the module uses that id. If the id already has items, those items stay, and the next id is the one named in the latest module prompt.
+The first module for each field is already written in `content/modules.mjs`, at the difficulty of the October notes. Mathematics and English sit at Year 10. Physics, biology, geology, history, politics, and technology sit at foundation level, with claims and evidence before the sciences. Chemistry continues from particles, ions, and pH. Psychology and social management are the deeper pass. A later module still uses a new strand id. If the id already has items, those items stay, and the next id is the one named in the latest module prompt. `placement-check` stays the survey. Its item ids, prompts, choices, answers, predicts, and orders stay.
 
 Reserved homes for the first module after the survey:
 

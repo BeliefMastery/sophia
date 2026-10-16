@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { equalTo, get, onValue, orderByChild, push, query, ref, set } from "firebase/database";
+import { get, onValue, push, ref, set } from "firebase/database";
 import { claims, judgePlacement } from "../lib/claims.mjs";
 import { recordChoice } from "../lib/recordChoice.mjs";
 import { checkRows, openRepair, orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
 import { resourceList } from "../lib/explain.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
-import { fieldMarks } from "../lib/expansion.mjs";
+import { applyModules, fieldMarks, moduleOutcomes, nextOpenModule, studyQueue } from "../lib/expansion.mjs";
 import { Admin } from "./Admin.jsx";
 import { Reward } from "./Reward.jsx";
 import { DepthChart } from "./Depth.jsx";
@@ -33,7 +33,9 @@ export function App() {
   const [password, setPassword] = useState("");
   const [signInError, setSignInError] = useState("");
   const [signingIn, setSigningIn] = useState(false);
-  const [items, setItems] = useState(null);
+  const [library, setLibrary] = useState(null);
+  const [strands, setStrands] = useState(null);
+  const [studying, setStudying] = useState(false);
   const [attempts, setAttempts] = useState(null);
   const [parent, setParent] = useState(null);
   const [selected, setSelected] = useState("");
@@ -50,8 +52,8 @@ export function App() {
 
   useEffect(() => {
     if (!user) return undefined;
-    const itemQuery = query(ref(db, "items"), orderByChild("strandId"), equalTo("placement-check"));
-    const unsubItems = onValue(itemQuery, (snapshot) => setItems(listFromSnapshot(snapshot.val())));
+    const unsubItems = onValue(ref(db, "items"), (snapshot) => setLibrary(listFromSnapshot(snapshot.val())));
+    const unsubStrands = onValue(ref(db, "strands"), (snapshot) => setStrands(snapshot.val() || {}));
     const unsubAttempts = onValue(ref(db, `attempts/${user.uid}`), (snapshot) => {
       setAttempts(listFromSnapshot(snapshot.val()));
     });
@@ -63,6 +65,7 @@ export function App() {
     });
     return () => {
       unsubItems();
+      unsubStrands();
       unsubAttempts();
       unsubRole();
       unsubRepairs();
@@ -75,17 +78,29 @@ export function App() {
     setGuides({});
     setRepairDraft("");
     setRepairs(null);
+    setStudying(false);
   }, [user]);
 
+  const survey = useMemo(() => (library || []).filter((item) => item.strandId === "placement-check"), [library]);
   const progress = useMemo(() => {
-    if (!items) return null;
-    return checkRows(items, attempts || []);
-  }, [items, attempts]);
+    if (!library) return null;
+    return checkRows(survey, attempts || []);
+  }, [library, survey, attempts]);
+  const placementRepair = useMemo(() => {
+    if (!library || !attempts || repairs === null) return null;
+    return openRepair(survey, attempts, repairs);
+  }, [library, survey, attempts, repairs]);
+  const placementDone = Boolean(progress?.complete) && !placementRepair;
+  const queue = useMemo(() => studyQueue(strands || {}, library || []), [strands, library]);
+  const upcoming = useMemo(() => nextOpenModule(queue, attempts || [], repairs || {}), [queue, attempts, repairs]);
+  const moduleTouched = (attempts || []).some((attempt) => attempt.strandId && attempt.strandId !== "placement-check");
+  const inModule = placementDone && Boolean(upcoming) && (studying || moduleTouched);
+  const items = inModule ? upcoming.items : survey;
 
   const dueRepair = useMemo(() => {
-    if (!items || !attempts || repairs === null) return null;
+    if (!library || !attempts || repairs === null) return null;
     return openRepair(items, attempts, repairs);
-  }, [items, attempts, repairs]);
+  }, [library, items, attempts, repairs]);
 
   const activeRepair = dueRepair
     || (pendingRepair && !(typeof repairs?.[pendingRepair.item.id]?.answer === "string" && repairs[pendingRepair.item.id].answer.trim())
@@ -127,7 +142,7 @@ export function App() {
 
   useEffect(() => {
     headingRef.current?.focus();
-  }, [progress?.next?.id, progress?.complete, user, activeRepair?.item?.id]);
+  }, [progress?.next?.id, progress?.complete, user, activeRepair?.item?.id, inModule, upcoming?.outcome?.answered]);
 
   async function onSignIn(event) {
     event.preventDefault();
@@ -144,11 +159,11 @@ export function App() {
   }
 
   async function onRecord() {
-    if (!progress?.next || !selected || savingRef.current || activeRepair) return;
+    const item = inModule ? checkRows(items, attempts || []).next : progress?.next;
+    if (!item || !selected || savingRef.current || activeRepair) return;
     savingRef.current = true;
     setSaving(true);
     setRecordError("");
-    const item = progress.next;
     const attemptRef = push(ref(db, `attempts/${user.uid}`));
     const payload = {
       itemId: item.id,
@@ -261,11 +276,11 @@ export function App() {
     );
   }
 
-  if (!items || !attempts || repairs === null || parent === null) {
+  if (!library || !strands || !attempts || repairs === null || parent === null) {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
 
-  if (items.length === 0) {
+  if (survey.length === 0) {
     return (
       <Shell user={user}>
         <Bezel plate="Placement" aside="Empty">
@@ -367,8 +382,56 @@ export function App() {
     );
   }
 
+  if (inModule) {
+    const moduleProgress = checkRows(items, attempts);
+    const item = moduleProgress.next;
+    if (item) {
+      const answered = items.filter((entry) => entry.order < item.order).length;
+      const choices = orderedChoices(item.choices);
+      return (
+        <Shell user={user}>
+          <Bezel plate={upcoming.strand.title} aside={`${answered + 1} of ${items.length}`} scene={sceneFor(item.claim)}>
+            <div className="meter" aria-hidden="true">
+              <span style={{ width: `${(answered / items.length) * 100}%` }} />
+            </div>
+            {answered === 0 ? (
+              <details>
+                <summary>What this module is</summary>
+                <p>{upcoming.strand.summary}</p>
+                <p>A wrong choice closes the options and asks a different question in your own words. This does not award NCEA.</p>
+              </details>
+            ) : null}
+            <h1 ref={headingRef} tabIndex={-1} className="prompt">{item.prompt}</h1>
+            <div className="choices" role="group" aria-label="Choices">
+              {choices.map((choice, index) => (
+                <button
+                  key={choice.id}
+                  type="button"
+                  className={selected === choice.id ? "choice is-selected" : "choice"}
+                  aria-pressed={selected === choice.id}
+                  disabled={saving}
+                  onClick={() => setSelected(choice.id)}
+                >
+                  <span className="choice-mark">{String.fromCharCode(65 + index)}</span>
+                  <span>{choice.text}</span>
+                </button>
+              ))}
+            </div>
+            {recordError ? <p className="alert" role="alert">{recordError}</p> : null}
+            <button type="button" className="primary" disabled={!selected || saving} onClick={onRecord}>
+              {saving ? "Recording…" : "Record this answer"}
+            </button>
+          </Bezel>
+        </Shell>
+      );
+    }
+  }
+
   const verdicts = judgePlacement(claims, progress.byClaim);
-  const marks = fieldMarks(verdicts, items, attempts, repairs);
+  const marks = applyModules(
+    fieldMarks(verdicts, survey, attempts, repairs),
+    moduleOutcomes(strands, library, attempts, repairs),
+  );
   const validatedCount = verdicts.filter((verdict) => verdict.validated).length;
   const rewards = verdicts.map((verdict) => rewardFor(verdict)).filter(Boolean);
   const excellentCount = rewards.filter((reward) => reward.level === "excellent").length;
@@ -389,6 +452,11 @@ export function App() {
           {validatedCount} {validatedCount === 1 ? "note still matches" : "notes still match"} October. {verdicts.length - validatedCount} {verdicts.length - validatedCount === 1 ? "does" : "do"} not.
           This does not award NCEA. Management was not scored: it is an interest, not a claimed level.
         </p>
+        {upcoming && !inModule ? (
+          <button type="button" className="primary" onClick={() => setStudying(true)}>
+            Start {upcoming.strand.title}
+          </button>
+        ) : null}
       </Bezel>
       <Bezel plate="Depth" aside="Age tiers" scene="reward">
         <h2>How far each field goes</h2>

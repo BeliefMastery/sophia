@@ -336,7 +336,9 @@ The prompt tells the next agent to read `attempts/{uid}`, `repairs/{uid}`, and `
 
 A module item uses a new id. `kind` is `probe`, not `check`. `check` stays the placement survey. A choice module still uses `answerKind` `choice`, a guide, a miss, and a repair. It does not use `predict`. `predict` belongs to the October notes. A finished module holds when a majority of its first attempts match. That moves the field's depth to the module's `depth` and the bar to the module's `ageTier`. If it does not hold, the next strand id is `{strandId}-practice` and the difficulty stays the same. If it holds, the next strand id is `{strandId}-depth-{depth + 1}`.
 
-The placement report scores only `placement-check` items. Module items do not change an October verdict. The student screen keeps asking the placement check until that section is complete. The next session that adds a module also opens that strand on her screen after the check, using strand `order`. It does not fold the new questions into `placement-check`.
+The placement report scores only `placement-check` items. Module items do not change an October verdict. The student screen keeps asking the placement check until that section is complete. After that, she can start the unfinished module with the lowest strand `order`. The questions are in `content/modules.mjs`. Their ids stay. They are not folded into `placement-check`.
+
+The first modules, six questions each, are `mathematics-hold`, `english-year10`, `science-claims`, `science-physics`, `science-chemistry`, `science-biology`, `science-earth`, `decision-context` (history, politics, and technology together), `psychology-insight`, and `social-management-depth-2`. `science-claims` is the check that comes before the science subjects. History, politics, and technology stay inside `decision-context`. Psychology uses only the four distinctions named in `plan.md`.
 
 ## What not to add
 
