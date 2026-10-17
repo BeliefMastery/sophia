@@ -59,7 +59,10 @@ const items = [
     answer: "twelve",
     lookFor: ["Five equal parts make 20, so one part is 4, and the larger share is three parts"],
     misconceptions: ["Splitting 20 in half"],
-    discover: [{ label: "Search: share an amount in a given ratio" }],
+    passage: [
+      "When you work through share an amount in a given ratio, keep each step in order and name what that step is doing. Five equal parts make 20, so one part is 4, and the larger share is three parts The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Splitting 20 in half After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If the ratio had been 1:1, what would each person get from the same total?",
   }),
   q({
@@ -77,7 +80,10 @@ const items = [
     answer: "forty",
     lookFor: ["Area of a rectangle is length times width"],
     misconceptions: ["Adding the sides, which gives a perimeter piece"],
-    discover: [{ label: "Search: area of a rectangle length times width" }],
+    passage: [
+      "When you work through area of a rectangle length times width, keep each step in order and name what that step is doing. Area of a rectangle is length times width The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Adding the sides, which gives a perimeter piece After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What measurement do you get if you add all four sides instead?",
   }),
   q({
@@ -95,7 +101,10 @@ const items = [
     answer: "six",
     lookFor: ["Add the scores and divide by how many there are"],
     misconceptions: ["Choosing the middle number without adding, or stopping at the total"],
-    discover: [{ label: "Search: how to calculate the mean of three numbers" }],
+    passage: [
+      "When you work through how to calculate the mean of three numbers, keep each step in order and name what that step is doing. Add the scores and divide by how many there are The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Choosing the middle number without adding, or stopping at the total After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If one more score of 6 is added, does the mean rise, fall, or stay the same?",
   }),
   q({
@@ -113,7 +122,10 @@ const items = [
     answer: "two",
     lookFor: ["Starting 3 below zero and moving 5 toward the positives lands 2 above zero"],
     misconceptions: ["Adding the unsigned numbers and keeping the minus"],
-    discover: [{ label: "Search: adding a negative integer and a positive integer" }],
+    passage: [
+      "When you work through adding a negative integer and a positive integer, keep each step in order and name what that step is doing. Starting 3 below zero and moving 5 toward the positives lands 2 above zero The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Adding the unsigned numbers and keeping the minus After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Start at negative 3 on a number line. Which way do you move when you add a positive number?",
   }),
   q({
@@ -131,7 +143,10 @@ const items = [
     answer: "nineteen",
     lookFor: ["The terms rise by 4 each time"],
     misconceptions: ["Adding 1, or repeating the gap between the first pair only once"],
-    discover: [{ label: "Search: next term of a linear number pattern" }],
+    passage: [
+      "When you work through next term of a linear number pattern, keep each step in order and name what that step is doing. The terms rise by 4 each time The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Adding 1, or repeating the gap between the first pair only once After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What is the gap between one term and the next in that pattern?",
   }),
   q({
@@ -149,7 +164,10 @@ const items = [
     answer: "point-eight",
     lookFor: ["The two outcomes make 1 altogether"],
     misconceptions: ["Copying the given probability, or adding it to 1"],
-    discover: [{ label: "Search: probability of the complement" }],
+    passage: [
+      "When you work through probability of the complement, keep each step in order and name what that step is doing. The two outcomes make 1 altogether The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Copying the given probability, or adding it to 1 After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why must the rain chance and the no-rain chance add to one?",
   }),
   q({
@@ -167,7 +185,10 @@ const items = [
     answer: "invite",
     lookFor: ["The notice asks people to come, and says when and where"],
     misconceptions: ["Treating a warm invitation as a punishment"],
-    discover: [{ label: "Search: purpose of an invitation notice" }],
+    passage: [
+      "When you work through purpose of an invitation notice, keep each step in order and name what that step is doing. The notice asks people to come, and says when and where The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating a warm invitation as a punishment After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Who is being asked to come, the students alone or the wider family group?",
   }),
   q({
@@ -185,7 +206,10 @@ const items = [
     answer: "however",
     lookFor: ["The second sentence pushes against the difficulty named in the first"],
     misconceptions: ["Using a cause word where the ideas oppose each other"],
-    discover: [{ label: "Search: connective that shows contrast" }],
+    passage: [
+      "When you work through connective that shows contrast, keep each step in order and name what that step is doing. The second sentence pushes against the difficulty named in the first The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using a cause word where the ideas oppose each other After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Write a because-sentence that gives a reason, not a contrast.",
   }),
   q({
@@ -203,7 +227,10 @@ const items = [
     answer: "played",
     lookFor: ["A summary keeps the outcome and the obstacles, and drops nothing essential"],
     misconceptions: ["Dropping the outcome, or inventing a cancellation"],
-    discover: [{ label: "Search: how to summarise a short paragraph" }],
+    passage: [
+      "When you work through how to summarise a short paragraph, keep each step in order and name what that step is doing. A summary keeps the outcome and the obstacles, and drops nothing essential The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Dropping the outcome, or inventing a cancellation After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one detail from the paragraph that a summary can leave out.",
   }),
   q({
@@ -221,7 +248,10 @@ const items = [
     answer: "request",
     lookFor: ["A council letter uses a complete, polite request"],
     misconceptions: ["Using chat language in a formal letter"],
-    discover: [{ label: "Search: formal language in a letter to a council" }],
+    passage: [
+      "When you work through formal language in a letter to a council, keep each step in order and name what that step is doing. A council letter uses a complete, polite request The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using chat language in a formal letter After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Change 'hey, sort it' into one polite clause. Do not copy the formal sentence above.",
   }),
   q({
@@ -239,7 +269,10 @@ const items = [
     answer: "difference",
     lookFor: ["The two settings are placed side by side so the difference can be felt"],
     misconceptions: ["Treating a structural contrast as a list of facts"],
-    discover: [{ label: "Search: contrast between two settings in a story" }],
+    passage: [
+      "When you work through contrast between two settings in a story, keep each step in order and name what that step is doing. The two settings are placed side by side so the difference can be felt The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating a structural contrast as a list of facts After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name the two places the writer puts side by side.",
   }),
   q({
@@ -257,7 +290,10 @@ const items = [
     answer: "force",
     lookFor: ["Shoved is a physical, abrupt action, here given to the wind"],
     misconceptions: ["Reading the verb as its opposite"],
-    discover: [{ label: "Search: verb choice that shows force" }],
+    passage: [
+      "When you work through verb choice that shows force, keep each step in order and name what that step is doing. Shoved is a physical, abrupt action, here given to the wind The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Reading the verb as its opposite After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Replace the verb with a plainer one and say what feeling is lost.",
   }),
   q({
@@ -275,7 +311,10 @@ const items = [
     answer: "sample",
     lookFor: ["One case is not enough to support a general rule"],
     misconceptions: ["Treating a single trial as proof for all cases"],
-    discover: [{ label: "Search: why sample size matters in a test" }],
+    passage: [
+      "When you work through why sample size matters in a test, keep each step in order and name what that step is doing. One case is not enough to support a general rule The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating a single trial as proof for all cases After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What would you count before you trusted a rule about seeds?",
   }),
   q({
@@ -293,7 +332,10 @@ const items = [
     answer: "check",
     lookFor: ["A repeat checks whether the result was a one-off"],
     misconceptions: ["Repeating only until the desired number appears, then stopping"],
-    discover: [{ label: "Search: repeat a scientific measurement" }],
+    passage: [
+      "When you work through repeat a scientific measurement, keep each step in order and name what that step is doing. A repeat checks whether the result was a one-off The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Repeating only until the desired number appears, then stopping After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If three repeats disagree, what should you not do with the odd one straight away?",
   }),
   q({
@@ -311,7 +353,10 @@ const items = [
     answer: "units",
     lookFor: ["A number without a unit, or with a different unit, is not the same measurement"],
     misconceptions: ["Comparing bare numbers"],
-    discover: [{ label: "Search: why units must match when comparing results" }],
+    passage: [
+      "When you work through why units must match when comparing results, keep each step in order and name what that step is doing. A number without a unit, or with a different unit, is not the same measurement The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Comparing bare numbers After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Write the two quantities so a reader can tell them apart.",
   }),
   q({
@@ -329,7 +374,10 @@ const items = [
     answer: "outlier",
     lookFor: ["A result far from the others needs a look at the conditions, not an instant new law"],
     misconceptions: ["Letting one damaged pot rewrite the whole claim"],
-    discover: [{ label: "Search: outlier in a set of results" }],
+    passage: [
+      "When you work through outlier in a set of results, keep each step in order and name what that step is doing. A result far from the others needs a look at the conditions, not an instant new law The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Letting one damaged pot rewrite the whole claim After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What would you check on that pot before you dropped the result?",
   }),
   q({
@@ -347,7 +395,10 @@ const items = [
     answer: "without",
     lookFor: ["The control is the comparison case"],
     misconceptions: ["Changing the control as well as the test"],
-    discover: [{ label: "Search: purpose of a control group" }],
+    passage: [
+      "When you work through purpose of a control group, keep each step in order and name what that step is doing. The control is the comparison case The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Changing the control as well as the test After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "In a plant-food test, what would the control plants not receive?",
   }),
   q({
@@ -365,7 +416,10 @@ const items = [
     answer: "together",
     lookFor: ["Correlation is not, on its own, a cause"],
     misconceptions: ["Jumping from 'together' to 'one made the other happen'"],
-    discover: [{ label: "Search: correlation is not the same as cause" }],
+    passage: [
+      "When you work through correlation is not the same as cause, keep each step in order and name what that step is doing. Correlation is not, on its own, a cause The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Jumping from 'together' to 'one made the other happen' After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one thing that could raise both of those counts in midsummer.",
   }),
   q({
@@ -383,7 +437,10 @@ const items = [
     answer: "pressure",
     lookFor: ["Pressure is force divided by area"],
     misconceptions: ["Thinking the weight changed because the board is wide"],
-    discover: [{ label: "Search: pressure equals force divided by area" }],
+    passage: [
+      "When you work through pressure equals force divided by area, keep each step in order and name what that step is doing. Pressure is force divided by area The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking the weight changed because the board is wide After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If the area under the same person gets smaller, what happens to the pressure?",
   }),
   q({
@@ -401,7 +458,10 @@ const items = [
     answer: "pumice",
     lookFor: ["Density is mass divided by volume. More volume for the same mass means lower density"],
     misconceptions: ["Using mass alone as density"],
-    discover: [{ label: "Search: density mass divided by volume" }],
+    passage: [
+      "When you work through density mass divided by volume, keep each step in order and name what that step is doing. Density is mass divided by volume. More volume for the same mass means lower density The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using mass alone as density After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why can some rocks float in water while others with the same mass do not?",
   }),
   q({
@@ -419,7 +479,10 @@ const items = [
     answer: "medium",
     lookFor: ["Sound is a vibration passed through particles"],
     misconceptions: ["Thinking sound travels the same way in empty space as light does"],
-    discover: [{ label: "Search: sound needs a medium" }],
+    passage: [
+      "When you work through sound needs a medium, keep each step in order and name what that step is doing. Sound is a vibration passed through particles The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking sound travels the same way in empty space as light does After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one material, other than air, that can carry a vibration to your ear.",
   }),
   q({
@@ -437,7 +500,10 @@ const items = [
     answer: "faster",
     lookFor: ["The flash and the thunder start together. Light arrives first because it is much faster"],
     misconceptions: ["Thinking the thunder happened later at the cloud"],
-    discover: [{ label: "Search: why lightning is seen before thunder" }],
+    passage: [
+      "When you work through why lightning is seen before thunder, keep each step in order and name what that step is doing. The flash and the thunder start together. Light arrives first because it is much faster The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking the thunder happened later at the cloud After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If the gap between flash and thunder is longer, is the storm nearer or farther?",
   }),
   q({
@@ -455,7 +521,10 @@ const items = [
     answer: "slow",
     lookFor: ["Insulation slows heat transfer. It does not make cold"],
     misconceptions: ["Thinking a chilly bin is a refrigerator that produces cold"],
-    discover: [{ label: "Search: thermal insulation slows heat transfer" }],
+    passage: [
+      "When you work through thermal insulation slows heat transfer, keep each step in order and name what that step is doing. Insulation slows heat transfer. It does not make cold The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking a chilly bin is a refrigerator that produces cold After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "On a hot day, which way is heat trying to move, into the drink or out of it?",
   }),
   q({
@@ -473,7 +542,10 @@ const items = [
     answer: "lever",
     lookFor: ["The handle lets a smaller effort move a load around a pivot"],
     misconceptions: ["Naming an electrical part for a simple machine"],
-    discover: [{ label: "Search: simple machine with a long handle and a pivot" }],
+    passage: [
+      "When you work through simple machine with a long handle and a pivot, keep each step in order and name what that step is doing. The handle lets a smaller effort move a load around a pivot The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Naming an electrical part for a simple machine After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Where is the pivot when you use a spade that way?",
   }),
   q({
@@ -491,7 +563,10 @@ const items = [
     answer: "temperature",
     lookFor: ["A higher temperature usually makes particles collide more often and more effectively"],
     misconceptions: ["Thinking heat changes the conservation of mass"],
-    discover: [{ label: "Search: temperature and the rate of dissolving" }],
+    passage: [
+      "When you work through temperature and the rate of dissolving, keep each step in order and name what that step is doing. A higher temperature usually makes particles collide more often and more effectively The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking heat changes the conservation of mass After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one other change, besides heat, that could make a tablet dissolve faster.",
   }),
   q({
@@ -509,7 +584,10 @@ const items = [
     answer: "acid",
     lookFor: ["Blue litmus turns red in acid"],
     misconceptions: ["Reversing the litmus colours"],
-    discover: [{ label: "Search: blue litmus in acid" }],
+    passage: [
+      "When you work through blue litmus in acid, keep each step in order and name what that step is doing. Blue litmus turns red in acid The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Reversing the litmus colours After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What colour would you expect from red litmus in an alkali?",
   }),
   q({
@@ -527,7 +605,10 @@ const items = [
     answer: "alloy",
     lookFor: ["An alloy is a mixture of metals"],
     misconceptions: ["Calling every metal a single element even when it is mixed"],
-    discover: [{ label: "Search: alloy as a mixture of metals" }],
+    passage: [
+      "When you work through alloy as a mixture of metals, keep each step in order and name what that step is doing. the value that fits is a mixture of metals The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calling every metal a single element even when it is mixed After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one reason a mixture of metals can be more useful than one metal alone.",
   }),
   q({
@@ -545,7 +626,10 @@ const items = [
     answer: "h2o",
     lookFor: ["Water is two hydrogen atoms and one oxygen atom in each molecule"],
     misconceptions: ["Confusing water with carbon dioxide or salt"],
-    discover: [{ label: "Search: chemical formula of water" }],
+    passage: [
+      "When you work through chemical formula of water, keep each step in order and name what that step is doing. Water is two hydrogen atoms and one oxygen atom in each molecule The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Confusing water with carbon dioxide or salt After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "How many hydrogen atoms does that formula show in one molecule?",
   }),
   q({
@@ -563,7 +647,10 @@ const items = [
     answer: "filter",
     lookFor: ["Sand is insoluble and stays in the filter. Salt stays dissolved"],
     misconceptions: ["Using a magnet, or trying to freeze the mixture as the first separation"],
-    discover: [{ label: "Search: filter sand from salty water" }],
+    passage: [
+      "When you work through filter sand from salty water, keep each step in order and name what that step is doing. Sand is insoluble and stays in the filter. Salt stays dissolved The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using a magnet, or trying to freeze the mixture as the first separation After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "After the sand is gone, how could you recover the salt from the water?",
   }),
   q({
@@ -581,7 +668,10 @@ const items = [
     answer: "hydrogen",
     lookFor: ["A metal reacting with an acid commonly releases hydrogen gas"],
     misconceptions: ["Naming a noble gas or a solid"],
-    discover: [{ label: "Search: magnesium and hydrochloric acid gas given off" }],
+    passage: [
+      "When you work through magnesium and hydrochloric acid gas given off, keep each step in order and name what that step is doing. A metal reacting with an acid commonly releases the value that fits gas The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Naming a noble gas or a solid After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why should that gas not be collected near a flame in a school lab?",
   }),
   q({
@@ -599,7 +689,10 @@ const items = [
     answer: "oxygen",
     lookFor: ["Respiration uses oxygen and food such as glucose to release energy"],
     misconceptions: ["Swapping respiration with photosynthesis"],
-    discover: [{ label: "Search: what cells use when they release energy from food" }],
+    passage: [
+      "When you work through what cells use when they release energy from food, keep each step in order and name what that step is doing. Respiration uses the value that fits and food such as glucose to release energy The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Swapping respiration with photosynthesis After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name the gas that this process gives out.",
   }),
   q({
@@ -617,7 +710,10 @@ const items = [
     answer: "producer",
     lookFor: ["Producers make food, usually by photosynthesis"],
     misconceptions: ["Calling a green plant a decomposer"],
-    discover: [{ label: "Search: producers in a food chain" }],
+    passage: [
+      "When you work through producers in a food chain, keep each step in order and name what that step is doing. Producers make food, usually by photosynthesis The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calling a green plant a decomposer After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Where does that kind of living thing get the energy it stores in food?",
   }),
   q({
@@ -635,7 +731,10 @@ const items = [
     answer: "break",
     lookFor: ["Decomposers recycle dead material"],
     misconceptions: ["Giving them the job of a producer or of Parliament"],
-    discover: [{ label: "Search: role of decomposers" }],
+    passage: [
+      "When you work through role of decomposers, keep each step in order and name what that step is doing. Decomposers recycle dead material The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Giving them the job of a producer or of Parliament After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one decomposer you might find in a compost bin.",
   }),
   q({
@@ -653,7 +752,10 @@ const items = [
     answer: "only-here",
     lookFor: ["Endemic means naturally found in one place and not elsewhere"],
     misconceptions: ["Confusing endemic with introduced or with extinct"],
-    discover: [{ label: "Search: endemic species meaning New Zealand kiwi" }],
+    passage: [
+      "When you work through endemic species meaning New Zealand kiwi, keep each step in order and name what that step is doing. Endemic means naturally found in one place and not elsewhere The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Confusing endemic with introduced or with extinct After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why does 'found only here' matter when a habitat is damaged?",
   }),
   q({
@@ -671,7 +773,10 @@ const items = [
     answer: "introduced",
     lookFor: ["These animals were brought to Aotearoa and prey on native wildlife"],
     misconceptions: ["Calling them native birds"],
-    discover: [{ label: "Search: animals brought to Aotearoa that hunt native birds" }],
+    passage: [
+      "When you work through animals brought to Aotearoa that hunt native birds, keep each step in order and name what that step is doing. These animals were brought to Aotearoa and prey on native wildlife The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calling them native birds After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one native bird that trapping these animals is meant to protect.",
   }),
   q({
@@ -689,7 +794,10 @@ const items = [
     answer: "grass",
     lookFor: ["The plant makes the food that the chain starts from"],
     misconceptions: ["Starting the chain at the animal"],
-    discover: [{ label: "Search: producer in a food chain" }],
+    passage: [
+      "When you work through producer in a food chain, keep each step in order and name what that step is doing. The plant makes the food that the chain starts from The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Starting the chain at the animal After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What would happen to the fantail if the insects in the middle all disappeared?",
   }),
   q({
@@ -707,7 +815,10 @@ const items = [
     answer: "boundary",
     lookFor: ["The country lies on the boundary between the Australian Plate and the Pacific Plate"],
     misconceptions: ["Thinking New Zealand is far from any plate boundary"],
-    discover: [{ label: "Search: New Zealand Australian and Pacific plate boundary" }],
+    passage: [
+      "When you work through New Zealand Australian and Pacific plate boundary, keep each step in order and name what that step is doing. The country lies on the boundary between the Australian Plate and the Pacific Plate The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking New Zealand is far from any plate boundary After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one hazard that is more common because of that setting.",
   }),
   q({
@@ -725,7 +836,10 @@ const items = [
     answer: "fault",
     lookFor: ["The Alpine Fault is the major fault where the plates meet along the South Island"],
     misconceptions: ["Confusing the fault with a river or a calendar event"],
-    discover: [{ label: "Search: Alpine Fault South Island" }],
+    passage: [
+      "When you work through Alpine Fault South Island, keep each step in order and name what that step is doing. The Alpine Fault is the major fault where the plates meet along the South Island The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Confusing the fault with a river or a calendar event After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why is 'it will rupture on a known Tuesday' not a scientific claim?",
   }),
   q({
@@ -743,7 +857,10 @@ const items = [
     answer: "many",
     lookFor: ["Auckland's field has many vents, not one classic cone alone"],
     misconceptions: ["Picturing Auckland as one volcano such as a single Fuji-like peak"],
-    discover: [{ label: "Search: Auckland Volcanic Field many volcanoes" }],
+    passage: [
+      "When you work through Auckland Volcanic Field many volcanoes, keep each step in order and name what that step is doing. Auckland's field has many vents, not one classic cone alone The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Picturing Auckland as one volcano such as a single Fuji-like peak After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why does a field of many vents change how a city plans, compared with one distant mountain?",
   }),
   q({
@@ -761,7 +878,10 @@ const items = [
     answer: "mix",
     lookFor: ["Soil is weathered rock plus organic material, water, and air"],
     misconceptions: ["Calling soil a pure chemical"],
-    discover: [{ label: "Search: what soil is made of" }],
+    passage: [
+      "When you work through what soil is made of, keep each step in order and name what that step is doing. Soil is weathered rock plus organic material, water, and air The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calling soil a pure chemical After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one living thing that helps make soil.",
   }),
   q({
@@ -779,7 +899,10 @@ const items = [
     answer: "erosion",
     lookFor: ["Waves can pick up and carry sand"],
     misconceptions: ["Naming a biological or political process"],
-    discover: [{ label: "Search: how waves carry beach sand away" }],
+    passage: [
+      "When you work through how waves carry beach sand away, keep each step in order and name what that step is doing. Waves can pick up and carry sand The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Naming a biological or political process After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "How is that different from weathering that only breaks rock in place?",
   }),
   q({
@@ -797,7 +920,10 @@ const items = [
     answer: "higher",
     lookFor: ["A long or strong earthquake at the coast is a natural warning of a possible tsunami"],
     misconceptions: ["Going toward the water"],
-    discover: [{ label: "Search: New Zealand tsunami natural warning long earthquake" }],
+    passage: [
+      "When you work through New Zealand tsunami natural warning long earthquake, keep each step in order and name what that step is doing. A long or strong earthquake at the coast is a natural warning of a possible tsunami The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Going toward the water After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why is the earthquake itself the warning, even before an official message arrives?",
   }),
   q({
@@ -815,7 +941,10 @@ const items = [
     answer: "eighteen-thirty-five",
     lookFor: ["1835 is before Te Tiriti in 1840"],
     misconceptions: ["Using the Treaty year for the earlier declaration"],
-    discover: [{ label: "Search: He Whakaputanga Declaration of Independence year" }],
+    passage: [
+      "When you work through He Whakaputanga Declaration of Independence year, keep each step in order and name what that step is doing. the value that fits is before Te Tiriti in 1840 The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using the Treaty year for the earlier declaration After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why does the order of that declaration and Te Tiriti matter?",
   }),
   q({
@@ -833,7 +962,10 @@ const items = [
     answer: "two-texts",
     lookFor: ["There are two texts, and the differences between them are part of the history"],
     misconceptions: ["Pretending there was only one wording"],
-    discover: [{ label: "Search: Te Tiriti Māori text and English text differences" }],
+    passage: [
+      "When you work through Te Tiriti Māori text and English text differences, keep each step in order and name what that step is doing. There are two texts, and the differences between them are part of the history The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Pretending there was only one wording After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why is it poor history to quote only one of those texts and ignore the other?",
   }),
   q({
@@ -851,7 +983,10 @@ const items = [
     answer: "vote-year",
     lookFor: ["The Electoral Act 1893 enfranchised women"],
     misconceptions: ["Using the year women could stand for Parliament"],
-    discover: [{ label: "Search: when women in New Zealand gained the parliamentary vote" }],
+    passage: [
+      "When you work through when women in New Zealand gained the parliamentary vote, keep each step in order and name what that step is doing. The Electoral Act the value that fits enfranchised women The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using the year women could stand for Parliament After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "How is casting a vote different from being allowed to stand as a candidate?",
   }),
   q({
@@ -869,7 +1004,10 @@ const items = [
     answer: "stand",
     lookFor: ["The Women's Parliamentary Rights Act 1919 allowed women to stand"],
     misconceptions: ["Assuming the vote and the right to stand arrived in the same year"],
-    discover: [{ label: "Search: Women's Parliamentary Rights Act New Zealand" }],
+    passage: [
+      "When you work through Women's Parliamentary Rights Act New Zealand, keep each step in order and name what that step is doing. The Women's Parliamentary Rights Act the value that fits allowed women to stand The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Assuming the vote and the right to stand arrived in the same year After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why would a timeline be misleading if it used one year for both rights?",
   }),
   q({
@@ -887,7 +1025,10 @@ const items = [
     answer: "land",
     lookFor: ["Raupatu is confiscation of land"],
     misconceptions: ["Treating the word as a celebration or a science term"],
-    discover: [{ label: "Search: raupatu land confiscation New Zealand Wars" }],
+    passage: [
+      "When you work through raupatu land confiscation New Zealand Wars, keep each step in order and name what that step is doing. Raupatu is confiscation of land The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating the word as a celebration or a science term After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why do historians ask which iwi lost land, rather than speaking only of 'the country'?",
   }),
   q({
@@ -905,7 +1046,10 @@ const items = [
     answer: "pacific",
     lookFor: ["Immigration raids disproportionately targeted Pacific peoples"],
     misconceptions: ["Describing the raids as a random scenic or school policy"],
-    discover: [{ label: "Search: Dawn Raids and the 2021 Crown apology" }],
+    passage: [
+      "When you work through Dawn Raids and the 2021 Crown apology, keep each step in order and name what that step is doing. Immigration raids disproportionately targeted Pacific peoples The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Describing the raids as a random scenic or school policy After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why does a later apology not erase what happened at the time?",
   }),
   q({
@@ -923,7 +1067,10 @@ const items = [
     answer: "five",
     lookFor: ["The threshold is 5 percent of the party vote, or one electorate seat"],
     misconceptions: ["Thinking a party needs a majority before any list seats"],
-    discover: [{ label: "Search: MMP threshold New Zealand party vote" }],
+    passage: [
+      "When you work through MMP threshold New Zealand party vote, keep each step in order and name what that step is doing. The threshold is the value that fits, or one electorate seat The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking a party needs a majority before any list seats After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What is the other way a party can bring list members in, besides that share of the party vote?",
   }),
   q({
@@ -941,7 +1088,10 @@ const items = [
     answer: "inquire",
     lookFor: ["The Tribunal inquires into Treaty claims. It is not the cabinet and not the central bank"],
     misconceptions: ["Giving it the job of Parliament or the Reserve Bank"],
-    discover: [{ label: "Search: Waitangi Tribunal purpose" }],
+    passage: [
+      "When you work through Waitangi Tribunal purpose, keep each step in order and name what that step is doing. The Tribunal inquires into Treaty claims. It is not the cabinet and not the central bank The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Giving it the job of Parliament or the Reserve Bank After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "How is an inquiry different from a criminal sentence?",
   }),
   q({
@@ -959,7 +1109,10 @@ const items = [
     answer: "ministers",
     lookFor: ["Cabinet is the senior ministers, not the whole House"],
     misconceptions: ["Treating Cabinet and Parliament as the same body"],
-    discover: [{ label: "Search: New Zealand Cabinet senior ministers" }],
+    passage: [
+      "When you work through New Zealand Cabinet senior ministers, keep each step in order and name what that step is doing. Cabinet is the senior ministers, not the whole House The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating Cabinet and Parliament as the same body After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why can Cabinet not pass an Act by itself?",
   }),
   q({
@@ -977,7 +1130,10 @@ const items = [
     answer: "judgement",
     lookFor: ["A conscience vote loosens the party whip on that question"],
     misconceptions: ["Thinking it means the MP is outside the law"],
-    discover: [{ label: "Search: conscience vote New Zealand Parliament" }],
+    passage: [
+      "When you work through conscience vote New Zealand Parliament, keep each step in order and name what that step is doing. A conscience vote loosens the party whip on that question The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking it means the MP is outside the law After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one sort of issue a party might leave to that kind of vote.",
   }),
   q({
@@ -995,7 +1151,10 @@ const items = [
     answer: "assent",
     lookFor: ["Royal assent is required, and it is not the Governor-General inventing the policy"],
     misconceptions: ["Treating the Governor-General as the author of the bill"],
-    discover: [{ label: "Search: Royal assent New Zealand" }],
+    passage: [
+      "When you work through Royal assent New Zealand, keep each step in order and name what that step is doing. Royal assent is required, and it is not the Governor-General inventing the policy The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating the Governor-General as the author of the bill After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Who debated and passed the bill before that step?",
   }),
   q({
@@ -1013,7 +1172,10 @@ const items = [
     answer: "twenty-twenty-two",
     lookFor: ["The first Matariki public holiday was in 2022"],
     misconceptions: ["Using the year of Te Tiriti or of women's suffrage"],
-    discover: [{ label: "Search: Matariki public holiday first year New Zealand" }],
+    passage: [
+      "When you work through Matariki public holiday first year New Zealand, keep each step in order and name what that step is doing. The first Matariki public holiday was in the value that fits The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using the year of Te Tiriti or of women's suffrage After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why is a public holiday a political decision as well as a cultural one?",
   }),
   q({
@@ -1031,7 +1193,10 @@ const items = [
     answer: "end",
     lookFor: ["Lifecycle includes making, using, and disposal or reuse"],
     misconceptions: ["Stopping at the shop display"],
-    discover: [{ label: "Search: product lifecycle materials use disposal" }],
+    passage: [
+      "When you work through product lifecycle materials use disposal, keep each step in order and name what that step is doing. Lifecycle includes making, using, and disposal or reuse The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Stopping at the shop display After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one harm that appears only at the disposal end.",
   }),
   q({
@@ -1049,7 +1214,10 @@ const items = [
     answer: "body",
     lookFor: ["Ergonomics fits the product to the user"],
     misconceptions: ["Reducing design to price"],
-    discover: [{ label: "Search: ergonomics designing for the user" }],
+    passage: [
+      "When you work through ergonomics designing for the user, keep each step in order and name what that step is doing. Ergonomics fits the product to the user The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Reducing design to price After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one change that would make a school chair fit a wider range of students.",
   }),
   q({
@@ -1067,7 +1235,10 @@ const items = [
     answer: "affected",
     lookFor: ["Stakeholders include users and others who gain or bear the costs"],
     misconceptions: ["Counting only the manufacturer"],
-    discover: [{ label: "Search: stakeholders in a design project" }],
+    passage: [
+      "When you work through stakeholders in a design project, keep each step in order and name what that step is doing. Stakeholders include users and others who gain or bear the costs The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Counting only the manufacturer After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name two stakeholders for a new school bag, besides the maker.",
   }),
   q({
@@ -1085,7 +1256,10 @@ const items = [
     answer: "materials",
     lookFor: ["Sustainability looks at ongoing use of materials, energy, and waste"],
     misconceptions: ["Reducing it to a short-term fashion choice"],
-    discover: [{ label: "Search: sustainability in a design brief" }],
+    passage: [
+      "When you work through sustainability in a design brief, keep each step in order and name what that step is doing. Sustainability looks at ongoing use of materials, energy, and waste The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Reducing it to a short-term fashion choice After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one material choice that would make a product harder to sustain.",
   }),
   q({
@@ -1103,7 +1277,10 @@ const items = [
     answer: "brief",
     lookFor: ["Evaluation uses the tests named at the start"],
     misconceptions: ["Judging only by whether the maker is pleased"],
-    discover: [{ label: "Search: evaluate a product against the brief" }],
+    passage: [
+      "When you work through evaluate a product against the brief, keep each step in order and name what that step is doing. Evaluation uses the tests named at the start The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Judging only by whether the maker is pleased After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Write one measured test you could use for a lunch box.",
   }),
   q({
@@ -1121,7 +1298,10 @@ const items = [
     answer: "rules",
     lookFor: ["Products have to meet the relevant safety requirements"],
     misconceptions: ["Thinking a shop sale cancels safety rules"],
-    discover: [{ label: "Search: product safety rules New Zealand" }],
+    passage: [
+      "When you work through product safety rules New Zealand, keep each step in order and name what that step is doing. Products have to meet the relevant safety requirements The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking a shop sale cancels safety rules After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why is a safety rule part of the design, not an extra to ignore?",
   }),
   q({
@@ -1139,7 +1319,10 @@ const items = [
     answer: "quiet",
     lookFor: ["Quiet is what was observed. The anger is a guess"],
     misconceptions: ["Treating the guess as the observation"],
-    discover: [{ label: "Search: separate an observation from a guess about a mind" }],
+    passage: [
+      "When you work through separate an observation from a guess about a mind, keep each step in order and name what that step is doing. Quiet is what was observed. The anger is a guess The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating the guess as the observation After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Rewrite the angry sentence so it is clearly a guess.",
   }),
   q({
@@ -1157,7 +1340,10 @@ const items = [
     answer: "substitute",
     lookFor: ["The need is the decision. The playlist fills the time instead"],
     misconceptions: ["Calling the avoidance the thing the group lacks"],
-    discover: [{ label: "Search: name the missing task rather than the distraction" }],
+    passage: [
+      "When you work through name the missing task rather than the distraction, keep each step in order and name what that step is doing. The need is the decision. The playlist fills the time instead The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calling the avoidance the thing the group lacks After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "State the need in one sentence that does not mention the playlist.",
   }),
   q({
@@ -1175,7 +1361,10 @@ const items = [
     answer: "brought",
     lookFor: ["The later action is the commitment"],
     misconceptions: ["Stopping at the earlier yes"],
-    discover: [{ label: "Search: commitment as the later action" }],
+    passage: [
+      "When you work through commitment as the later action, keep each step in order and name what that step is doing. The later action is the commitment The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Stopping at the earlier yes After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What was the public yes in that story?",
   }),
   q({
@@ -1193,7 +1382,10 @@ const items = [
     answer: "itself",
     lookFor: ["An external points system can crowd out intrinsic motivation"],
     misconceptions: ["Treating the points as the original reason"],
-    discover: [{ label: "Search: reward crowding out interest in the activity" }],
+    passage: [
+      "When you work through reward crowding out interest in the activity, keep each step in order and name what that step is doing. An external points system can crowd out intrinsic motivation The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating the points as the original reason After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What was the reward attached to, the story or the points?",
   }),
   q({
@@ -1211,7 +1403,10 @@ const items = [
     answer: "late",
     lookFor: ["The words said are the fact. The hatred is an added story"],
     misconceptions: ["Expanding one comment into a verdict on the person"],
-    discover: [{ label: "Search: what was said compared with a story about the speaker" }],
+    passage: [
+      "When you work through what was said compared with a story about the speaker, keep each step in order and name what that step is doing. The words said are the fact. The hatred is an added story The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Expanding one comment into a verdict on the person After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What story did the player add?",
   }),
   q({
@@ -1229,7 +1424,10 @@ const items = [
     answer: "form",
     lookFor: ["The situation needs the form. The rewriting stands in for that"],
     misconceptions: ["Calling the rewriting the need"],
-    discover: [{ label: "Search: distinguish the required task from the substitute activity" }],
+    passage: [
+      "When you work through distinguish the required task from the substitute activity, keep each step in order and name what that step is doing. The situation needs the form. The rewriting stands in for that The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calling the rewriting the need After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What activity is standing in for returning the form?",
   }),
   q({
@@ -1247,7 +1445,10 @@ const items = [
     answer: "aim",
     lookFor: ["The opening time is the shared aim. The songs are a method"],
     misconceptions: ["Treating a method dispute as if the aim were not shared"],
-    discover: [{ label: "Search: shared goal and a disputed method" }],
+    passage: [
+      "When you work through shared goal and a disputed method, keep each step in order and name what that step is doing. The opening time is the shared aim. The songs are a method The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating a method dispute as if the aim were not shared After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What question would help them choose the song order without dropping the aim?",
   }),
   q({
@@ -1265,7 +1466,10 @@ const items = [
     answer: "ask",
     lookFor: ["Silence is not agreement"],
     misconceptions: ["Filling the silence with the meaning you want"],
-    discover: [{ label: "Search: silence in a group is not consent" }],
+    passage: [
+      "When you work through silence in a group is not consent, keep each step in order and name what that step is doing. Silence is not agreement The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Filling the silence with the meaning you want After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Write a question that invites their concern without blaming them.",
   }),
   q({
@@ -1283,7 +1487,10 @@ const items = [
     answer: "measure",
     lookFor: ["People follow the measure the prize uses"],
     misconceptions: ["Blaming kindness instead of the measure"],
-    discover: [{ label: "Search: a reward aimed at the wrong measure" }],
+    passage: [
+      "When you work through a reward aimed at the wrong measure, keep each step in order and name what that step is doing. People follow the measure the prize uses The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Blaming kindness instead of the measure After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name a sign that the audience understood, other than a slide count.",
   }),
   q({
@@ -1301,7 +1508,10 @@ const items = [
     answer: "booked",
     lookFor: ["Booking the hall is the action. The thumbs-up is only the public yes"],
     misconceptions: ["Scoring the emoji as equal to the booking"],
-    discover: [{ label: "Search: follow-through compared with agreeing in a message" }],
+    passage: [
+      "When you work through follow-through compared with agreeing in a message, keep each step in order and name what that step is doing. Booking the hall is the action. The thumbs-up is only the public yes The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Scoring the emoji as equal to the booking After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What could the second person do this week that would count as commitment?",
   }),
   q({
@@ -1319,7 +1529,10 @@ const items = [
     answer: "role",
     lookFor: ["The prefect role is status. The idea still needs a reason"],
     misconceptions: ["Treating the role as proof"],
-    discover: [{ label: "Search: status is not a reason in a group decision" }],
+    passage: [
+      "When you work through status is not a reason in a group decision, keep each step in order and name what that step is doing. The prefect role is status. The idea still needs a reason The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating the role as proof After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What question would test the idea on its own?",
   }),
   q({
@@ -1337,7 +1550,10 @@ const items = [
     answer: "next-hour",
     lookFor: ["The agreement still names the job. Blame does not cook the food"],
     misconceptions: ["Replacing the task with a character verdict"],
-    discover: [{ label: "Search: return a group to the agreed task" }],
+    passage: [
+      "When you work through return a group to the agreed task, keep each step in order and name what that step is doing. The agreement still names the job. Blame does not cook the food The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Replacing the task with a character verdict After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What part of the sizzle can still be done today?",
   }),
   q({
@@ -1355,7 +1571,10 @@ const items = [
     answer: "loop",
     lookFor: ["Charge needs a closed path"],
     misconceptions: ["Thinking a broken wire is still a working circuit"],
-    discover: [{ label: "Search: a complete electrical circuit" }],
+    passage: [
+      "When you work through a complete electrical circuit, keep each step in order and name what that step is doing. Charge needs a closed path The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking a broken wire is still a working circuit After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What happens to the current if one wire comes loose?",
   }),
   q({
@@ -1373,7 +1592,10 @@ const items = [
     answer: "copper",
     lookFor: ["Copper conducts. Rubber, glass, and dry wood are used as insulators"],
     misconceptions: ["Choosing an insulator"],
-    discover: [{ label: "Search: metal used inside household wiring" }],
+    passage: [
+      "When you work through metal used inside household wiring, keep each step in order and name what that step is doing. the value that fits conducts. Rubber, glass, and dry wood are used as insulators The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Choosing an insulator After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why is that metal in a flex covered rather than left bare?",
   }),
   q({
@@ -1391,7 +1613,10 @@ const items = [
     answer: "flow",
     lookFor: ["Current is moving charge"],
     misconceptions: ["Confusing current with the colour code"],
-    discover: [{ label: "Search: what moves around a closed electrical loop" }],
+    passage: [
+      "When you work through what moves around a closed electrical loop, keep each step in order and name what that step is doing. Current is moving charge The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Confusing current with the colour code After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name the unit used for that flow.",
   }),
   q({
@@ -1409,7 +1634,10 @@ const items = [
     answer: "push",
     lookFor: ["Voltage is the electrical push, or potential difference"],
     misconceptions: ["Counting hardware instead of the push"],
-    discover: [{ label: "Search: voltage as electrical push" }],
+    passage: [
+      "When you work through voltage as electrical push, keep each step in order and name what that step is doing. Voltage is the electrical push, or potential difference The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Counting hardware instead of the push After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "A torch cell is about one and a half volts. Is that the same push as household mains? Say yes or no.",
   }),
   q({
@@ -1427,7 +1655,10 @@ const items = [
     answer: "opens",
     lookFor: ["A switch completes or breaks the path"],
     misconceptions: ["Giving the switch a chemical job"],
-    discover: [{ label: "Search: what a switch does in a circuit" }],
+    passage: [
+      "When you work through what a switch does in a circuit, keep each step in order and name what that step is doing. A switch completes or breaks the path The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Giving the switch a chemical job After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Is the loop complete when the switch is open? Say yes or no.",
   }),
   q({
@@ -1445,7 +1676,10 @@ const items = [
     answer: "mains",
     lookFor: ["New Zealand mains is about 230 volts AC"],
     misconceptions: ["Using a battery voltage for the household supply"],
-    discover: [{ label: "Search: New Zealand household supply voltage" }],
+    passage: [
+      "When you work through New Zealand household supply voltage, keep each step in order and name what that step is doing. New Zealand mains is about 230 volts AC The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using a battery voltage for the household supply After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why should a school student not open a mains appliance to look inside?",
   }),
   q({
@@ -1463,7 +1697,10 @@ const items = [
     answer: "three-amps",
     lookFor: ["Current is voltage divided by resistance"],
     misconceptions: ["Multiplying voltage by resistance"],
-    discover: [{ label: "Search: Ohm's law current equals voltage divided by resistance" }],
+    passage: [
+      "When you work through Ohm's law current equals voltage divided by resistance, keep each step in order and name what that step is doing. Current is voltage divided by resistance The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Multiplying voltage by resistance After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If the resistance rises and the voltage stays the same, does the current rise or fall?",
   }),
   q({
@@ -1481,7 +1718,10 @@ const items = [
     answer: "limit",
     lookFor: ["The resistor keeps the current through the LED from becoming too large"],
     misconceptions: ["Thinking the resistor is there to increase the voltage to a dangerous level"],
-    discover: [{ label: "Search: series resistor with an LED" }],
+    passage: [
+      "When you work through series resistor with an LED, keep each step in order and name what that step is doing. The resistor keeps the current through the LED from becoming too large The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking the resistor is there to increase the voltage to a dangerous level After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What could happen to the LED if that part is left out and the voltage is too high?",
   }),
   q({
@@ -1499,7 +1739,10 @@ const items = [
     answer: "large",
     lookFor: ["A path with almost no resistance lets a very large current flow"],
     misconceptions: ["Thinking a short circuit makes the circuit safer"],
-    discover: [{ label: "Search: why a short circuit is dangerous" }],
+    passage: [
+      "When you work through why a short circuit is dangerous, keep each step in order and name what that step is doing. A path with almost no resistance lets a very large current flow The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking a short circuit makes the circuit safer After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one device that is meant to open the loop if that current is too high.",
   }),
   q({
@@ -1517,7 +1760,10 @@ const items = [
     answer: "stay",
     lookFor: ["Each parallel branch is its own loop back to the supply"],
     misconceptions: ["Treating parallel lamps as if they were in one series line"],
-    discover: [{ label: "Search: parallel circuit one branch open" }],
+    passage: [
+      "When you work through parallel circuit one branch open, keep each step in order and name what that step is doing. Each parallel branch is its own loop back to the supply The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating parallel lamps as if they were in one series line After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "In a series string of party lights, what happens to the others if one bulb fails open?",
   }),
   q({
@@ -1535,7 +1781,10 @@ const items = [
     answer: "polarity",
     lookFor: ["An LED conducts in one direction"],
     misconceptions: ["Treating it like a plain resistor that works either way"],
-    discover: [{ label: "Search: LED polarity" }],
+    passage: [
+      "When you work through LED polarity, keep each step in order and name what that step is doing. An LED conducts in one direction The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating it like a plain resistor that works either way After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What would you reverse if the LED does not light and the resistor is correct?",
   }),
   q({
@@ -1553,7 +1802,10 @@ const items = [
     answer: "opens",
     lookFor: ["The fuse melts or opens so the dangerous current stops"],
     misconceptions: ["Thinking a fuse increases the current"],
-    discover: [{ label: "Search: how a fuse protects a circuit" }],
+    passage: [
+      "When you work through how a fuse protects a circuit, keep each step in order and name what that step is doing. The fuse melts or opens so the dangerous current stops The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking a fuse increases the current After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why is replacing a fuse with a thicker piece of wire a bad idea?",
   }),
   q({
@@ -1571,7 +1823,10 @@ const items = [
     answer: "limited",
     lookFor: ["Scarcity is limited resources against unlimited wants"],
     misconceptions: ["Thinking scarcity means money is banned"],
-    discover: [{ label: "Search: scarcity in economics wants and resources" }],
+    passage: [
+      "When you work through scarcity in economics wants and resources, keep each step in order and name what that step is doing. Scarcity is limited resources against unlimited wants The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking scarcity means money is banned After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one resource a household can run short of.",
   }),
   q({
@@ -1589,7 +1844,10 @@ const items = [
     answer: "next",
     lookFor: ["The opportunity cost is the best thing you did not choose"],
     misconceptions: ["Equating it with the price tag alone"],
-    discover: [{ label: "Search: opportunity cost definition" }],
+    passage: [
+      "When you work through opportunity cost definition, keep each step in order and name what that step is doing. The opportunity cost is the best thing you did not choose The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Equating it with the price tag alone After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "You spend an hour on a game instead of on an assignment. What is the opportunity cost?",
   }),
   q({
@@ -1607,7 +1865,10 @@ const items = [
     answer: "demand",
     lookFor: ["More wanted at the same price is an increase in demand"],
     misconceptions: ["Describing a shift in wants as a change in physics or law"],
-    discover: [{ label: "Search: increase in demand at the same price" }],
+    passage: [
+      "When you work through increase in demand at the same price, keep each step in order and name what that step is doing. More wanted at the same price is an increase in demand The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Describing a shift in wants as a change in physics or law After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If demand rises and supply stays put, what tends to happen to the price?",
   }),
   q({
@@ -1625,7 +1886,10 @@ const items = [
     answer: "makes",
     lookFor: ["Producers supply goods or services"],
     misconceptions: ["Confusing a producer with any public role"],
-    discover: [{ label: "Search: producer in economics" }],
+    passage: [
+      "When you work through producer in economics, keep each step in order and name what that step is doing. Producers supply goods or services The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Confusing a producer with any public role After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one New Zealand producer of a food people buy.",
   }),
   q({
@@ -1643,7 +1907,10 @@ const items = [
     answer: "focus",
     lookFor: ["Specialisation plus trade lets people use different skills"],
     misconceptions: ["Thinking specialisation means no trade"],
-    discover: [{ label: "Search: specialisation and trade" }],
+    passage: [
+      "When you work through specialisation and trade, keep each step in order and name what that step is doing. Specialisation plus trade lets people use different skills The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking specialisation means no trade After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one job that exists because not everyone builds their own house.",
   }),
   q({
@@ -1661,7 +1928,10 @@ const items = [
     answer: "dairy",
     lookFor: ["Dairy is one of the main merchandise exports, not the only thing the country sells"],
     misconceptions: ["Claiming there are no food exports"],
-    discover: [{ label: "Search: New Zealand largest goods exports dairy" }],
+    passage: [
+      "When you work through New Zealand largest goods exports dairy, keep each step in order and name what that step is doing. Dairy is one of the main merchandise exports, not the only thing the country sells The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Claiming there are no food exports After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one other goods export besides dairy.",
   }),
   q({
@@ -1679,7 +1949,10 @@ const items = [
     answer: "fifteen",
     lookFor: ["GST is 15 percent"],
     misconceptions: ["Using an old or invented rate"],
-    discover: [{ label: "Search: New Zealand GST rate on goods and services" }],
+    passage: [
+      "When you work through New Zealand GST rate on goods and services, keep each step in order and name what that step is doing. GST is the value that fits The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using an old or invented rate After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Is that tax added on most shop prices, or is it a tax on wages? Say which.",
   }),
   q({
@@ -1697,7 +1970,10 @@ const items = [
     answer: "ocr",
     lookFor: ["The Reserve Bank sets the Official Cash Rate"],
     misconceptions: ["Giving the Bank the job of setting every retail price"],
-    discover: [{ label: "Search: Reserve Bank of New Zealand Official Cash Rate" }],
+    passage: [
+      "When you work through Reserve Bank of New Zealand Official Cash Rate, keep each step in order and name what that step is doing. The Reserve Bank sets the value that fits The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Giving the Bank the job of setting every retail price After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why would a change in that rate matter to someone with a floating loan?",
   }),
   q({
@@ -1715,7 +1991,10 @@ const items = [
     answer: "rising",
     lookFor: ["Inflation is a rise in the general price level"],
     misconceptions: ["Thinking it means every price falls"],
-    discover: [{ label: "Search: inflation general price level" }],
+    passage: [
+      "When you work through inflation general price level, keep each step in order and name what that step is doing. Inflation is a rise in the general price level The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking it means every price falls After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If prices rise and your pay stays the same, what happens to what your pay can buy?",
   }),
   q({
@@ -1733,7 +2012,10 @@ const items = [
     answer: "tells",
     lookFor: ["Prices carry information about how scarce something is"],
     misconceptions: ["Thinking a price deletes the underlying scarcity"],
-    discover: [{ label: "Search: price as a signal of scarcity" }],
+    passage: [
+      "When you work through price as a signal of scarcity, keep each step in order and name what that step is doing. Prices carry information about how scarce something is The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking a price deletes the underlying scarcity After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If a price stays very high, what might a producer be tempted to do?",
   }),
   q({
@@ -1751,7 +2033,10 @@ const items = [
     answer: "more-want",
     lookFor: ["A price ceiling can leave quantity demanded above quantity supplied"],
     misconceptions: ["Assuming sellers will provide unlimited stock at a lower price"],
-    discover: [{ label: "Search: price ceiling and shortage" }],
+    passage: [
+      "When you work through price ceiling and shortage, keep each step in order and name what that step is doing. A price ceiling can leave quantity demanded above quantity supplied The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Assuming sellers will provide unlimited stock at a lower price After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Who misses out if there is not enough of the good at that lower price?",
   }),
   q({
@@ -1769,7 +2054,10 @@ const items = [
     answer: "reward",
     lookFor: ["Incentives change the payoff of a choice"],
     misconceptions: ["Using the word for an unrelated school topic"],
-    discover: [{ label: "Search: incentives in economics" }],
+    passage: [
+      "When you work through incentives in economics, keep each step in order and name what that step is doing. Incentives change the payoff of a choice The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Using the word for an unrelated school topic After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Give one incentive a shop might use to sell bread before it goes stale.",
   }),
   q({
@@ -1787,7 +2075,10 @@ const items = [
     answer: "health",
     lookFor: ["Needs come before optional wants when money is limited"],
     misconceptions: ["Treating every preference as a need"],
-    discover: [{ label: "Search: needs and wants in a budget" }],
+    passage: [
+      "When you work through needs and wants in a budget, keep each step in order and name what that step is doing. Needs come before optional wants when money is limited The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating every preference as a need After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one household cost that is a need, and one that is a want.",
   }),
   q({
@@ -1805,7 +2096,10 @@ const items = [
     answer: "plan",
     lookFor: ["A budget matches income and spending"],
     misconceptions: ["Thinking a budget is only a wish that costs do not count"],
-    discover: [{ label: "Search: what a personal budget includes" }],
+    passage: [
+      "When you work through what a personal budget includes, keep each step in order and name what that step is doing. A budget matches income and spending The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking a budget is only a wish that costs do not count After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What is the problem if the money going out is larger than the money coming in?",
   }),
   q({
@@ -1823,7 +2117,10 @@ const items = [
     answer: "paid",
     lookFor: ["Savings interest is paid to the saver"],
     misconceptions: ["Confusing it with a penalty"],
-    discover: [{ label: "Search: interest earned on savings" }],
+    passage: [
+      "When you work through interest earned on savings, keep each step in order and name what that step is doing. Savings interest is paid to the saver The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Confusing it with a penalty After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Is that payment the same thing as interest you pay on a loan? Say yes or no.",
   }),
   q({
@@ -1841,7 +2138,10 @@ const items = [
     answer: "cost",
     lookFor: ["Borrowing has a price, which is the interest"],
     misconceptions: ["Thinking interest reduces the debt by itself without payments"],
-    discover: [{ label: "Search: interest as the cost of borrowing" }],
+    passage: [
+      "When you work through interest as the cost of borrowing, keep each step in order and name what that step is doing. Borrowing has a price, which is the interest The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking interest reduces the debt by itself without payments After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why can a small purchase cost more if it is paid off slowly on credit?",
   }),
   q({
@@ -1859,7 +2159,10 @@ const items = [
     answer: "already",
     lookFor: ["Debit spends money already in the account"],
     misconceptions: ["Treating every card tap as new borrowing"],
-    discover: [{ label: "Search: debit card spends money in the account" }],
+    passage: [
+      "When you work through debit card spends money in the account, keep each step in order and name what that step is doing. Debit spends money already in the account The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating every card tap as new borrowing After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "What happens if the account does not hold enough for the payment?",
   }),
   q({
@@ -1877,7 +2180,10 @@ const items = [
     answer: "compare",
     lookFor: ["Unit price lets you compare dollars per 100 grams or per litre"],
     misconceptions: ["Comparing only the sticker on unequal packets"],
-    discover: [{ label: "Search: unit price per 100 grams supermarket" }],
+    passage: [
+      "When you work through unit price per 100 grams supermarket, keep each step in order and name what that step is doing. Unit price lets you compare dollars per 100 grams or per litre The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Comparing only the sticker on unequal packets After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Two bags cost the same, but one is heavier. Which is the better buy, and why?",
   }),
   q({
@@ -1895,7 +2201,10 @@ const items = [
     answer: "added",
     lookFor: ["Compounding means interest itself can earn interest"],
     misconceptions: ["Thinking the balance is frozen"],
-    discover: [{ label: "Search: compound interest meaning" }],
+    passage: [
+      "When you work through compound interest meaning, keep each step in order and name what that step is doing. Compounding means interest itself can earn interest The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking the balance is frozen After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why does starting to save earlier matter if interest compounds?",
   }),
   q({
@@ -1913,7 +2222,10 @@ const items = [
     answer: "scheme",
     lookFor: ["KiwiSaver is a voluntary retirement savings scheme. This question does not say whether to join"],
     misconceptions: ["Treating it as a wallet for daily shopping, or as personal advice"],
-    discover: [{ label: "Search: what KiwiSaver is, without joining instructions" }],
+    passage: [
+      "When you work through what KiwiSaver is, without joining instructions, keep each step in order and name what that step is doing. KiwiSaver is a voluntary retirement savings scheme. This question does not say whether to join The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating it as a wallet for daily shopping, or as personal advice After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why does this study page not tell you whether to join a scheme?",
   }),
   q({
@@ -1931,7 +2243,10 @@ const items = [
     answer: "aside",
     lookFor: ["A buffer is savings kept for a necessary surprise"],
     misconceptions: ["Calling a forced weekly loan a buffer"],
-    discover: [{ label: "Search: emergency fund or savings buffer" }],
+    passage: [
+      "When you work through emergency fund or savings buffer, keep each step in order and name what that step is doing. A buffer is savings kept for a necessary surprise The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calling a forced weekly loan a buffer After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Name one cost a buffer is for, and one cost it is not for.",
   }),
   q({
@@ -1949,7 +2264,10 @@ const items = [
     answer: "refuse",
     lookFor: ["A bank will not ask you to hand a code to a stranger"],
     misconceptions: ["Complying with the request"],
-    discover: [{ label: "Search: bank will not ask for your password or code scam" }],
+    passage: [
+      "When you work through bank will not ask for your password or code scam, keep each step in order and name what that step is doing. A bank will not ask you to hand a code to a stranger The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Complying with the request After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Who should you contact if you are unsure, the number in the strange message or the number on the back of your card?",
   }),
   q({
@@ -1967,7 +2285,10 @@ const items = [
     answer: "pay",
     lookFor: ["EFTPOS moves money you have. It does not create money"],
     misconceptions: ["Thinking the terminal is a source of new funds"],
-    discover: [{ label: "Search: EFTPOS pays from a bank account" }],
+    passage: [
+      "When you work through EFTPOS pays from a bank account, keep each step in order and name what that step is doing. EFTPOS moves money you have. It does not create money The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Thinking the terminal is a source of new funds After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "If the account is empty, can the terminal invent the money? Say yes or no.",
   }),
   q({
@@ -1985,7 +2306,10 @@ const items = [
     answer: "owe",
     lookFor: ["Deferred payment is still a debt"],
     misconceptions: ["Treating 'pay later' as free"],
-    discover: [{ label: "Search: buy now pay later is still a debt" }],
+    passage: [
+      "When you work through buy now pay later is still a debt, keep each step in order and name what that step is doing. Deferred payment is still a debt The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treating 'pay later' as free After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
+    ],
     followPrompt: "Why should the total you will pay, not only today's price, be the number you look at?",
   }),
 ];

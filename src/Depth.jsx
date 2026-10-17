@@ -56,26 +56,19 @@ export function FieldCounts({ fields }) {
   );
 }
 
-export function InterestReport({ vote, avoided }) {
+export function InterestReport({ ticks }) {
   return (
     <div className="interest-report">
-      <h2>Interest vote and fields avoided</h2>
-      {vote ? (
-        <p>Current vote: {vote.domainTitle} / {vote.title} (field {vote.field}).</p>
-      ) : (
-        <p>No interest vote yet.</p>
-      )}
-      <p className="quiet">Avoided means no attempts and no finished module in that catalog subfield.</p>
-      {avoided?.length ? (
+      <h2>Registered interests</h2>
+      <p className="quiet">Checkbox register only. Ticks do not create or choose the next module.</p>
+      {ticks?.length ? (
         <ul className="avoided-list">
-          {avoided.map((entry) => (
-            <li key={`${entry.domainId}-${entry.subfieldId}`}>
-              {entry.domainTitle} / {entry.title}
-            </li>
+          {ticks.map((entry) => (
+            <li key={entry.id}>{entry.group}: {entry.title}</li>
           ))}
         </ul>
       ) : (
-        <p className="quiet">No avoided catalog subfields right now.</p>
+        <p className="quiet">No interests ticked yet.</p>
       )}
     </div>
   );

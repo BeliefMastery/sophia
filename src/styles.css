@@ -350,6 +350,20 @@ textarea {
 
 .domain .meter { grid-column: 1 / -1; }
 
+.passage {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #fffdf8;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.passage p {
+  margin: 0;
+  line-height: 1.55;
+}
+
 .interest {
   display: grid;
   gap: 12px;

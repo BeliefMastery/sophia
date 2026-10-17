@@ -108,8 +108,14 @@ The placement check is depth 1, a survey across fields. Later study is short mod
 The parent login then shows three things.
 
 - A depth chart. Each field has a depth, which is how many modules in that field are finished. The bar is the age tier those results support. The tiers are Year 9 at age 14, Year 10 at age 15, Year 11 at age 16, Year 12 at age 17, and Year 13 at age 18. The peer line is Year 10, age 15. A weak note that simply holds stays left of that line. Meeting the Year 10 mathematics note sits on the line. An advanced note that holds sits above the line, toward Year 11, and is not called Year 12, Year 13, or NCEA. Passing a note that sat below Year 10 moves toward the line and does not cross it.
-- Interest vote and fields avoided. The student picks one subfield from the curated tree in `content/interest-tree.mjs` (seeded to `catalog/domains`). That vote is stored at `votes/{uid}`. Fields avoided are catalog subfields with no attempts and no finished module, excluding the current vote. The parent sees both next to the depth chart so pursuit and neglect stay visible.
-- An expansion prompt. It names the finished section, the student id, the missed item ids, the interest vote when present, the avoided list, and the next strand id and difficulty for each field. Warwick copies that prompt into Cursor. The agent fetches `attempts/{uid}`, `repairs/{uid}`, and the guides for the missed ids, then writes one new module. The prompt is computed on the admin screen. It is not stored as its own database path, and it is not emailed. New modules stay shared once seeded.
+- Registered interests. The student ticks school and university fields from `content/interest-tree.mjs` (seeded to `catalog/interests`). Those ticks are stored at `interests/{uid}`. They are a register only. They do not create modules or choose the next cluster.
+- An expansion prompt. It names the finished section, the student id, the missed item ids, and the next strand id and difficulty for each field. Warwick copies that prompt into Cursor. The agent fetches `attempts/{uid}`, `repairs/{uid}`, and the guides for the missed ids, then writes one new module. The prompt is computed on the admin screen. It is not stored as its own database path, and it is not emailed. New modules stay shared once seeded.
+
+A wrong choice does not open the web. It opens a two-paragraph in-app reading on the guide that buries the idea, then a different written question answerable from that reading alone.
+
+### Module deepening
+
+Early modules in a field cover primary essential knowledge only. As modules deepen, they broaden range as well as difficulty: more coverage and optional branches from the core already taught. When a module finishes, the expansion prompt requires the next cluster to deepen and broaden, list the core ideas already covered, and avoid only restating them. Explicit branch strands keep the same `field` and set `continues` to the finished strand. There is no student branch-picker UI in this stage.
 
 The next module follows the grade already on the screen.
 

@@ -4,7 +4,7 @@ import { get, onValue, push, ref, set } from "firebase/database";
 import { recordChoice } from "../lib/recordChoice.mjs";
 import { orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
-import { resourceList } from "../lib/explain.mjs";
+import { passageParagraphs } from "../lib/explain.mjs";
 import { fieldPlace, fieldStudy, nextFieldStep } from "../lib/expansion.mjs";
 import { Admin } from "./Admin.jsx";
 import { InterestVote } from "./InterestVote.jsx";
@@ -43,9 +43,9 @@ export function App() {
   const [pendingRepair, setPendingRepair] = useState(null);
   const [repairDraft, setRepairDraft] = useState("");
   const [catalog, setCatalog] = useState(null);
-  const [vote, setVote] = useState(null);
-  const [voteSaving, setVoteSaving] = useState(false);
-  const [voteError, setVoteError] = useState("");
+  const [interests, setInterests] = useState(null);
+  const [interestSaving, setInterestSaving] = useState(false);
+  const [interestError, setInterestError] = useState("");
   const savingRef = useRef(false);
   const headingRef = useRef(null);
 
@@ -64,11 +64,11 @@ export function App() {
     const unsubRepairs = onValue(ref(db, `repairs/${user.uid}`), (snapshot) => {
       setRepairs(snapshot.val() || {});
     });
-    const unsubCatalog = onValue(ref(db, "catalog/domains"), (snapshot) => {
+    const unsubCatalog = onValue(ref(db, "catalog/interests"), (snapshot) => {
       setCatalog(snapshot.val() || {});
     });
-    const unsubVote = onValue(ref(db, `votes/${user.uid}`), (snapshot) => {
-      setVote(snapshot.val() || null);
+    const unsubInterests = onValue(ref(db, `interests/${user.uid}`), (snapshot) => {
+      setInterests(snapshot.val() || {});
     });
     return () => {
       unsubItems();
@@ -77,7 +77,7 @@ export function App() {
       unsubRole();
       unsubRepairs();
       unsubCatalog();
-      unsubVote();
+      unsubInterests();
     };
   }, [user]);
 
@@ -89,8 +89,8 @@ export function App() {
     setRepairs(null);
     setChosenField("");
     setCatalog(null);
-    setVote(null);
-    setVoteError("");
+    setInterests(null);
+    setInterestError("");
   }, [user]);
 
   const fields = useMemo(
@@ -215,16 +215,16 @@ export function App() {
     }
   }
 
-  async function onVoteSave(nextVote) {
-    if (!user || voteSaving) return;
-    setVoteSaving(true);
-    setVoteError("");
+  async function onInterestSave(nextInterests) {
+    if (!user || interestSaving) return;
+    setInterestSaving(true);
+    setInterestError("");
     try {
-      await set(ref(db, `votes/${user.uid}`), nextVote);
+      await set(ref(db, `interests/${user.uid}`), nextInterests);
     } catch {
-      setVoteError("That vote was not saved. Try it again.");
+      setInterestError("Those interests were not saved. Try it again.");
     } finally {
-      setVoteSaving(false);
+      setInterestSaving(false);
     }
   }
 
@@ -289,18 +289,17 @@ export function App() {
     );
   }
 
-  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null) {
+  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || interests === null) {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
 
-  const anyComplete = fields.some((field) => field.complete);
-  const votePanel = (
+  const interestPanel = (
     <InterestVote
       catalog={catalog}
-      vote={vote}
-      onSave={onVoteSave}
-      saving={voteSaving}
-      error={voteError}
+      interests={interests}
+      onSave={onInterestSave}
+      saving={interestSaving}
+      error={interestError}
     />
   );
 
@@ -340,7 +339,7 @@ export function App() {
               </li>
             ))}
           </ul>
-          {anyComplete ? votePanel : null}
+          {interestPanel}
         </Bezel>
       </Shell>
     );
@@ -348,7 +347,7 @@ export function App() {
 
   if (activeRepair) {
     const guide = guides[activeRepair.item.id];
-    const resources = resourceList(guide?.discover);
+    const paragraphs = passageParagraphs(guide?.passage);
     const chosen = activeRepair.item.choices?.[activeRepair.selected]?.text || "";
     const follow = typeof guide?.followPrompt === "string" ? guide.followPrompt : "";
     return (
@@ -356,20 +355,14 @@ export function App() {
         <Bezel plate="Discovery" aside="Written answer" scene="discovery">
           <p>That choice did not match. The choices are closed.</p>
           {chosen ? <p className="quiet">Your choice: {chosen}</p> : null}
-          {!follow ? <p className="quiet">Loading the next question…</p> : (
+          {!follow || paragraphs.length < 2 ? <p className="quiet">Loading the reading…</p> : (
             <>
-              <p>Use a resource, then answer the new question in your own words.</p>
-              <ul className="resources">
-                {resources.map((entry) => (
-                  <li key={entry.href || entry.label}>
-                    {entry.href ? (
-                      <a href={entry.href} target="_blank" rel="noopener noreferrer">{entry.label}</a>
-                    ) : (
-                      <p className="search-line">{entry.label}</p>
-                    )}
-                  </li>
+              <p>Read the passages below, then answer the new question from that reading only.</p>
+              <div className="passage">
+                {paragraphs.map((paragraph, index) => (
+                  <p key={`passage-${index}`}>{paragraph}</p>
                 ))}
-              </ul>
+              </div>
               <h1 ref={headingRef} tabIndex={-1} className="prompt">{follow}</h1>
               <label>
                 Your answer
@@ -383,7 +376,7 @@ export function App() {
             </>
           )}
           {recordError ? <p className="alert" role="alert">{recordError}</p> : null}
-          <button type="button" className="primary" disabled={!follow || !repairDraft.trim() || saving} onClick={onRepair}>
+          <button type="button" className="primary" disabled={paragraphs.length < 2 || !follow || !repairDraft.trim() || saving} onClick={onRepair}>
             {saving ? "Saving…" : "Save this answer"}
           </button>
           <button type="button" className="text" onClick={() => setChosenField("")}>All fields</button>
@@ -435,8 +428,8 @@ export function App() {
           {current.answered} of {current.total} questions are answered.
           {current.depth ? ` Depth ${current.depth}. ${current.label}.` : ""}
         </p>
-        <p>There is no further question in this field until a new cluster is added. Vote for the next subfield to deepen.</p>
-        {votePanel}
+        <p>There is no further question in this field until a new cluster is added. You can update your interest ticks below.</p>
+        {interestPanel}
         <button type="button" className="primary" onClick={() => setChosenField("")}>All fields</button>
       </Bezel>
     </Shell>

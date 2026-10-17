@@ -13,6 +13,7 @@ on:
       - lib/checkContent.mjs
       - lib/checkModules.mjs
       - lib/checkInterestTree.mjs
+      - lib/passage.mjs
       - lib/records.mjs
       - scripts/seed-placement-check.js
       - .github/workflows/seed-placement-check.yml

@@ -127,15 +127,16 @@ test("a signed-in student can finish the check and the notes are judged from the
     if (verdict.claimId !== "mathematics") assert.equal(verdict.validated, true, verdict.claimId);
   }
 
-  const catalog = await get(ref(db, "catalog/domains"));
-  assert.ok(catalog.val()?.science?.subfields?.electronics);
-  const vote = {
-    domainId: "science",
-    subfieldId: "electronics",
-    field: "electronics",
-    submittedAt: Date.now(),
+  const catalog = await get(ref(db, "catalog/interests"));
+  assert.ok(catalog.val()?.philosophy);
+  const interests = {
+    philosophy: true,
+    design: true,
+    updatedAt: Date.now(),
   };
-  await set(ref(db, `votes/${uid}`), vote);
-  const saved = await get(ref(db, `votes/${uid}`));
-  assert.equal(saved.val().field, "electronics");
+  await set(ref(db, `interests/${uid}`), interests);
+  const saved = await get(ref(db, `interests/${uid}`));
+  assert.equal(saved.val().philosophy, true);
+  const guide = await get(ref(db, "guides/check-math-1"));
+  assert.equal(Array.isArray(guide.val().passage) ? guide.val().passage.length : 0, 2);
 });

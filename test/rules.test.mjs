@@ -178,36 +178,36 @@ test("a parent can read the key and a student cannot", async () => {
   await assertFails(get(ref(student, `guides/${physics.id}`)));
 });
 
-test("a student can vote on the catalog and cannot write another vote or the catalog", async () => {
+test("a student can register interests and cannot write another register or the catalog", async () => {
   await testEnv.withSecurityRulesDisabled(async (context) => {
     const db = context.database();
     await set(ref(db, "roles/parent/parent"), true);
-    await set(ref(db, "catalog/domains/science"), {
-      title: "Science",
+    await set(ref(db, "catalog/interests/philosophy"), {
+      title: "Philosophy",
+      group: "University",
       order: 1,
-      subfields: {
-        electronics: { title: "Electronics", field: "electronics", order: 1 },
-      },
+    });
+    await set(ref(db, "catalog/interests/design"), {
+      title: "Design",
+      group: "University",
+      order: 2,
     });
   });
-  const vote = {
-    domainId: "science",
-    subfieldId: "electronics",
-    field: "electronics",
-    submittedAt: Date.now(),
+  const record = {
+    philosophy: true,
+    design: true,
+    updatedAt: Date.now(),
   };
   const student = testEnv.authenticatedContext("student").database();
-  await assertSucceeds(get(ref(student, "catalog/domains")));
-  await assertSucceeds(set(ref(student, "votes/student"), vote));
-  await assertFails(set(ref(student, "votes/other"), vote));
-  await assertFails(set(ref(student, "catalog/domains/science/title"), "Hack"));
-  await assertFails(set(ref(student, "votes/student"), {
-    domainId: "science",
-    subfieldId: "electronics",
-    field: "biology",
-    submittedAt: Date.now(),
+  await assertSucceeds(get(ref(student, "catalog/interests")));
+  await assertSucceeds(set(ref(student, "interests/student"), record));
+  await assertFails(set(ref(student, "interests/other"), record));
+  await assertFails(set(ref(student, "catalog/interests/philosophy/title"), "Hack"));
+  await assertFails(set(ref(student, "interests/student"), {
+    unknownField: true,
+    updatedAt: Date.now(),
   }));
   const parent = testEnv.authenticatedContext("parent").database();
-  const listed = await get(ref(parent, "votes"));
-  assert.equal(listed.val().student.field, "electronics");
+  const listed = await get(ref(parent, "interests"));
+  assert.equal(listed.val().student.philosophy, true);
 });

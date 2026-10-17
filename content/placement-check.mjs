@@ -35,9 +35,9 @@ const items = [
     answer: "six",
     lookFor: ["Divides by 3 first, then adds 2: x − 2 = 4, so x = 6."],
     misconceptions: ["Stops at x − 2 = 4, or treats the 2 as the solution."],
-    discover: [
-      { label: "Solving an equation that has brackets", href: "https://www.mathsisfun.com/algebra/equations-solving.html" },
-      { label: "Search: solve an equation with brackets, one step at a time" },
+    passage: [
+      "When you work through Solving an equation that has brackets, keep each step in order and name what that step is doing. Divides by 3 first, then adds 2: x − 2 = 4, so the value that fits. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Stops at x − 2 = 4, or treats the 2 as the solution. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Solve 4(y + 1) = 24. Write the value of y, and write the line you had just after dividing both sides by 4.",
   }),
@@ -56,9 +56,9 @@ const items = [
     answer: "ten",
     lookFor: ["Uses Pythagoras: 36 + 64 = 100, so the third side is 10 cm."],
     misconceptions: ["Adds the sides, or multiplies them."],
-    discover: [
-      { label: "The rule for the third side of a right-angled triangle", href: "https://www.mathsisfun.com/pythagoras.html" },
-      { label: "Search: length of the longest side of a right-angled triangle" },
+    passage: [
+      "When you work through The rule for the third side of a right-angled triangle, keep each step in order and name what that step is doing. Uses Pythagoras: 36 + 64 = 100, so the third side is the value that fits. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Adds the sides, or multiplies them. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A right-angled triangle has shorter sides 5 cm and 12 cm. How long is the third side? Write the length and the two squares you added.",
   }),
@@ -77,9 +77,9 @@ const items = [
     answer: "thirty-six",
     lookFor: ["15% is 0.15 × 240 = 36."],
     misconceptions: ["Takes 10% and stops, or treats 15 as the answer."],
-    discover: [
-      { label: "How to find a percentage of an amount", href: "https://www.mathsisfun.com/percentage.html" },
-      { label: "Search: how to find a percentage of a number" },
+    passage: [
+      "When you work through How to find a percentage of an amount, keep each step in order and name what that step is doing. 15% is 0.15 × 240 = the value that fits. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Takes 10% and stops, or treats 15 as the answer. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "What is 20% of 150? Write the result and the calculation you used.",
   }),
@@ -98,9 +98,9 @@ const items = [
     answer: "persuade",
     lookFor: ["Names the purpose as persuasion aimed at the council, not a story or a catalogue."],
     misconceptions: ["Calls any library paragraph a description of the building or the books."],
-    discover: [
-      { label: "How to name a writer's purpose", href: "https://www.bbc.co.uk/bitesize/articles/z2q3h4j" },
-      { label: "Search: how to tell whether a paragraph is trying to persuade" },
+    passage: [
+      "When you work through How to name a writer's purpose, keep each step in order and name what that step is doing. Names the purpose as persuasion aimed at the council, not a story or a catalogue. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calls any library paragraph a description of the building or the books. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Read this:\n\n\"The sports field lights go off at 5pm, before most teams finish training. If the school wants teams to practise safely, the lights need to stay on while training is still happening.\"\n\nWhat is the writer trying to do? Answer in one sentence.",
   }),
@@ -119,9 +119,9 @@ const items = [
     answer: "topic",
     lookFor: ["Chooses a topic sentence that states the paragraph's point."],
     misconceptions: ["Opens with a personal aside, or with a therefore or a conclusion."],
-    discover: [
-      { label: "What a topic sentence does in a paragraph", href: "https://www.bbc.co.uk/bitesize/articles/z2mj8hv" },
-      { label: "Search: what a topic sentence is" },
+    passage: [
+      "When you work through What a topic sentence does in a paragraph, keep each step in order and name what that step is doing. Chooses a topic sentence that states the paragraph's point. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Opens with a personal aside, or with a therefore or a conclusion. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Write one topic sentence that could open a paragraph about why buses run late.",
   }),
@@ -140,9 +140,9 @@ const items = [
     answer: "weight",
     lookFor: ["Explains the repetition as emphasis and certainty, not as proof the money is spent."],
     misconceptions: ["Treats a language effect as a fact about the budget."],
-    discover: [
-      { label: "What repetition does in a piece of writing", href: "https://literarydevices.net/repetition/" },
-      { label: "Search: the effect of repeating a short sentence in a speech" },
+    passage: [
+      "When you work through What repetition does in a piece of writing, keep each step in order and name what that step is doing. Explains the repetition as emphasis and certainty, not as proof the money is spent. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treats a language effect as a fact about the budget. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A notice repeats: \"Bring a coat. Bring water. Bring a torch.\" What does that repetition do? Answer in one sentence of your own.",
   }),
@@ -161,9 +161,9 @@ const items = [
     answer: "friction",
     lookFor: ["Names a continuing resistive force, not a push that gets used up."],
     misconceptions: ["The impetus idea: a push lives in the object and then runs out."],
-    discover: [
-      { label: "What keeps moving when a push has stopped", href: "https://www.physicsclassroom.com/tutorial/newtons-laws/newtons-first-law/newtons-first-law" },
-      { label: "Search: why a sliding object slows down on a flat surface" },
+    passage: [
+      "When you work through What keeps moving when a push has stopped, keep each step in order and name what that step is doing. Names a continuing resistive force, not a push that gets used up. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: The impetus idea: a push lives in the object and then runs out. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A book is slid across a desk and then left alone. It slows and stops. Why does it stop? Write the reason in your own words.",
   }),
@@ -182,9 +182,9 @@ const items = [
     answer: "joule",
     lookFor: ["Joule is energy. Newton is force, metre is length, second is time."],
     misconceptions: ["Calls the force unit the energy unit."],
-    discover: [
-      { label: "The unit used for work and energy", href: "https://www.physicsclassroom.com/tutorial/work-and-energy/forms-of-energy/definition-and-mathematics-of-work" },
-      { label: "Search: the SI unit of energy" },
+    passage: [
+      "When you work through The unit used for work and energy, keep each step in order and name what that step is doing. the value that fits is energy. Newton is force, metre is length, second is time. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calls the force unit the energy unit. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A kettle heats water. In one sentence, name the unit used to measure the energy the kettle uses, and say what that unit is measuring.",
   }),
@@ -203,9 +203,9 @@ const items = [
     answer: "light",
     lookFor: ["Same force, less mass, greater acceleration."],
     misconceptions: ["Heavier objects are pushed harder by the same force."],
-    discover: [
-      { label: "How mass changes the acceleration from the same force", href: "https://www.physicsclassroom.com/tutorial/newtons-laws/newtons-second-law/newtons-second-law" },
-      { label: "Search: same force, different mass, which accelerates more" },
+    passage: [
+      "When you work through How mass changes the acceleration from the same force, keep each step in order and name what that step is doing. Same force, less mass, greater acceleration. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Heavier objects are pushed harder by the same force. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "The same push is applied to a 2 kg trolley and a 10 kg trolley. Which one speeds up faster, and why? Write one sentence.",
   }),
@@ -224,9 +224,9 @@ const items = [
     answer: "ph2",
     lookFor: ["Lower pH is more acidic. pH 7 is neutral."],
     misconceptions: ["Treats a higher pH number as a stronger acid."],
-    discover: [
-      { label: "Acids, bases, and the pH scale", href: "https://www.sciencelearn.org.nz/resources/3019-acids-and-bases-introduction" },
-      { label: "Search: which pH number is more acidic" },
+    passage: [
+      "When you work through Acids, bases, and the pH scale, keep each step in order and name what that step is doing. Lower pH is more acidic. pH 7 is neutral. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Treats a higher pH number as a stronger acid. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "One drink is pH 3 and another is pH 9. Which is more acidic, and how do you know? Write one sentence.",
   }),
@@ -245,8 +245,9 @@ const items = [
     answer: "charged",
     lookFor: ["Charge from gaining or losing electrons."],
     misconceptions: ["An ion is anything that dissolves, or anything an indicator has touched."],
-    discover: [
-      { label: "Search: what an ion is in chemistry" },
+    passage: [
+      "When you work through what an ion is in chemistry, keep each step in order and name what that step is doing. Charge from gaining or losing electrons. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: An ion is anything that dissolves, or anything an indicator has touched. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "In your own words, what is an ion? Then say whether a sodium atom that has lost one electron counts as one, and why.",
   }),
@@ -265,9 +266,9 @@ const items = [
     answer: "one",
     lookFor: ["Mass divided by molar mass: 44 / 44 = 1 mol. This is past the pH-and-ions note."],
     misconceptions: ["Reads the 44 in the molar mass as the number of moles."],
-    discover: [
-      { label: "The mole as a count of particles", href: "https://www.sciencelearn.org.nz/videos/1897-the-mole" },
-      { label: "Search: how to turn a mass in grams into moles" },
+    passage: [
+      "When you work through The mole as a count of particles, keep each step in order and name what that step is doing. Mass divided by molar mass: 44 / 44 = the value that fits. This is past the pH-and-ions note. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Reads the 44 in the molar mass as the number of moles. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "The molar mass of water is about 18 g/mol. How many moles are in 36 g of water? Write the number of moles and the division you used.",
   }),
@@ -286,9 +287,9 @@ const items = [
     answer: "gate",
     lookFor: ["The membrane is a selective boundary, not the gene store and not a plant wall."],
     misconceptions: ["Animal cells have a rigid wall, or the membrane is where photosynthesis happens."],
-    discover: [
-      { label: "What a cell membrane controls", href: "https://www.sciencelearn.org.nz/resources/175-cells" },
-      { label: "Search: what the cell membrane does" },
+    passage: [
+      "When you work through What a cell membrane controls, keep each step in order and name what that step is doing. The membrane is a selective boundary, not the gene store and not a plant wall. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Animal cells have a rigid wall, or the membrane is where photosynthesis happens. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A cell needs glucose from outside, and it has to keep its own proteins in. What job is the boundary of the cell doing? Answer in one sentence.",
   }),
@@ -307,9 +308,9 @@ const items = [
     answer: "chloroplast",
     lookFor: ["Chloroplast, not the nucleus or the wall."],
     misconceptions: ["Photosynthesis happens in the nucleus because that is the 'main' part."],
-    discover: [
-      { label: "Plant cell parts, including where photosynthesis happens", href: "https://www.sciencelearn.org.nz/resources/499-cell-organelles" },
-      { label: "Search: where photosynthesis happens inside a plant cell" },
+    passage: [
+      "When you work through Plant cell parts, including where photosynthesis happens, keep each step in order and name what that step is doing. the value that fits, not the nucleus or the wall. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Photosynthesis happens in the nucleus because that is the 'main' part. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Name the part of a plant cell where photosynthesis happens, and write one sentence that says what that part does.",
   }),
@@ -328,9 +329,9 @@ const items = [
     answer: "cell-first",
     lookFor: ["Cell, then tissue, then organ, then organ system."],
     misconceptions: ["Starts from the organ because it is the familiar object."],
-    discover: [
-      { label: "How cells, tissues, and organs fit together", href: "https://www.sciencelearn.org.nz/resources/175-cells" },
-      { label: "Search: the order of organisation in a living thing, from smallest to largest" },
+    passage: [
+      "When you work through How cells, tissues, and organs fit together, keep each step in order and name what that step is doing. Cell, then tissue, then organ, then organ system. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Starts from the organ because it is the familiar object. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Put these in order from smallest to largest, and write the list: a heart, cardiac muscle tissue, a muscle cell, the circulatory system.",
   }),
@@ -349,9 +350,9 @@ const items = [
     answer: "melt",
     lookFor: ["Igneous means cooled from melt. The squeeze-without-melting option is metamorphic."],
     misconceptions: ["Calls every changed rock igneous."],
-    discover: [
-      { label: "How rocks are made and changed", href: "https://www.sciencelearn.org.nz/resources/1490-the-rock-cycle" },
-      { label: "Search: how igneous rock forms" },
+    passage: [
+      "When you work through How rocks are made and changed, keep each step in order and name what that step is doing. Igneous means cooled from melt. The squeeze-without-melting option is metamorphic. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Calls every changed rock igneous. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Basalt forms from lava that has cooled. Marble forms when limestone is squeezed and heated, and it does not melt. Which one is igneous, and what makes the other one different? Write two sentences.",
   }),
@@ -370,9 +371,9 @@ const items = [
     answer: "break-then-move",
     lookFor: ["Weathering is breakdown in place. Erosion is transport."],
     misconceptions: ["Swaps the two words."],
-    discover: [
-      { label: "Weathering and erosion in the rock cycle", href: "https://www.sciencelearn.org.nz/resources/1490-the-rock-cycle" },
-      { label: "Search: the difference between weathering and erosion" },
+    passage: [
+      "When you work through Weathering and erosion in the rock cycle, keep each step in order and name what that step is doing. Weathering is breakdown in place. Erosion is transport. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Swaps the two words. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Rain cracks a cliff face, and the pieces stay where they fell. A river later carries those pieces downstream. Which process is which? Write one sentence for each.",
   }),
@@ -391,9 +392,9 @@ const items = [
     answer: "sedimentary",
     lookFor: ["Sedimentary layers can bury remains. A full melt destroys them."],
     misconceptions: ["Fossils form inside molten rock."],
-    discover: [
-      { label: "How remains can be kept when sediments become rock", href: "https://www.sciencelearn.org.nz/resources/1490-the-rock-cycle" },
-      { label: "Search: which kind of rock most often contains fossils" },
+    passage: [
+      "When you work through How remains can be kept when sediments become rock, keep each step in order and name what that step is doing. the value that fits layers can bury remains. A full melt destroys them. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Fossils form inside molten rock. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A leaf falls into soft mud at the bottom of a lake. Somewhere else, rock forms from magma that cools. Where are the leaf's remains more likely to be kept, and why would the cooled magma not keep them? Write two sentences.",
   }),
@@ -412,9 +413,9 @@ const items = [
     answer: "from-the-time",
     lookFor: ["Primary means from the time of the event, not the newest summary."],
     misconceptions: ["The most recent book is the primary source."],
-    discover: [
-      { label: "Search: what a primary source is in history" },
-      { label: "Search: a letter or diary from the time, compared with a later textbook" },
+    passage: [
+      "When you work through what a primary source is in history, keep each step in order and name what that step is doing. Primary means from the time of the event, not the newest summary. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: The most recent book is the primary source. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "For the opening of the Auckland Harbour Bridge, name one record that would count as coming from that time, and name one record that would be a later retelling. Write one sentence for each.",
   }),
@@ -433,9 +434,9 @@ const items = [
     answer: "1840",
     lookFor: ["1840. 1642 is Tasman's voyage. 1860 is the start of the Taranaki war. 1947 is the Statute of Westminster Adoption Act."],
     misconceptions: ["Mixes the Treaty with a later war or with first European contact."],
-    discover: [
-      { label: "The Treaty of Waitangi, in brief", href: "https://nzhistory.govt.nz/politics/treaty/the-treaty-in-brief" },
-      { label: "Search: the year the Treaty of Waitangi was first signed" },
+    passage: [
+      "When you work through The Treaty of Waitangi, in brief, keep each step in order and name what that step is doing. the value that fits. 1642 is Tasman's voyage. 1860 is the start of the Taranaki war. 1947 is the Statute of Westminster Adoption Act. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Mixes the Treaty with a later war or with first European contact. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Write the year the Treaty of Waitangi was first signed. Then name one other event from that same decade that is not the Treaty. Use two sentences.",
   }),
@@ -454,8 +455,9 @@ const items = [
     answer: "check",
     lookFor: ["A nearby event is a possible cause, not an automatic one."],
     misconceptions: ["Two events close in time must be cause and effect."],
-    discover: [
-      { label: "Search: the difference between a cause and two events that only happened near each other" },
+    passage: [
+      "When you work through the difference between a cause and two events that only happened near each other, keep each step in order and name what that step is doing. A nearby event is a possible cause, not an automatic one. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Two events close in time must be cause and effect. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A new bus route starts in March. In April, more people visit the library. What is a careful way to talk about whether the bus route caused the extra visits? Write one sentence.",
   }),
@@ -474,9 +476,9 @@ const items = [
     answer: "parliament",
     lookFor: ["Parliament passes Acts. Courts interpret them. Departments administer them."],
     misconceptions: ["A court or a department can pass a statute on its own."],
-    discover: [
-      { label: "How a bill becomes an Act", href: "https://www3.parliament.nz/en/visit-and-learn/how-parliament-works/how-laws-are-made/how-a-bill-becomes-law/" },
-      { label: "Search: which body in New Zealand passes Acts" },
+    passage: [
+      "When you work through How a bill becomes an Act, keep each step in order and name what that step is doing. the value that fits passes Acts. Courts interpret them. Departments administer them. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: A court or a department can pass a statute on its own. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Who in New Zealand is allowed to pass an Act? Name that body, and say in the same sentence one thing a court does with an Act instead.",
   }),
@@ -495,8 +497,9 @@ const items = [
     answer: "vote",
     lookFor: ["The government can be changed by the vote."],
     misconceptions: ["Any country with laws is already a democracy."],
-    discover: [
-      { label: "Search: the feature that lets citizens replace a government" },
+    passage: [
+      "When you work through the feature that lets citizens replace a government, keep each step in order and name what that step is doing. The government can be changed by the vote. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Any country with laws is already a democracy. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A country holds regular elections, and the people in office can lose those elections. What feature of a democracy is that describing? Answer in one sentence.",
   }),
@@ -515,8 +518,9 @@ const items = [
     answer: "in-force",
     lookFor: ["A statute binds. A manifesto does not, until it is made law."],
     misconceptions: ["An election promise is already a law."],
-    discover: [
-      { label: "Search: the difference between a law and an election promise" },
+    passage: [
+      "When you work through the difference between a law and an election promise, keep each step in order and name what that step is doing. A statute binds. A manifesto does not, until it is made law. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: An election promise is already a law. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A party says it will cut bus fares. No Act has been passed. Is that a law, or a promise? Explain the difference in two sentences.",
   }),
@@ -535,8 +539,9 @@ const items = [
     answer: "jobs",
     lookFor: ["A tool can change work and skills without a new law. This is technology as a social fact."],
     misconceptions: ["Only a change in the law can change social life."],
-    discover: [
-      { label: "Search: how a new machine can change jobs without a new law" },
+    passage: [
+      "When you work through how a new machine can change jobs without a new law, keep each step in order and name what that step is doing. A tool can change work and skills without a new law. This is technology as a social fact. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Only a change in the law can change social life. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A bakery starts using a mixer that does the work of four people. No law has changed. What can still change for the bakers? Write one sentence.",
   }),
@@ -555,8 +560,9 @@ const items = [
     answer: "panels",
     lookFor: ["A cheaper, better tool is a technology fact. A vote, a leader, and a judgment are political."],
     misconceptions: ["Any public event is politics."],
-    discover: [
-      { label: "Search: an example of a technology fact rather than a political fact" },
+    passage: [
+      "When you work through an example of a technology fact rather than a political fact, keep each step in order and name what that step is doing. A cheaper, better tool is a technology fact. A vote, a leader, and a judgment are political. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Any public event is politics. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Phone batteries last longer than they did ten years ago, and the phones cost less to make. Is that a technology fact or a politics fact? Say which, and why, in one sentence.",
   }),
@@ -575,8 +581,9 @@ const items = [
     answer: "both",
     lookFor: ["Useful and unwanted effects can both be real."],
     misconceptions: ["A downside means the description of the upside was wrong."],
-    discover: [
-      { label: "Search: a technology with both a useful effect and an unwanted effect" },
+    passage: [
+      "When you work through a technology with both a useful effect and an unwanted effect, keep each step in order and name what that step is doing. Useful and unwanted effects can both be real. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: A downside means the description of the upside was wrong. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Online maps make it easier to find a new place. They also record where people go. What does that pair of outcomes show about a technology? Write one sentence.",
   }),
@@ -595,8 +602,9 @@ const items = [
     answer: "itself",
     lookFor: ["He continues with no pay and refuses pay to stop. The activity itself is the reason."],
     misconceptions: ["Any repeated behaviour must be paid or punished."],
-    discover: [
-      { label: "Search: when someone keeps doing an activity with no pay and refuses pay to stop" },
+    passage: [
+      "When you work through when someone keeps doing an activity with no pay and refuses pay to stop, keep each step in order and name what that step is doing. He continues with no pay and refuses pay to stop. The activity itself is the reason. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Any repeated behaviour must be paid or punished. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Aroha practises the piano every afternoon with no exam coming and no one paying her. A cousin offers her money to stop, and she keeps practising. Why is she practising? Answer in one sentence.",
   }),
@@ -615,8 +623,9 @@ const items = [
     answer: "fits",
     lookFor: ["She selects the evidence that confirms the belief."],
     misconceptions: ["Remembering the failures is the same as weighing all the evidence."],
-    discover: [
-      { label: "Search: keeping only the examples that fit a belief and dropping the rest" },
+    passage: [
+      "When you work through keeping only the examples that fit a belief and dropping the rest, keep each step in order and name what that step is doing. She selects the evidence that confirms the belief. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Remembering the failures is the same as weighing all the evidence. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Sam believes his street is dangerous. He remembers every siren and ignores a month with none. What is going wrong in his thinking? Answer in one sentence.",
   }),
@@ -635,8 +644,9 @@ const items = [
     answer: "situation",
     lookFor: ["The situation is a possible explanation. Character is not the only one."],
     misconceptions: ["One sharp moment is enough to name a personality."],
-    discover: [
-      { label: "Search: how a situation can explain a behaviour without naming someone's character" },
+    passage: [
+      "When you work through how a situation can explain a behaviour without naming someone's character, keep each step in order and name what that step is doing. The situation is a possible explanation. Character is not the only one. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: One sharp moment is enough to name a personality. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A teammate misses an easy pass. You decide they are careless, and you do not consider that the sun was in their eyes. What have you left out? Answer in one sentence.",
   }),
@@ -655,8 +665,9 @@ const items = [
     answer: "check",
     lookFor: ["Reads the effect and checks it, rather than escalating or pretending feelings are not information."],
     misconceptions: ["A quiet room should be pushed harder, or fled automatically."],
-    discover: [
-      { label: "Search: how to read the effect of a joke before you continue" },
+    passage: [
+      "When you work through how to read the effect of a joke before you continue, keep each step in order and name what that step is doing. Reads the effect and checks it, rather than escalating or pretending feelings are not information. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: A quiet room should be pushed harder, or fled automatically. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "You tease a friend about being late. She stops talking and looks at the floor. What is a useful next move, and what did you notice? Write one sentence.",
   }),
@@ -675,8 +686,9 @@ const items = [
     answer: "goal",
     lookFor: ["Shared goal, different method. The disagreement is not proof the goal is fake."],
     misconceptions: ["Different plans mean there is no shared aim."],
-    discover: [
-      { label: "Search: a shared aim when two people want different methods" },
+    passage: [
+      "When you work through a shared aim when two people want different methods, keep each step in order and name what that step is doing. Shared goal, different method. The disagreement is not proof the goal is fake. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: Different plans mean there is no shared aim. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Two neighbours both want a quieter street. One wants speed bumps. The other wants a lower speed limit. What do they share, even though their plans differ? Answer in one sentence.",
   }),
@@ -695,8 +707,9 @@ const items = [
     answer: "public",
     lookFor: ["Public agreement is not the same as a commitment that shows up in the work."],
     misconceptions: ["A spoken yes in the room is the commitment."],
-    discover: [
-      { label: "Search: the difference between agreeing in a meeting and actually doing the work" },
+    passage: [
+      "When you work through the difference between agreeing in a meeting and actually doing the work, keep each step in order and name what that step is doing. Public agreement is not the same as a commitment that shows up in the work. The same method appears with different numbers or wording, so the reasoning matters more than remembering one finished line from somewhere else.",
+      "A common slip looks like this: A spoken yes in the room is the commitment. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "In a group chat everyone agrees to bring food. On the day, three people arrive with nothing and say they thought someone else would. What distinction matters? Answer in one sentence.",
   }),

@@ -86,7 +86,7 @@ function databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, m
     writes.push([`/items/${item.id}`, publicItem(item)]);
     writes.push([`/guides/${item.id}`, guideRecord(item)]);
   }
-  writes.push(["/catalog/domains", catalog]);
+  writes.push(["/catalog/interests", catalog]);
   return writes;
 }
 
@@ -131,7 +131,7 @@ async function main() {
   const { strand, items } = await import("../content/placement-check.mjs");
   const { strands: firstStrands, items: firstItems } = await import("../content/modules.mjs");
   const { strands: secondStrands, items: secondItems } = await import("../content/modules-part2.mjs");
-  const { domains, catalogRecord } = await import("../content/interest-tree.mjs");
+  const { options, interestsCatalogRecord } = await import("../content/interest-tree.mjs");
   const moduleStrands = [...firstStrands, ...secondStrands];
   const moduleItems = [...firstItems, ...secondItems];
   const { checkContent } = await import("../lib/checkContent.mjs");
@@ -140,9 +140,9 @@ async function main() {
   const { publicItem, guideRecord } = await import("../lib/records.mjs");
   const errors = checkContent(strand, items)
     .concat(checkModules(moduleStrands, moduleItems, items))
-    .concat(checkInterestTree(domains));
+    .concat(checkInterestTree(options));
   if (errors.length) fail(errors.join("; "));
-  const catalog = catalogRecord(domains);
+  const catalog = interestsCatalogRecord(options);
   const writes = databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, moduleItems, catalog);
   if (process.env.FIREBASE_DATABASE_EMULATOR_HOST) {
     for (const [dbPath, value] of writes) await putEmulator(dbPath, value);
@@ -151,7 +151,7 @@ async function main() {
     const token = await accessToken(serviceAccount);
     for (const [dbPath, value] of writes) await putProduction(token, dbPath, value);
   }
-  console.log(`placement check seeded: ${items.length} questions; modules seeded: ${moduleItems.length}; domains seeded: ${domains.length}`);
+  console.log(`placement check seeded: ${items.length} questions; modules seeded: ${moduleItems.length}; interests seeded: ${options.length}`);
 }
 
 main().catch((error) => fail(error.message || "placement seed failed"));

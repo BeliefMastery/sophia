@@ -1,64 +1,72 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { domains, catalogRecord, domainsFromCatalog } from "../content/interest-tree.mjs";
+import { options, interestsCatalogRecord, optionsFromCatalog, tickedInterests } from "../content/interest-tree.mjs";
 import { checkInterestTree } from "../lib/checkInterestTree.mjs";
-import {
-  avoidedFields,
-  fieldClusterPrompt,
-  interestVotePrompt,
-  voteSummary,
-} from "../lib/expansion.mjs";
+import { fieldClusterPrompt, modulePrompt } from "../lib/expansion.mjs";
+import { buildPassage, checkPassage } from "../lib/passage.mjs";
 
-test("the interest tree is valid and seeds as a catalog record", () => {
-  assert.equal(checkInterestTree(domains).length, 0);
-  const catalog = catalogRecord(domains);
-  const listed = domainsFromCatalog(catalog);
-  assert.ok(listed.length >= 4);
-  assert.ok(listed.some((domain) => domain.subfields.some((sub) => sub.field === "electronics")));
+test("interest options are valid and include university fields", () => {
+  assert.equal(checkInterestTree(options).length, 0);
+  const catalog = interestsCatalogRecord(options);
+  const listed = optionsFromCatalog(catalog);
+  assert.ok(listed.some((option) => option.id === "philosophy"));
+  assert.ok(listed.some((option) => option.group === "University"));
 });
 
-test("avoided fields skip attempted, finished, and voted subfields", () => {
-  const catalog = catalogRecord(domains);
-  const fields = [
-    { id: "physics", answered: 2, total: 2, complete: true, depth: 2 },
-    { id: "mathematics", answered: 1, total: 4, complete: false, depth: 0 },
-  ];
-  const vote = { domainId: "science", subfieldId: "electronics", field: "electronics", submittedAt: 1 };
-  const avoided = avoidedFields(catalog, fields, [], {}, [], vote);
-  assert.equal(avoided.some((entry) => entry.field === "electronics"), false);
-  assert.equal(avoided.some((entry) => entry.field === "physics"), false);
-  assert.equal(avoided.some((entry) => entry.field === "mathematics"), false);
-  assert.ok(avoided.some((entry) => entry.field === "biology"));
+test("ticked interests list only true catalog options", () => {
+  const catalog = interestsCatalogRecord(options);
+  const ticks = tickedInterests({ philosophy: true, design: true, updatedAt: 1, missing: true }, catalog);
+  assert.deepEqual(ticks.map((row) => row.id).sort(), ["design", "philosophy"]);
 });
 
-test("vote summary and prompts name the vote and avoided list", () => {
-  const catalog = catalogRecord(domains);
-  const vote = voteSummary({
-    domainId: "science",
-    subfieldId: "electronics",
-    field: "electronics",
-    submittedAt: 10,
-  }, catalog);
-  assert.equal(vote.title, "Electronics");
-  const avoided = [{ domainId: "english", domainTitle: "English", subfieldId: "english", title: "English", field: "english" }];
-  const interest = interestVotePrompt({ name: "Student", uid: "abc", vote, avoided });
-  assert.match(interest, /Interest vote: Science \/ Electronics/);
-  assert.match(interest, /Fields avoided: English \/ English/);
+test("passages are two long paragraphs without the correct choice text", () => {
+  const item = {
+    id: "sample",
+    claim: "physics",
+    answer: "newton",
+    choices: [
+      { id: "newton", text: "a unique correct phrase xyz" },
+      { id: "other", text: "something else" },
+    ],
+    lookFor: ["Force changes the motion of a mass when it is unbalanced."],
+    misconceptions: ["Thinking a push is needed to keep constant speed."],
+    discover: [{ label: "Search: unbalanced force and changing motion" }],
+  };
+  const passage = buildPassage(item);
+  assert.equal(passage.length, 2);
+  assert.equal(checkPassage({ ...item, passage }).length, 0);
+  assert.equal(passage.join(" ").toLowerCase().includes("a unique correct phrase xyz"), false);
+});
+
+test("expansion prompts require passages and core-then-branch deepening", () => {
   const cluster = fieldClusterPrompt({
     name: "Student",
     uid: "abc",
     field: {
-      id: "physics",
-      title: "Physics",
+      id: "history",
+      title: "History",
       complete: true,
       depth: 2,
       label: "Year 10",
-      nextStrandId: "physics-cluster-2",
+      nextStrandId: "history-cluster-2",
     },
-    vote,
-    avoided,
   });
-  assert.match(cluster, /Field complete: physics/);
-  assert.match(cluster, /Interest vote:/);
-  assert.match(cluster, /Fields avoided:/);
+  assert.match(cluster, /two passage paragraphs/);
+  assert.match(cluster, /deepen and broaden/);
+  assert.match(cluster, /Interest checkboxes are a register only/);
+  const module = modulePrompt({
+    name: "Student",
+    uid: "abc",
+    outcome: {
+      complete: true,
+      strandId: "science-earth",
+      title: "Earth",
+      depth: 2,
+      field: "geology",
+      missed: [],
+      recommendation: "Write the next module one step deeper.",
+    },
+  });
+  assert.match(module, /deepen and broaden/);
+  assert.match(module, /two-paragraph/);
 });

@@ -14,7 +14,7 @@ A zip of `main` is at https://github.com/BeliefMastery/sophia/archive/refs/heads
 
 The live site is Firebase Hosting: https://sophia-138fe.web.app
 
-When a section is finished, the parent login shows a depth chart and a prompt for the next short module. The student can also vote for the next subfield from the curated tree in `content/interest-tree.mjs`; the parent sees that vote and the fields avoided. The rules for adding the next module are in `plan.md` and `database.md`. A new topic is a new strand. Existing ids stay.
+When a section is finished, the parent login shows a depth chart and a prompt for the next short module. A wrong answer opens a two-paragraph in-app reading and a follow-up from that text, not an external search. Students can tick school and university fields of interest in `content/interest-tree.mjs`; those ticks are a register only. The rules for adding the next module are in `plan.md` and `database.md`. Early modules stay on essentials; later ones deepen and broaden. A new topic is a new strand. Existing ids stay.
 
 ## How the system is split
 
@@ -22,7 +22,7 @@ When a section is finished, the parent login shows a depth chart and a prompt fo
 | --- | --- | --- |
 | App, images, plan docs, curriculum authoring | **This GitHub repo** | Edit here; push updates the site and seeds content |
 | Auth logins | **Firebase Authentication** | Project `sophia-138fe` |
-| Questions, guides, attempts, interest catalog, votes | **Firebase Realtime Database** | Seeded from `content/`; student progress and votes stay in the DB only |
+| Questions, guides with passages, attempts, interest ticks | **Firebase Realtime Database** | Seeded from `content/`; student progress and interests stay in the DB only |
 | Built site | **Firebase Hosting** | Deployed from `dist` by CI |
 
 Git is the source of truth for curriculum. Edit `content/*.mjs`, then let the seed workflow write `strands`, `items`, and `guides` into the live database. Do not hand-edit live questions in the Firebase console except for emergencies. Do not commit student attempts, passwords, or service-account keys.

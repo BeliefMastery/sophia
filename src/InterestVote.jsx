@@ -1,77 +1,78 @@
-import { useState } from "react";
-import { domainsFromCatalog, findSubfield } from "../content/interest-tree.mjs";
-import { voteSummary } from "../lib/expansion.mjs";
+import { useEffect, useState } from "react";
+import { optionsFromCatalog } from "../content/interest-tree.mjs";
 
-export function InterestVote({ catalog, vote, onSave, saving, error }) {
-  const domains = domainsFromCatalog(catalog);
-  const summary = voteSummary(vote, catalog);
-  const [domainId, setDomainId] = useState(summary?.domainId || domains[0]?.id || "");
-  const domain = domains.find((entry) => entry.id === domainId) || domains[0];
-  const [subfieldId, setSubfieldId] = useState(summary?.subfieldId || domain?.subfields?.[0]?.id || "");
+function groupOptions(options) {
+  const groups = new Map();
+  for (const option of options) {
+    const list = groups.get(option.group) || [];
+    list.push(option);
+    groups.set(option.group, list);
+  }
+  return [...groups.entries()];
+}
 
-  if (!domains.length) {
-    return <p className="quiet">The interest catalog is not loaded yet.</p>;
+export function InterestVote({ catalog, interests, onSave, saving, error }) {
+  const options = optionsFromCatalog(catalog);
+  const [ticks, setTicks] = useState({});
+
+  useEffect(() => {
+    const listed = optionsFromCatalog(catalog);
+    const next = {};
+    for (const option of listed) {
+      next[option.id] = interests?.[option.id] === true;
+    }
+    setTicks(next);
+  }, [catalog, interests]);
+
+  if (!options.length) {
+    return <p className="quiet">Interest options are not loaded yet.</p>;
   }
 
-  const activeDomain = domains.find((entry) => entry.id === domainId) || domain;
-  const subfields = activeDomain?.subfields || [];
-
-  function pickDomain(nextId) {
-    setDomainId(nextId);
-    const next = domains.find((entry) => entry.id === nextId);
-    setSubfieldId(next?.subfields?.[0]?.id || "");
+  function toggle(id) {
+    setTicks((current) => ({ ...current, [id]: !current[id] }));
   }
 
   function submit() {
-    const subfield = findSubfield(domains, domainId, subfieldId);
-    if (!subfield) return;
-    onSave({
-      domainId,
-      subfieldId,
-      field: subfield.field,
-      submittedAt: Date.now(),
-    });
+    const record = { updatedAt: Date.now() };
+    for (const option of options) {
+      if (ticks[option.id]) record[option.id] = true;
+    }
+    onSave(record);
   }
+
+  const selected = options.filter((option) => ticks[option.id]).map((option) => option.title);
 
   return (
     <div className="interest">
-      <h2>Next field to deepen</h2>
-      <p>Choose one subfield. The parent uses this vote when writing the next shared cluster.</p>
-      {summary ? (
-        <p className="quiet">Current vote: {summary.domainTitle} / {summary.title}</p>
+      <h2>Fields of interest</h2>
+      <p>Tick any school or university fields you care about. This only registers interest. It does not add a module by itself.</p>
+      {selected.length ? (
+        <p className="quiet">Selected: {selected.join(", ")}</p>
       ) : (
-        <p className="quiet">No vote yet.</p>
+        <p className="quiet">Nothing selected yet.</p>
       )}
-      <label>
-        Domain
-        <select value={domainId} onChange={(event) => pickDomain(event.target.value)}>
-          {domains.map((entry) => (
-            <option key={entry.id} value={entry.id}>{entry.title}</option>
-          ))}
-        </select>
-      </label>
-      <fieldset className="interest-subfields">
-        <legend>Subfield</legend>
-        <ul className="interest-list">
-          {subfields.map((subfield) => (
-            <li key={subfield.id}>
-              <label className="interest-option">
-                <input
-                  type="radio"
-                  name="interest-subfield"
-                  value={subfield.id}
-                  checked={subfieldId === subfield.id}
-                  onChange={() => setSubfieldId(subfield.id)}
-                />
-                <span>{subfield.title}</span>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </fieldset>
+      {groupOptions(options).map(([group, rows]) => (
+        <fieldset key={group} className="interest-subfields">
+          <legend>{group}</legend>
+          <ul className="interest-list">
+            {rows.map((option) => (
+              <li key={option.id}>
+                <label className="interest-option">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(ticks[option.id])}
+                    onChange={() => toggle(option.id)}
+                  />
+                  <span>{option.title}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </fieldset>
+      ))}
       {error ? <p className="alert" role="alert">{error}</p> : null}
-      <button type="button" className="primary" disabled={!subfieldId || saving} onClick={submit}>
-        {saving ? "Saving…" : "Save this vote"}
+      <button type="button" className="primary" disabled={saving} onClick={submit}>
+        {saving ? "Saving…" : "Save interests"}
       </button>
     </div>
   );

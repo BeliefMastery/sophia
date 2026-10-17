@@ -1,118 +1,72 @@
-/** Curated domain → subfield catalog. Edit here; seed writes catalog/domains. */
+/** Curated interest checkbox options. Seed writes catalog/interests. Register only; does not create modules. */
 
-const domains = [
-  {
-    id: "mathematics",
-    title: "Mathematics",
-    subfields: [
-      { id: "mathematics", title: "Mathematics", field: "mathematics" },
-      { id: "finance", title: "Finance", field: "finance" },
-    ],
-  },
-  {
-    id: "english",
-    title: "English",
-    subfields: [
-      { id: "english", title: "English", field: "english" },
-    ],
-  },
-  {
-    id: "science",
-    title: "Science",
-    subfields: [
-      { id: "physics", title: "Physics", field: "physics" },
-      { id: "chemistry", title: "Chemistry", field: "chemistry" },
-      { id: "biology", title: "Biology", field: "biology" },
-      { id: "geology", title: "Geology", field: "geology" },
-      { id: "electronics", title: "Electronics", field: "electronics" },
-      { id: "systems", title: "Systems thinking", field: "systems" },
-    ],
-  },
-  {
-    id: "social",
-    title: "Social studies",
-    subfields: [
-      { id: "history", title: "History", field: "history" },
-      { id: "politics", title: "Politics", field: "politics" },
-      { id: "technology", title: "Technology", field: "technology" },
-      { id: "economics", title: "Economics", field: "economics" },
-    ],
-  },
-  {
-    id: "mind",
-    title: "Mind and people",
-    subfields: [
-      { id: "psychology", title: "Psychology", field: "psychology" },
-      { id: "socialManagement", title: "Social management", field: "socialManagement" },
-      { id: "claims", title: "Claims and evidence", field: "claims" },
-    ],
-  },
-  {
-    id: "management",
-    title: "Management",
-    subfields: [
-      { id: "management", title: "Management", field: "management" },
-      { id: "aiLiteracy", title: "AI literacy", field: "aiLiteracy" },
-    ],
-  },
+const options = [
+  { id: "mathematics", title: "Mathematics", group: "School" },
+  { id: "english", title: "English", group: "School" },
+  { id: "physics", title: "Physics", group: "School" },
+  { id: "chemistry", title: "Chemistry", group: "School" },
+  { id: "biology", title: "Biology", group: "School" },
+  { id: "geology", title: "Geology", group: "School" },
+  { id: "history", title: "History", group: "School" },
+  { id: "politics", title: "Politics", group: "School" },
+  { id: "technology", title: "Technology", group: "School" },
+  { id: "psychology", title: "Psychology", group: "School" },
+  { id: "socialManagement", title: "Social management", group: "School" },
+  { id: "electronics", title: "Electronics", group: "School" },
+  { id: "economics", title: "Economics", group: "School" },
+  { id: "finance", title: "Finance", group: "School" },
+  { id: "management", title: "Management", group: "School" },
+  { id: "philosophy", title: "Philosophy", group: "University" },
+  { id: "design", title: "Design", group: "University" },
+  { id: "literature", title: "Literature", group: "University" },
+  { id: "linguistics", title: "Linguistics", group: "University" },
+  { id: "sociology", title: "Sociology", group: "University" },
+  { id: "anthropology", title: "Anthropology", group: "University" },
+  { id: "computerScience", title: "Computer science", group: "University" },
+  { id: "engineering", title: "Engineering", group: "University" },
+  { id: "architecture", title: "Architecture", group: "University" },
+  { id: "law", title: "Law", group: "University" },
+  { id: "medicine", title: "Medicine", group: "University" },
+  { id: "environmentalScience", title: "Environmental science", group: "University" },
+  { id: "aiLiteracy", title: "AI literacy", group: "University" },
 ];
 
-function catalogRecord(list = domains) {
+function interestsCatalogRecord(list = options) {
   const out = {};
-  list.forEach((domain, domainIndex) => {
-    const subfields = {};
-    domain.subfields.forEach((subfield, subIndex) => {
-      subfields[subfield.id] = {
-        title: subfield.title,
-        field: subfield.field,
-        order: subIndex + 1,
-      };
-    });
-    out[domain.id] = {
-      title: domain.title,
-      order: domainIndex + 1,
-      subfields,
+  list.forEach((option, index) => {
+    out[option.id] = {
+      title: option.title,
+      group: option.group,
+      order: index + 1,
     };
   });
   return out;
 }
 
-function domainsFromCatalog(catalog) {
+function optionsFromCatalog(catalog) {
   if (!catalog) return [];
   if (Array.isArray(catalog)) {
-    return catalog.map((domain, domainIndex) => ({
-      id: domain.id,
-      title: domain.title,
-      order: domain.order ?? domainIndex + 1,
-      subfields: (domain.subfields || []).map((subfield, subIndex) => ({
-        id: subfield.id,
-        title: subfield.title,
-        field: subfield.field,
-        order: subfield.order ?? subIndex + 1,
-      })),
+    return catalog.map((option, index) => ({
+      id: option.id,
+      title: option.title,
+      group: option.group || "Other",
+      order: option.order ?? index + 1,
     }));
   }
   return Object.entries(catalog)
-    .map(([id, domain]) => ({
+    .map(([id, option]) => ({
       id,
-      title: domain.title,
-      order: Number(domain.order) || 0,
-      subfields: Object.entries(domain.subfields || {})
-        .map(([subId, subfield]) => ({
-          id: subId,
-          title: subfield.title,
-          field: subfield.field,
-          order: Number(subfield.order) || 0,
-        }))
-        .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id)),
+      title: option.title,
+      group: option.group || "Other",
+      order: Number(option.order) || 0,
     }))
     .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
 }
 
-function findSubfield(domainList, domainId, subfieldId) {
-  const domain = (domainList || []).find((entry) => entry.id === domainId);
-  if (!domain) return null;
-  return domain.subfields.find((entry) => entry.id === subfieldId) || null;
+function tickedInterests(record, catalog) {
+  const listed = optionsFromCatalog(catalog);
+  const ticks = record && typeof record === "object" ? record : {};
+  return listed.filter((option) => ticks[option.id] === true);
 }
 
-export { domains, catalogRecord, domainsFromCatalog, findSubfield };
+export { options, interestsCatalogRecord, optionsFromCatalog, tickedInterests };

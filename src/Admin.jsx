@@ -5,19 +5,17 @@ import { studentReport } from "../lib/report.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
 import {
   applyModules,
-  avoidedFields,
   chartMarks,
   expansionPrompt,
   fieldClusterPrompt,
   fieldMarks,
   fieldStudy,
-  interestVotePrompt,
   moduleOutcomes,
   modulePrompt,
   placementItems,
   sectionStatus,
-  voteSummary,
 } from "../lib/expansion.mjs";
+import { tickedInterests } from "../content/interest-tree.mjs";
 import { Reward } from "./Reward.jsx";
 import { DepthChart, ExpansionPrompt, FieldCounts, InterestReport } from "./Depth.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
@@ -44,7 +42,7 @@ export function Admin({ user }) {
   const [repairs, setRepairs] = useState(null);
   const [strands, setStrands] = useState(null);
   const [catalog, setCatalog] = useState(null);
-  const [votes, setVotes] = useState(null);
+  const [interests, setInterests] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -60,8 +58,8 @@ export function Admin({ user }) {
       watch("guides", setGuides),
       watch("repairs", setRepairs),
       watch("strands", setStrands),
-      watch("catalog/domains", setCatalog),
-      watch("votes", setVotes),
+      watch("catalog/interests", setCatalog),
+      watch("interests", setInterests),
     ];
     return () => unsubs.forEach((unsub) => unsub());
   }, []);
@@ -75,20 +73,20 @@ export function Admin({ user }) {
     );
   }
 
-  if (!profiles || !attempts || !items || !guides || !repairs || !strands || !catalog || !votes) {
+  if (!profiles || !attempts || !items || !guides || !repairs || !strands || !catalog || !interests) {
     return <p className="quiet">Loading the report…</p>;
   }
 
   const itemList = list(items);
   const survey = placementItems(itemList);
-  const uids = new Set([...Object.keys(profiles), ...Object.keys(attempts), ...Object.keys(votes)]);
+  const uids = new Set([...Object.keys(profiles), ...Object.keys(attempts), ...Object.keys(interests)]);
   uids.delete(user.uid);
   const students = [...uids].map((uid) => ({
     uid,
     name: profiles[uid]?.name || "Student",
     attempts: list(attempts[uid]),
     repairs: repairs[uid] || {},
-    vote: votes[uid] || null,
+    interests: interests[uid] || {},
     report: studentReport(survey, list(attempts[uid]), guides, repairs[uid]),
   })).sort((a, b) => a.name.localeCompare(b.name));
 
@@ -98,7 +96,7 @@ export function Admin({ user }) {
         <div className="bezel-plate"><span>Admin</span><span>Report</span></div>
         <div className="bezel-screen">
           <h1>No student activity yet.</h1>
-          <p>Answers and interest votes appear here after a student signs in.</p>
+          <p>Answers and interest ticks appear here after a student signs in.</p>
         </div>
       </section>
     );
@@ -129,11 +127,8 @@ function StudentReport({ student, items, strands, allItems, catalog }) {
     marks: surveyMarks,
   });
   const fields = fieldStudy(strands, allItems, student.attempts, student.repairs);
-  const vote = voteSummary(student.vote, catalog);
-  const avoided = avoidedFields(catalog, fields, student.attempts, strands, allItems, student.vote);
   const ready = fields.filter((field) => field.complete);
-  const voteReady = Boolean(vote?.field) && !ready.some((field) => field.id === vote.field);
-  const interestPrompt = voteReady ? interestVotePrompt({ name: student.name, uid: student.uid, vote, avoided }) : "";
+  const ticks = tickedInterests(student.interests, catalog);
   const validated = report.verdicts.filter((verdict) => verdict.open === false && verdict.validated).length;
   const invalidated = report.verdicts.filter((verdict) => verdict.open === false && !verdict.validated).length;
   const open = report.verdicts.filter((verdict) => verdict.open).length;
@@ -167,29 +162,22 @@ function StudentReport({ student, items, strands, allItems, catalog }) {
           <h2>How far each field goes</h2>
           <FieldCounts fields={fields} />
           <DepthChart marks={marks} />
-          <InterestReport vote={vote} avoided={avoided} />
+          <InterestReport ticks={ticks} />
         </div>
       </section>
       <section className="bezel">
-        <div className="bezel-plate"><span>Next cluster</span><span>{ready.length || interestPrompt ? "Ready" : "Open"}</span></div>
+        <div className="bezel-plate"><span>Next cluster</span><span>{ready.length ? "Ready" : "Open"}</span></div>
         <div className="bezel-screen">
           <h2>Fields ready for more questions</h2>
           {ready.length ? ready.map((field) => (
             <ExpansionPrompt
               key={field.id}
-              prompt={fieldClusterPrompt({
-                name: student.name,
-                uid: student.uid,
-                field,
-                vote,
-                avoided,
-              })}
+              prompt={fieldClusterPrompt({ name: student.name, uid: student.uid, field })}
               pending=""
             />
           )) : (
-            <p>A prompt appears when a student finishes every current question in a field, or when they cast an interest vote for a subfield that still needs a cluster.</p>
+            <p>A prompt appears when a student finishes every current question in a field. Interest ticks are a register only; they do not choose the next module.</p>
           )}
-          {interestPrompt ? <ExpansionPrompt prompt={interestPrompt} pending="" /> : null}
           {prompt ? <ExpansionPrompt prompt={prompt} pending="" /> : null}
         </div>
       </section>
