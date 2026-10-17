@@ -46,27 +46,58 @@ test("expansion prompts require passages and core-then-branch deepening", () => 
       id: "history",
       title: "History",
       complete: true,
+      held: true,
+      matched: 5,
+      total: 6,
+      need: 5,
       depth: 2,
       label: "Year 10",
       nextStrandId: "history-cluster-2",
+      missDetails: [],
     },
   });
   assert.match(cluster, /two passage paragraphs/);
   assert.match(cluster, /deepen and broaden/);
   assert.match(cluster, /Interest checkboxes are a register only/);
+  const practice = fieldClusterPrompt({
+    name: "Student",
+    uid: "abc",
+    field: {
+      id: "history",
+      title: "History",
+      complete: true,
+      held: false,
+      matched: 4,
+      total: 6,
+      need: 5,
+      depth: 2,
+      label: "Needs another module",
+      nextStrandId: "history-practice",
+      missDetails: [{
+        id: "hist-1",
+        prompt: "What year was the Treaty signed?",
+        chosen: "1841",
+        repair: "1840 at Waitangi.",
+      }],
+    },
+  });
+  assert.match(practice, /same field covering the missed/);
+  assert.match(practice, /What year was the Treaty signed/);
   const module = modulePrompt({
     name: "Student",
     uid: "abc",
     outcome: {
       complete: true,
+      held: true,
       strandId: "science-earth",
       title: "Earth",
       depth: 2,
       field: "geology",
       missed: [],
+      missDetails: [],
       recommendation: "Write the next module one step deeper.",
     },
   });
-  assert.match(module, /deepen and broaden/);
+  assert.match(module, /next deeper module/);
   assert.match(module, /two-paragraph/);
 });

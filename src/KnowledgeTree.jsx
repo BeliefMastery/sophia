@@ -8,10 +8,27 @@ const stateLabel = {
   open: "Open",
   active: "Active",
   complete: "Complete",
+  practice: "Practice",
 };
 
 function interestKey(node) {
   return node.field || node.id;
+}
+
+function ResultMarks({ marks, complete, held }) {
+  if (!marks?.length) return null;
+  return (
+    <div className="tech-marks" aria-label="Question results">
+      {marks.map((mark, index) => (
+        <span key={`${mark}-${index}`} className={`tech-mark is-${mark}`} title={mark} />
+      ))}
+      {complete ? (
+        <span className="tech-mark-caption">
+          {held ? "Deeper branch open" : "Another module in this field"}
+        </span>
+      ) : null}
+    </div>
+  );
 }
 
 export function KnowledgeTree({
@@ -37,7 +54,6 @@ export function KnowledgeTree({
     const next = { ...(interests || {}), updatedAt: Date.now() };
     if (next[key]) delete next[key];
     else next[key] = true;
-    // Drop falsey leftover keys except updatedAt
     for (const [id, value] of Object.entries(next)) {
       if (id !== "updatedAt" && value !== true) delete next[id];
     }
@@ -46,7 +62,11 @@ export function KnowledgeTree({
 
   function onNodeActivate(node) {
     setFocusId(node.id);
-    if (node.studyable && node.field && (node.state === "open" || node.state === "active" || node.state === "complete")) {
+    if (
+      node.studyable
+      && node.field
+      && (node.state === "open" || node.state === "active" || node.state === "complete" || node.state === "practice")
+    ) {
       onStudy(node.field);
     }
   }
@@ -54,14 +74,15 @@ export function KnowledgeTree({
   return (
     <div className="tech-tree">
       <p className="quiet">
-        Work through open branches. Locked ones wait on earlier knowledge. Planned ones are not written yet — mark interest if you want them later.
+        Work through open branches. A deeper branch opens when enough first answers match.
+        Falling short keeps you in this field for another module. Planned ones are not written yet.
       </p>
       <div className="tech-board" role="list">
-        {tiers.map(({ tier, nodes }) => (
+        {tiers.map(({ tier, nodes: tierNodes }) => (
           <div key={tier} className="tech-column" data-tier={tier}>
             <p className="tech-column-label">{tier === 0 ? "Domains" : `Branch ${tier}`}</p>
             <ul className="tech-nodes">
-              {nodes.map((node) => {
+              {tierNodes.map((node) => {
                 const kids = childrenOf(evaluated, node.id);
                 const interested = interests?.[interestKey(node)] === true;
                 return (
@@ -80,6 +101,9 @@ export function KnowledgeTree({
                         <>
                           <span className="tech-node-meta">
                             {node.progress.answered} of {node.progress.total}
+                            {node.progress.complete
+                              ? ` · ${node.progress.matched} held (need ${node.progress.need})`
+                              : ""}
                             {node.progress.depth ? ` · Depth ${node.progress.depth}` : ""}
                           </span>
                           <span className="meter" aria-hidden="true">
@@ -90,6 +114,11 @@ export function KnowledgeTree({
                             }}
                             />
                           </span>
+                          <ResultMarks
+                            marks={node.progress.marks}
+                            complete={node.progress.complete}
+                            held={node.progress.held}
+                          />
                         </>
                       ) : null}
                       {interested ? <span className="tech-interest">Interest marked</span> : null}
@@ -110,13 +139,26 @@ export function KnowledgeTree({
           <h2>{focus.title}</h2>
           <p>{focus.summary}</p>
           <p className="quiet">{focus.reason}</p>
+          {focus.progress?.marks?.length ? (
+            <ResultMarks
+              marks={focus.progress.marks}
+              complete={focus.progress.complete}
+              held={focus.progress.held}
+            />
+          ) : null}
           {focus.studyable && focus.field ? (
             <button
               type="button"
               className="primary"
               onClick={() => onStudy(focus.field)}
             >
-              {focus.state === "active" ? "Continue this field" : focus.state === "complete" ? "Open this field" : "Study this field"}
+              {focus.state === "active"
+                ? "Continue this field"
+                : focus.state === "practice"
+                  ? "Open this field"
+                  : focus.state === "complete"
+                    ? "Open this field"
+                    : "Study this field"}
             </button>
           ) : null}
           {focus.field ? (

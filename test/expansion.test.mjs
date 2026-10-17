@@ -234,20 +234,25 @@ test("a later module that holds raises the field depth without renaming the stra
     depth: 2,
     ageTier: "year10",
   };
-  const items = [1, 2, 3].map((order) => ({
+  const items = [1, 2, 3, 4, 5, 6].map((order) => ({
     id: `physics-mod-${order}`,
     strandId: "science-physics",
     claim: "physics",
     order,
+    prompt: `Physics question ${order}`,
+    choices: { a: { text: "Choice A" }, b: { text: "Choice B" } },
   }));
   const attempts = items.map((item, index) => ({
     itemId: item.id,
-    matched: index < 2,
+    matched: index < 5,
+    selected: index < 5 ? "a" : "b",
     submittedAt: index + 1,
   }));
-  const repairs = { "physics-mod-3": { answer: "A newton is a force." } };
+  const repairs = { "physics-mod-6": { answer: "A newton is a force." } };
   const outcome = moduleOutcome(strand, items, attempts, repairs);
   assert.equal(outcome.complete, true);
+  assert.equal(outcome.held, true);
+  assert.equal(outcome.matched, 5);
   assert.equal(outcome.depth, 2);
   assert.equal(outcome.position, peerAt);
   assert.equal(outcome.mode, "deeper");
@@ -276,29 +281,45 @@ test("a later module that holds raises the field depth without renaming the stra
 
   const prompt = modulePrompt({ name: "Sample", uid: "uid-1", outcome });
   assert.match(prompt, /science-physics-depth-3/);
+  assert.match(prompt, /Physics question 6/);
   assert.match(prompt, /does not award NCEA/);
   assert.equal(modulePrompt({ name: "Sample", uid: "uid-1", outcome: { ...outcome, complete: false } }), "");
 });
 
 test("a later module that misses stays at the same difficulty", () => {
+  const items = [1, 2, 3, 4, 5, 6].map((order) => ({
+    id: `physics-mod-${order}`,
+    strandId: "science-physics",
+    order,
+    prompt: `Physics question ${order}`,
+    choices: { a: { text: "A" }, b: { text: "B" } },
+  }));
   const outcome = moduleOutcome({
     id: "science-physics",
     field: "physics",
     depth: 2,
     ageTier: "year10",
     title: "Physics foundation",
-  }, [1, 2, 3].map((order) => ({ id: `physics-mod-${order}`, strandId: "science-physics", order })), [
-    { itemId: "physics-mod-1", matched: false, submittedAt: 1 },
-    { itemId: "physics-mod-2", matched: false, submittedAt: 2 },
-    { itemId: "physics-mod-3", matched: true, submittedAt: 3 },
+  }, items, [
+    { itemId: "physics-mod-1", matched: false, selected: "b", submittedAt: 1 },
+    { itemId: "physics-mod-2", matched: false, selected: "b", submittedAt: 2 },
+    { itemId: "physics-mod-3", matched: true, selected: "a", submittedAt: 3 },
+    { itemId: "physics-mod-4", matched: true, selected: "a", submittedAt: 4 },
+    { itemId: "physics-mod-5", matched: true, selected: "a", submittedAt: 5 },
+    { itemId: "physics-mod-6", matched: true, selected: "a", submittedAt: 6 },
   ], {
     "physics-mod-1": { answer: "one" },
     "physics-mod-2": { answer: "two" },
   });
+  assert.equal(outcome.complete, true);
+  assert.equal(outcome.held, false);
+  assert.equal(outcome.matched, 4);
   assert.equal(outcome.mode, "same");
   assert.equal(outcome.label, "Short of Year 10");
   assert.ok(outcome.position < peerAt);
   assert.equal(outcome.nextStrandId, "science-physics-practice");
+  assert.match(modulePrompt({ name: "Sample", uid: "uid-1", outcome }), /same field covering the missed/);
+  assert.match(modulePrompt({ name: "Sample", uid: "uid-1", outcome }), /Physics question 1/);
 });
 
 test("question counts stay with each field across every block", () => {
@@ -366,11 +387,14 @@ test("a finished field asks for the next cluster and leaves other fields open", 
   const math = done.find((field) => field.id === "mathematics");
   const electronics = done.find((field) => field.id === "electronics");
   assert.equal(math.complete, true);
+  assert.equal(math.held, false);
   assert.equal(electronics.complete, true);
+  assert.equal(electronics.held, true);
   assert.equal(nextFieldStep(strands, items, doneAttempts, repairs, "mathematics").kind, "done");
   const prompt = fieldClusterPrompt({ name: "Sophia", uid: "uid-1", field: math });
   assert.match(prompt, /Field complete: mathematics/);
-  assert.match(prompt, /next cluster/i);
+  assert.match(prompt, /did not hold/i);
+  assert.match(prompt, /same field covering the missed/);
   assert.match(prompt, /does not award NCEA/);
   assert.doesNotMatch(prompt, /electronics/);
 });
