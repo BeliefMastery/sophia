@@ -9,6 +9,7 @@ on:
       - content/placement-check.mjs
       - content/modules.mjs
       - content/modules-part2.mjs
+      - content/modules-university.mjs
       - content/interest-tree.mjs
       - content/knowledge-tree.mjs
       - lib/checkContent.mjs

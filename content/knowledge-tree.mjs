@@ -9,7 +9,7 @@ const nodes = [
     parentId: null,
     tier: 0,
     status: "live",
-    summary: "Number, algebra, and core Year 10 methods.",
+    summary: "Number, algebra, and core methods that deepen toward university.",
   },
   {
     id: "english",
@@ -18,7 +18,7 @@ const nodes = [
     parentId: null,
     tier: 0,
     status: "live",
-    summary: "Reading, writing, and language control.",
+    summary: "Reading, writing, language, and literature.",
   },
   {
     id: "science",
@@ -45,19 +45,28 @@ const nodes = [
     parentId: null,
     tier: 0,
     status: "live",
-    summary: "Psychology, social skill, and human inquiry.",
+    summary: "Psychology, philosophy, and human inquiry.",
   },
   {
-    id: "management",
-    title: "Management",
+    id: "commerce",
+    title: "Commerce",
     field: null,
     parentId: null,
     tier: 0,
     status: "live",
-    summary: "Organisation, design, and applied systems.",
+    summary: "Business, accounting, marketing, and management.",
+  },
+  {
+    id: "applied",
+    title: "Applied fields",
+    field: null,
+    parentId: null,
+    tier: 0,
+    status: "live",
+    summary: "Law, design, computing, AI literacy, and architecture.",
   },
 
-  // Mathematics branches
+  // Mathematics
   {
     id: "finance",
     title: "Finance",
@@ -73,19 +82,19 @@ const nodes = [
     field: "statistics",
     parentId: "mathematics",
     tier: 1,
-    status: "planned",
-    summary: "Data, chance, and reading results.",
+    status: "live",
+    summary: "Data, chance, and careful claims. Year 11 gateway toward university statistics.",
   },
 
-  // English branches
+  // English
   {
     id: "literature",
     title: "Literature",
     field: "literature",
     parentId: "english",
     tier: 1,
-    status: "planned",
-    summary: "Longer texts and literary method.",
+    status: "live",
+    summary: "Narrator, theme, and evidence from text. Year 11 gateway toward university literature.",
   },
   {
     id: "linguistics",
@@ -93,11 +102,11 @@ const nodes = [
     field: "linguistics",
     parentId: "english",
     tier: 1,
-    status: "planned",
-    summary: "How language is built and used.",
+    status: "live",
+    summary: "Form, meaning, and register. Year 11 gateway toward university linguistics.",
   },
 
-  // Science children (domain container does not block)
+  // Science
   {
     id: "claims",
     title: "Claims and evidence",
@@ -189,7 +198,7 @@ const nodes = [
     summary: "Earth and human systems as linked wholes.",
   },
 
-  // Social children
+  // Social
   {
     id: "history",
     title: "History",
@@ -245,7 +254,7 @@ const nodes = [
     summary: "Comparative global strand after the core anchors.",
   },
 
-  // Mind children
+  // Mind
   {
     id: "psychology",
     title: "Psychology",
@@ -270,8 +279,8 @@ const nodes = [
     field: "philosophy",
     parentId: "mind",
     tier: 1,
-    status: "planned",
-    summary: "Argument, ethics, and careful questions.",
+    status: "live",
+    summary: "Argument, ethics, and careful questions. Year 11 gateway toward university philosophy.",
   },
   {
     id: "sociology",
@@ -279,8 +288,8 @@ const nodes = [
     field: "sociology",
     parentId: "mind",
     tier: 1,
-    status: "planned",
-    summary: "Groups, norms, and social structure.",
+    status: "live",
+    summary: "Groups, norms, and social structure. Year 11 gateway toward university sociology.",
   },
   {
     id: "anthropology",
@@ -288,64 +297,93 @@ const nodes = [
     field: "anthropology",
     parentId: "mind",
     tier: 1,
-    status: "planned",
-    summary: "Culture, meaning, and human difference.",
+    status: "live",
+    summary: "Culture, meaning, and human difference. Year 11 gateway toward university anthropology.",
   },
 
-  // Management children
+  // Commerce
+  {
+    id: "accounting",
+    title: "Accounting",
+    field: "accounting",
+    parentId: "commerce",
+    tier: 1,
+    status: "live",
+    summary: "Assets, liabilities, and a simple profit idea. Year 11 gateway toward university accounting.",
+  },
+  {
+    id: "marketing",
+    title: "Marketing",
+    field: "marketing",
+    parentId: "commerce",
+    tier: 1,
+    status: "live",
+    summary: "Customer need, offer, and channel. Year 11 gateway toward university marketing.",
+  },
   {
     id: "managementCore",
-    title: "Management practice",
+    title: "Management",
     field: "management",
-    parentId: "management",
+    parentId: "commerce",
     tier: 1,
-    status: "planned",
-    summary: "PESTEL, SWOT, and organised action.",
+    status: "live",
+    summary: "Goal, plan, organise, lead, and control. Year 11 gateway toward university management.",
   },
+  {
+    id: "business",
+    title: "Business",
+    field: "business",
+    parentId: "commerce",
+    tier: 1,
+    status: "live",
+    summary: "Firm, customer, cost, and competition. Year 11 gateway toward university business.",
+  },
+
+  // Applied
   {
     id: "design",
     title: "Design",
     field: "design",
-    parentId: "management",
+    parentId: "applied",
     tier: 1,
-    status: "planned",
-    summary: "Briefs, users, and made things.",
+    status: "live",
+    summary: "Brief, user, prototype, and test. Year 11 gateway toward university design.",
   },
   {
     id: "law",
     title: "Law",
     field: "law",
-    parentId: "management",
+    parentId: "applied",
     tier: 1,
-    status: "planned",
-    summary: "Rules, rights, and institutions.",
+    status: "live",
+    summary: "Rules, rights, and fair process. Year 11 gateway toward university law.",
   },
   {
     id: "aiLiteracy",
     title: "AI literacy",
     field: "aiLiteracy",
-    parentId: "management",
+    parentId: "applied",
     tier: 1,
-    status: "planned",
-    summary: "What AI systems can and cannot do.",
+    status: "live",
+    summary: "Models, data, limits, and human checks. Year 11 gateway toward applied AI study.",
   },
   {
     id: "computerScience",
     title: "Computer science",
     field: "computerScience",
-    parentId: "management",
+    parentId: "applied",
     tier: 1,
-    status: "planned",
-    summary: "Computation, data, and building logic.",
+    status: "live",
+    summary: "Algorithms, data, and clear steps. Year 11 gateway toward university computer science.",
   },
   {
     id: "architecture",
     title: "Architecture",
     field: "architecture",
-    parentId: "management",
+    parentId: "applied",
     tier: 1,
-    status: "planned",
-    summary: "Space, structure, and built form.",
+    status: "live",
+    summary: "Space, structure, light, and site. Year 11 gateway toward university architecture.",
   },
 ];
 

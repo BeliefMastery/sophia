@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { onValue, ref, set } from "firebase/database";
-import { db } from "./firebase.js";
+import { db, firebaseConfig } from "./firebase.js";
 import { studentReport } from "../lib/report.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
 import { reviewRecord } from "../lib/markRepair.mjs";
+import { createStudentAccount } from "../lib/createStudent.mjs";
 import {
   applyModules,
   chartMarks,
@@ -63,6 +64,12 @@ export function Admin({ user, onStudy }) {
   const [view, setView] = useState("students");
   const [selectedUid, setSelectedUid] = useState("");
   const [reviewSaving, setReviewSaving] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newName, setNewName] = useState("");
+  const [createBusy, setCreateBusy] = useState(false);
+  const [createMessage, setCreateMessage] = useState("");
+  const [createError, setCreateError] = useState("");
 
   useEffect(() => {
     const watch = (path, setValue) => onValue(ref(db, path), (snapshot) => {
@@ -100,6 +107,33 @@ export function Admin({ user, onStudy }) {
       setError("That review was not saved. Try it again.");
     } finally {
       setReviewSaving("");
+    }
+  }
+
+  async function onCreateStudent(event) {
+    event.preventDefault();
+    if (createBusy) return;
+    setCreateBusy(true);
+    setCreateError("");
+    setCreateMessage("");
+    try {
+      const created = await createStudentAccount(firebaseConfig, {
+        email: newEmail,
+        password: newPassword,
+        name: newName || newEmail.split("@")[0],
+      });
+      setCreateMessage(`Created ${created.name} (${created.email}). They can sign in now.`);
+      setNewEmail("");
+      setNewPassword("");
+      setNewName("");
+    } catch (failure) {
+      const code = failure?.code || "";
+      if (code === "auth/email-already-in-use") setCreateError("That email already has an account.");
+      else if (code === "auth/invalid-email") setCreateError("That email address is not valid.");
+      else if (code === "auth/weak-password") setCreateError("Choose a stronger password (at least 6 characters).");
+      else setCreateError(failure?.message || "That student account was not created.");
+    } finally {
+      setCreateBusy(false);
     }
   }
 
@@ -182,6 +216,46 @@ export function Admin({ user, onStudy }) {
           {onStudy ? (
             <button type="button" className="text" onClick={onStudy}>Study as a student</button>
           ) : null}
+          <form className="admin-create" onSubmit={onCreateStudent}>
+            <h2>Add a student</h2>
+            <p className="quiet">Creates a Firebase login. Share the email and initial password with the student.</p>
+            <label>
+              Display name
+              <input
+                value={newName}
+                onChange={(event) => setNewName(event.target.value)}
+                maxLength={80}
+                autoComplete="off"
+                placeholder="Optional"
+              />
+            </label>
+            <label>
+              Email
+              <input
+                type="email"
+                required
+                value={newEmail}
+                onChange={(event) => setNewEmail(event.target.value)}
+                autoComplete="off"
+              />
+            </label>
+            <label>
+              Initial password
+              <input
+                type="text"
+                required
+                minLength={6}
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+                autoComplete="new-password"
+              />
+            </label>
+            <button type="submit" className="primary" disabled={createBusy}>
+              {createBusy ? "Creating…" : "Create student login"}
+            </button>
+            {createMessage ? <p className="quiet">{createMessage}</p> : null}
+            {createError ? <p className="alert" role="alert">{createError}</p> : null}
+          </form>
         </div>
       </section>
 
