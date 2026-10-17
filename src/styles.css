@@ -150,6 +150,60 @@ summary {
   color: var(--muted);
 }
 
+.student-fold {
+  padding: 10px 12px 12px;
+}
+
+.student-fold > details {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.student-fold-summary {
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.student-fold-summary::-webkit-details-marker {
+  display: none;
+}
+
+.student-fold-summary::after {
+  content: "Show report";
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.student-fold > details[open] > .student-fold-summary::after {
+  content: "Hide report";
+}
+
+.student-fold-name {
+  font-family: Palatino, Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.student-fold-meta {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.student-fold-body {
+  display: grid;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.bezel.nested {
+  box-shadow: none;
+}
+
 .choices {
   display: grid;
   gap: 8px;
