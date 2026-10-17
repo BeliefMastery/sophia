@@ -14,7 +14,7 @@ A zip of `main` is at https://github.com/BeliefMastery/sophia/archive/refs/heads
 
 The live site is Firebase Hosting: https://sophia-138fe.web.app
 
-When a section is finished, the parent login shows a depth chart and a prompt for the next short module. A wrong answer opens a two-paragraph in-app reading and a follow-up from that text, not an external search. Students can tick school and university fields of interest in `content/interest-tree.mjs`; those ticks are a register only. The rules for adding the next module are in `plan.md` and `database.md`. Early modules stay on essentials; later ones deepen and broaden. A new topic is a new strand. Existing ids stay.
+When a section is finished, the parent login shows a depth chart and a prompt for the next short module. A wrong answer opens a two-paragraph in-app reading and a follow-up from that text, not an external search. Students pick work from the knowledge tech-tree in `content/knowledge-tree.mjs` (live branches unlock after prerequisites; planned branches can be marked as interest only). The rules for adding the next module are in `plan.md` and `database.md`. Early modules stay on essentials; later ones deepen and broaden. A new topic is a new strand. Existing ids stay.
 
 ## How the system is split
 

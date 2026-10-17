@@ -1,35 +1,8 @@
-/** Curated interest checkbox options. Seed writes catalog/interests. Register only; does not create modules. */
+/** Interest options derived from the knowledge tech-tree. Seed writes catalog/interests. */
 
-const options = [
-  { id: "mathematics", title: "Mathematics", group: "School" },
-  { id: "english", title: "English", group: "School" },
-  { id: "physics", title: "Physics", group: "School" },
-  { id: "chemistry", title: "Chemistry", group: "School" },
-  { id: "biology", title: "Biology", group: "School" },
-  { id: "geology", title: "Geology", group: "School" },
-  { id: "history", title: "History", group: "School" },
-  { id: "politics", title: "Politics", group: "School" },
-  { id: "technology", title: "Technology", group: "School" },
-  { id: "psychology", title: "Psychology", group: "School" },
-  { id: "socialManagement", title: "Social management", group: "School" },
-  { id: "electronics", title: "Electronics", group: "School" },
-  { id: "economics", title: "Economics", group: "School" },
-  { id: "finance", title: "Finance", group: "School" },
-  { id: "management", title: "Management", group: "School" },
-  { id: "philosophy", title: "Philosophy", group: "University" },
-  { id: "design", title: "Design", group: "University" },
-  { id: "literature", title: "Literature", group: "University" },
-  { id: "linguistics", title: "Linguistics", group: "University" },
-  { id: "sociology", title: "Sociology", group: "University" },
-  { id: "anthropology", title: "Anthropology", group: "University" },
-  { id: "computerScience", title: "Computer science", group: "University" },
-  { id: "engineering", title: "Engineering", group: "University" },
-  { id: "architecture", title: "Architecture", group: "University" },
-  { id: "law", title: "Law", group: "University" },
-  { id: "medicine", title: "Medicine", group: "University" },
-  { id: "environmentalScience", title: "Environmental science", group: "University" },
-  { id: "aiLiteracy", title: "AI literacy", group: "University" },
-];
+import { interestOptionsFromTree, nodes } from "./knowledge-tree.mjs";
+
+const options = interestOptionsFromTree(nodes);
 
 function interestsCatalogRecord(list = options) {
   const out = {};
@@ -37,7 +10,7 @@ function interestsCatalogRecord(list = options) {
     out[option.id] = {
       title: option.title,
       group: option.group,
-      order: index + 1,
+      order: option.order ?? index + 1,
     };
   });
   return out;

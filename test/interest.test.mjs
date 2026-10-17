@@ -5,12 +5,12 @@ import { checkInterestTree } from "../lib/checkInterestTree.mjs";
 import { fieldClusterPrompt, modulePrompt } from "../lib/expansion.mjs";
 import { buildPassage, checkPassage } from "../lib/passage.mjs";
 
-test("interest options are valid and include university fields", () => {
+test("interest options are valid and include planned university-style fields", () => {
   assert.equal(checkInterestTree(options).length, 0);
   const catalog = interestsCatalogRecord(options);
   const listed = optionsFromCatalog(catalog);
   assert.ok(listed.some((option) => option.id === "philosophy"));
-  assert.ok(listed.some((option) => option.group === "University"));
+  assert.ok(listed.some((option) => option.id === "design"));
 });
 
 test("ticked interests list only true catalog options", () => {

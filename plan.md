@@ -108,14 +108,14 @@ The placement check is depth 1, a survey across fields. Later study is short mod
 The parent login then shows three things.
 
 - A depth chart. Each field has a depth, which is how many modules in that field are finished. The bar is the age tier those results support. The tiers are Year 9 at age 14, Year 10 at age 15, Year 11 at age 16, Year 12 at age 17, and Year 13 at age 18. The peer line is Year 10, age 15. A weak note that simply holds stays left of that line. Meeting the Year 10 mathematics note sits on the line. An advanced note that holds sits above the line, toward Year 11, and is not called Year 12, Year 13, or NCEA. Passing a note that sat below Year 10 moves toward the line and does not cross it.
-- Registered interests. The student ticks school and university fields from `content/interest-tree.mjs` (seeded to `catalog/interests`). Those ticks are stored at `interests/{uid}`. They are a register only. They do not create modules or choose the next cluster.
+- Knowledge tech-tree. The student home map is `content/knowledge-tree.mjs` (seeded to `catalog/tree`). Domains fan into live and planned branches. A child unlocks when its parent field section is finished; planned nodes stay visible for interest only. Interest ticks still live at `interests/{uid}` and do not create modules.
 - An expansion prompt. It names the finished section, the student id, the missed item ids, and the next strand id and difficulty for each field. Warwick copies that prompt into Cursor. The agent fetches `attempts/{uid}`, `repairs/{uid}`, and the guides for the missed ids, then writes one new module. The prompt is computed on the admin screen. It is not stored as its own database path, and it is not emailed. New modules stay shared once seeded.
 
 A wrong choice does not open the web. It opens a two-paragraph in-app reading on the guide that buries the idea, then a different written question answerable from that reading alone.
 
 ### Module deepening
 
-Early modules in a field cover primary essential knowledge only. As modules deepen, they broaden range as well as difficulty: more coverage and optional branches from the core already taught. When a module finishes, the expansion prompt requires the next cluster to deepen and broaden, list the core ideas already covered, and avoid only restating them. Explicit branch strands keep the same `field` and set `continues` to the finished strand. There is no student branch-picker UI in this stage.
+Early modules in a field cover primary essential knowledge only. As modules deepen, they broaden range as well as difficulty: more coverage and optional branches from the core already taught. When a module finishes, the expansion prompt requires the next cluster to deepen and broaden, list the core ideas already covered, and avoid only restating them. Explicit branch strands keep the same `field` and set `continues` to the finished strand. New branches should also be added to `content/knowledge-tree.mjs` so the student map stays ahead of unwritten content.
 
 The next module follows the grade already on the screen.
 

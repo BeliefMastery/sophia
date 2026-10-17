@@ -30,7 +30,8 @@ The root is closed. Someone who is not signed in cannot read or write.
 | `attempts/{uid}/{attemptId}` | Her answer. She can create one. She cannot edit or delete it | Read, create own | Read all |
 | `reviews/{uid}/{attemptId}` | Known, partial, or unknown, plus a note | Read own | Read, write |
 | `mastery/{uid}/{strandId}/{ideaId}` | Whether an idea is currently known | Read own | Read, write |
-| `catalog/interests` | Curated checkbox options (school + university fields) | Read | Read, write |
+| `catalog/interests` | Interest options derived from the knowledge tree | Read | Read, write |
+| `catalog/tree` | Knowledge tech-tree nodes (domains, branches, planned leaves) | Read | Read, write |
 | `interests/{uid}` | Checkbox register (`optionId: true` plus `updatedAt`) | Read, write own | Read all |
 
 `attemptId` is a Realtime Database push id. Do not use the item id as the attempt id. She will answer the same idea more than once, and the earlier answer has to remain.
@@ -39,9 +40,13 @@ The root is closed. Someone who is not signed in cannot read or write.
 
 After a miss, the student reads `guides/{itemId}.passage`: exactly two paragraphs that teach the idea without quoting the correct choice text. `followPrompt` must be answerable from that reading alone. Do not put external discovery links on the student repair path. Do not store passages on `sources/*` for this flow; those are readable without a miss.
 
+## Knowledge tree
+
+The student field map is a tech-tree in git as `content/knowledge-tree.mjs`. The seed job writes it to `catalog/tree`. Domain roots fan into live and planned branches. Within a branch, a child with live content unlocks only when its parent field’s current section is complete. Domain containers do not block their children. Planned nodes stay visible with no study content so a student can mark interest.
+
 ## Interest register
 
-The checkbox list lives in git as `content/interest-tree.mjs`. The seed job writes it to `catalog/interests`. Grow it by editing that file and re-seeding.
+Interest options are derived from the knowledge tree (`content/interest-tree.mjs`). The seed job writes them to `catalog/interests`. Grow both by editing the tree and re-seeding.
 
 ```json
 {

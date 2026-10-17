@@ -10,9 +10,12 @@ on:
       - content/modules.mjs
       - content/modules-part2.mjs
       - content/interest-tree.mjs
+      - content/knowledge-tree.mjs
       - lib/checkContent.mjs
       - lib/checkModules.mjs
       - lib/checkInterestTree.mjs
+      - lib/checkKnowledgeTree.mjs
+      - lib/knowledgeTree.mjs
       - lib/passage.mjs
       - lib/records.mjs
       - scripts/seed-placement-check.js

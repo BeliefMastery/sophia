@@ -8,6 +8,7 @@ import { passageParagraphs } from "../lib/explain.mjs";
 import { fieldPlace, fieldStudy, nextFieldStep } from "../lib/expansion.mjs";
 import { Admin } from "./Admin.jsx";
 import { InterestVote } from "./InterestVote.jsx";
+import { KnowledgeTree } from "./KnowledgeTree.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
 
 const signInMessages = {
@@ -43,6 +44,7 @@ export function App() {
   const [pendingRepair, setPendingRepair] = useState(null);
   const [repairDraft, setRepairDraft] = useState("");
   const [catalog, setCatalog] = useState(null);
+  const [tree, setTree] = useState(null);
   const [interests, setInterests] = useState(null);
   const [interestSaving, setInterestSaving] = useState(false);
   const [interestError, setInterestError] = useState("");
@@ -83,6 +85,9 @@ export function App() {
     const unsubCatalog = onValue(ref(db, "catalog/interests"), (snapshot) => {
       setCatalog(snapshot.val() || {});
     });
+    const unsubTree = onValue(ref(db, "catalog/tree"), (snapshot) => {
+      setTree(snapshot.val() || {});
+    });
     const unsubInterests = onValue(ref(db, `interests/${user.uid}`), (snapshot) => {
       setInterests(snapshot.val() || {});
     });
@@ -93,6 +98,7 @@ export function App() {
       unsubRole();
       unsubRepairs();
       unsubCatalog();
+      unsubTree();
       unsubInterests();
     };
   }, [user]);
@@ -105,6 +111,7 @@ export function App() {
     setRepairs(null);
     setChosenField("");
     setCatalog(null);
+    setTree(null);
     setInterests(null);
     setInterestError("");
     setStudyMode(false);
@@ -306,7 +313,7 @@ export function App() {
     );
   }
 
-  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || interests === null) {
+  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || tree === null || interests === null) {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
 
@@ -340,29 +347,19 @@ export function App() {
   if (!current) {
     return (
       <Shell {...shellProps}>
-        <Bezel plate="Fields" aside="Choose one" scene="study">
-          <h1 ref={headingRef} tabIndex={-1}>Choose a field</h1>
-          <p>Work in one field at a time. Your place in each field is saved. Fields with no answers yet stay visible as not started.</p>
+        <Bezel plate="Knowledge map" aside="Tech tree" scene="study">
+          <h1 ref={headingRef} tabIndex={-1}>Knowledge map</h1>
+          <p>Choose an open branch. Later branches unlock when earlier knowledge is finished.</p>
           {parent ? <p className="quiet">You are in student mode. Answers are saved on this admin login so you can review them in the report.</p> : null}
-          <ul className="domains">
-            {fields.map((field) => (
-              <li key={field.id}>
-                <button type="button" className="domain" onClick={() => { setSelected(""); setChosenField(field.id); }}>
-                  <span className="domain-title">{field.title}</span>
-                  <span className="domain-meta">
-                    {field.depth ? `Depth ${field.depth}. ` : ""}
-                    {field.complete ? "Section finished" : field.label}
-                    {!field.answered ? " · Not started" : ""}
-                  </span>
-                  <span className="domain-count">{field.answered} of {field.total}</span>
-                  <span className="meter" aria-hidden="true">
-                    <span style={{ width: `${field.total ? (field.answered / field.total) * 100 : 0}%` }} />
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          {interestPanel}
+          <KnowledgeTree
+            tree={tree}
+            fields={fields}
+            interests={interests}
+            onStudy={(fieldId) => { setSelected(""); setChosenField(fieldId); }}
+            onSaveInterests={onInterestSave}
+            savingInterest={interestSaving}
+            interestError={interestError}
+          />
         </Bezel>
       </Shell>
     );
@@ -474,10 +471,6 @@ function Shell({ user, onAdmin, children }) {
         </div>
       </header>
       {children}
-      <footer className="files">
-        <a href="https://github.com/BeliefMastery/sophia">Project files on GitHub</a>
-        <a href="https://github.com/BeliefMastery/sophia/archive/refs/heads/main.zip">Download this copy</a>
-      </footer>
     </main>
   );
 }

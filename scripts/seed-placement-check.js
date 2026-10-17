@@ -72,7 +72,7 @@ function accessToken(serviceAccount) {
   });
 }
 
-function databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, moduleItems, catalog) {
+function databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, moduleItems, interestCatalog, treeCatalog) {
   const writes = [[`/strands/placement-check`, strand]];
   for (const item of items) {
     writes.push([`/items/${item.id}`, publicItem(item)]);
@@ -86,7 +86,8 @@ function databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, m
     writes.push([`/items/${item.id}`, publicItem(item)]);
     writes.push([`/guides/${item.id}`, guideRecord(item)]);
   }
-  writes.push(["/catalog/interests", catalog]);
+  writes.push(["/catalog/interests", interestCatalog]);
+  writes.push(["/catalog/tree", treeCatalog]);
   return writes;
 }
 
@@ -132,18 +133,31 @@ async function main() {
   const { strands: firstStrands, items: firstItems } = await import("../content/modules.mjs");
   const { strands: secondStrands, items: secondItems } = await import("../content/modules-part2.mjs");
   const { options, interestsCatalogRecord } = await import("../content/interest-tree.mjs");
+  const { nodes, treeCatalogRecord } = await import("../content/knowledge-tree.mjs");
   const moduleStrands = [...firstStrands, ...secondStrands];
   const moduleItems = [...firstItems, ...secondItems];
   const { checkContent } = await import("../lib/checkContent.mjs");
   const { checkModules } = await import("../lib/checkModules.mjs");
   const { checkInterestTree } = await import("../lib/checkInterestTree.mjs");
+  const { checkKnowledgeTree } = await import("../lib/checkKnowledgeTree.mjs");
   const { publicItem, guideRecord } = await import("../lib/records.mjs");
   const errors = checkContent(strand, items)
     .concat(checkModules(moduleStrands, moduleItems, items))
-    .concat(checkInterestTree(options));
+    .concat(checkInterestTree(options))
+    .concat(checkKnowledgeTree(nodes));
   if (errors.length) fail(errors.join("; "));
-  const catalog = interestsCatalogRecord(options);
-  const writes = databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, moduleItems, catalog);
+  const interestCatalog = interestsCatalogRecord(options);
+  const treeCatalog = treeCatalogRecord(nodes);
+  const writes = databaseWrites(
+    strand,
+    items,
+    publicItem,
+    guideRecord,
+    moduleStrands,
+    moduleItems,
+    interestCatalog,
+    treeCatalog,
+  );
   if (process.env.FIREBASE_DATABASE_EMULATOR_HOST) {
     for (const [dbPath, value] of writes) await putEmulator(dbPath, value);
   } else {
@@ -151,7 +165,7 @@ async function main() {
     const token = await accessToken(serviceAccount);
     for (const [dbPath, value] of writes) await putProduction(token, dbPath, value);
   }
-  console.log(`placement check seeded: ${items.length} questions; modules seeded: ${moduleItems.length}; interests seeded: ${options.length}`);
+  console.log(`placement check seeded: ${items.length} questions; modules seeded: ${moduleItems.length}; interests seeded: ${options.length}; tree nodes: ${nodes.length}`);
 }
 
 main().catch((error) => fail(error.message || "placement seed failed"));
