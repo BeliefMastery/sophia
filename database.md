@@ -8,7 +8,7 @@ The database URL is `https://sophia-138fe-default-rtdb.asia-southeast1.firebased
 
 A signed-in student reads her own profile, attempts, reviews, mastery, written repairs, and the interest catalog. She writes her name, her own attempts, one written repair after a miss, and her interest checkbox register. She reads strands, items, and sources. After a wrong multiple-choice answer is stored, she can read that one guide, including its two-paragraph reading passage.
 
-The parent does that, and also writes placement, strands, items, guides, sources, reviews, mastery, and the interest catalog. The parent login is the admin report: it can read every profile, every attempt, every written repair, and every interest register. Guides are marking notes. Sophia cannot read a guide before she has missed that question, and she cannot read the guide list.
+The parent does that, and also writes placement, strands, items, guides, sources, reviews, mastery, and the interest catalog. The parent login is the admin report: it can read every profile, every attempt, every written repair, and every interest register. From the admin home screen the parent can switch into student mode and take the modules on the same login; those practice attempts and repairs are stored under the parent uid and appear in the report as admin practice. Guides are marking notes. Sophia cannot read a guide before she has missed that question, and she cannot read the guide list.
 
 `roles/{uid}/parent` is true only for the parent. Clients cannot write `roles`. That value is set later with the admin credential, after the login exists.
 

@@ -46,10 +46,26 @@ export function App() {
   const [interests, setInterests] = useState(null);
   const [interestSaving, setInterestSaving] = useState(false);
   const [interestError, setInterestError] = useState("");
+  const [studyMode, setStudyMode] = useState(() => {
+    try {
+      return sessionStorage.getItem("sophia-study-mode") === "1";
+    } catch {
+      return false;
+    }
+  });
   const savingRef = useRef(false);
   const headingRef = useRef(null);
 
   useEffect(() => onAuthStateChanged(auth, setUser), []);
+
+  useEffect(() => {
+    try {
+      if (studyMode) sessionStorage.setItem("sophia-study-mode", "1");
+      else sessionStorage.removeItem("sophia-study-mode");
+    } catch {
+      // sessionStorage may be unavailable
+    }
+  }, [studyMode]);
 
   useEffect(() => {
     if (!user) return undefined;
@@ -91,6 +107,7 @@ export function App() {
     setCatalog(null);
     setInterests(null);
     setInterestError("");
+    setStudyMode(false);
   }, [user]);
 
   const fields = useMemo(
@@ -281,10 +298,10 @@ export function App() {
     );
   }
 
-  if (parent) {
+  if (parent && !studyMode) {
     return (
       <Shell user={user}>
-        <Admin user={user} />
+        <Admin user={user} onStudy={() => setStudyMode(true)} />
       </Shell>
     );
   }
@@ -292,6 +309,11 @@ export function App() {
   if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || interests === null) {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
+
+  const shellProps = {
+    user,
+    onAdmin: parent ? () => { setChosenField(""); setStudyMode(false); } : null,
+  };
 
   const interestPanel = (
     <InterestVote
@@ -305,7 +327,7 @@ export function App() {
 
   if (!library.length) {
     return (
-      <Shell user={user}>
+      <Shell {...shellProps}>
         <Bezel plate="Fields" aside="Empty">
           <h1 ref={headingRef} tabIndex={-1}>The questions are not loaded.</h1>
           <p>There is no field to open yet.</p>
@@ -317,10 +339,11 @@ export function App() {
   const current = fields.find((field) => field.id === chosenField);
   if (!current) {
     return (
-      <Shell user={user}>
+      <Shell {...shellProps}>
         <Bezel plate="Fields" aside="Choose one" scene="study">
           <h1 ref={headingRef} tabIndex={-1}>Choose a field</h1>
           <p>Work in one field at a time. Your place in each field is saved. Fields with no answers yet stay visible as not started.</p>
+          {parent ? <p className="quiet">You are in student mode. Answers are saved on this admin login so you can review them in the report.</p> : null}
           <ul className="domains">
             {fields.map((field) => (
               <li key={field.id}>
@@ -351,7 +374,7 @@ export function App() {
     const chosen = activeRepair.item.choices?.[activeRepair.selected]?.text || "";
     const follow = typeof guide?.followPrompt === "string" ? guide.followPrompt : "";
     return (
-      <Shell user={user}>
+      <Shell {...shellProps}>
         <Bezel plate="Discovery" aside="Written answer" scene="discovery">
           <p>That choice did not match. The choices are closed.</p>
           {chosen ? <p className="quiet">Your choice: {chosen}</p> : null}
@@ -389,7 +412,7 @@ export function App() {
     const item = step.item;
     const choices = orderedChoices(item.choices);
     return (
-      <Shell user={user}>
+      <Shell {...shellProps}>
         <Bezel plate={current.title} aside={`${step.index} of ${step.total}`} scene={sceneFor(current.id)}>
           <div className="meter" aria-hidden="true">
             <span style={{ width: `${((step.index - 1) / step.total) * 100}%` }} />
@@ -421,7 +444,7 @@ export function App() {
   }
 
   return (
-    <Shell user={user}>
+    <Shell {...shellProps}>
       <Bezel plate={current.title} aside="Section finished" scene={sceneFor(current.id)}>
         <h1 ref={headingRef} tabIndex={-1}>{current.title} is finished</h1>
         <p>
@@ -436,14 +459,19 @@ export function App() {
   );
 }
 
-function Shell({ user, children }) {
+function Shell({ user, onAdmin, children }) {
   return (
     <main className="shell">
       <header className="top">
         <p className="wordmark">Sophia</p>
-        {user ? (
-          <button type="button" className="text" onClick={() => signOut(auth)}>Sign out</button>
-        ) : null}
+        <div className="top-actions">
+          {onAdmin ? (
+            <button type="button" className="text" onClick={onAdmin}>Admin report</button>
+          ) : null}
+          {user ? (
+            <button type="button" className="text" onClick={() => signOut(auth)}>Sign out</button>
+          ) : null}
+        </div>
       </header>
       {children}
       <footer className="files">

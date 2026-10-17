@@ -38,6 +38,12 @@ body {
   padding: 0 6px;
 }
 
+.top-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .wordmark {
   margin: 0;
   letter-spacing: 0.22em;

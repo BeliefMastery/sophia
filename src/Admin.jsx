@@ -34,7 +34,7 @@ function when(stamp) {
   }).format(new Date(stamp));
 }
 
-export function Admin({ user }) {
+export function Admin({ user, onStudy }) {
   const [profiles, setProfiles] = useState(null);
   const [attempts, setAttempts] = useState(null);
   const [items, setItems] = useState(null);
@@ -80,38 +80,65 @@ export function Admin({ user }) {
   const itemList = list(items);
   const survey = placementItems(itemList);
   const uids = new Set([...Object.keys(profiles), ...Object.keys(attempts), ...Object.keys(interests)]);
-  uids.delete(user.uid);
-  const students = [...uids].map((uid) => ({
-    uid,
-    name: profiles[uid]?.name || "Student",
-    attempts: list(attempts[uid]),
-    repairs: repairs[uid] || {},
-    interests: interests[uid] || {},
-    report: studentReport(survey, list(attempts[uid]), guides, repairs[uid]),
-  })).sort((a, b) => a.name.localeCompare(b.name));
+  const students = [...uids].map((uid) => {
+    const self = uid === user.uid;
+    return {
+      uid,
+      self,
+      name: self
+        ? (profiles[uid]?.name ? `${profiles[uid].name} (admin practice)` : "Admin practice")
+        : (profiles[uid]?.name || "Student"),
+      attempts: list(attempts[uid]),
+      repairs: repairs[uid] || {},
+      interests: interests[uid] || {},
+      report: studentReport(survey, list(attempts[uid]), guides, repairs[uid]),
+    };
+  }).sort((a, b) => Number(b.self) - Number(a.self) || a.name.localeCompare(b.name));
+
+  const home = (
+    <section className="bezel">
+      <div className="bezel-plate"><span>Admin</span><span>Home</span></div>
+      <div className="bezel-screen">
+        <Scene name="study" />
+        <h1>Admin report</h1>
+        <p>Review student progress here, or switch to student mode to take the modules yourself. Your practice answers stay on this login and show in the report below.</p>
+        {onStudy ? (
+          <button type="button" className="primary" onClick={onStudy}>Study as a student</button>
+        ) : null}
+      </div>
+    </section>
+  );
 
   if (!students.length) {
     return (
-      <section className="bezel">
-        <div className="bezel-plate"><span>Admin</span><span>Report</span></div>
-        <div className="bezel-screen">
-          <h1>No student activity yet.</h1>
-          <p>Answers and interest ticks appear here after a student signs in.</p>
-        </div>
-      </section>
+      <>
+        {home}
+        <section className="bezel">
+          <div className="bezel-plate"><span>Admin</span><span>Report</span></div>
+          <div className="bezel-screen">
+            <h1>No student activity yet.</h1>
+            <p>Answers and interest ticks appear here after a student signs in, or after you practise in student mode.</p>
+          </div>
+        </section>
+      </>
     );
   }
 
-  return students.map((student) => (
-    <StudentReport
-      key={student.uid}
-      student={student}
-      items={survey}
-      strands={strands}
-      allItems={itemList}
-      catalog={catalog}
-    />
-  ));
+  return (
+    <>
+      {home}
+      {students.map((student) => (
+        <StudentReport
+          key={student.uid}
+          student={student}
+          items={survey}
+          strands={strands}
+          allItems={itemList}
+          catalog={catalog}
+        />
+      ))}
+    </>
+  );
 }
 
 function StudentReport({ student, items, strands, allItems, catalog }) {
