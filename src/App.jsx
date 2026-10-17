@@ -456,9 +456,27 @@ export function App() {
         <h1 ref={headingRef} tabIndex={-1}>{current.title} is finished</h1>
         <p>
           {current.answered} of {current.total} questions are answered.
-          {current.depth ? ` Depth ${current.depth}. ${current.label}.` : ""}
+          {current.moduleRoman ? ` ${current.moduleRoman}.` : ""}
+          {current.label ? ` ${current.label}.` : ""}
         </p>
-        <p>There is no further question in this field until a new cluster is added. You can update your interest ticks below.</p>
+        {current.awaitingModule ? (
+          <div className="tech-await" role="status">
+            <p>
+              {current.held
+                ? `This sitting held. ${current.nextModuleRoman || "The next deeper module"} is not written yet.`
+                : `This sitting did not hold. Another module at the same level (${current.nextModuleRoman || "practice"}) is not written yet.`}
+              {" "}
+              Your admin has been notified and can see this gap in the Modules needed table.
+            </p>
+            <p className="quiet">
+              {current.held
+                ? "If a deeper subdomain is already open on the map, you can study that next. Otherwise mark an interest and return later."
+                : "Study other open fields for now, or mark this field as an interest so it stays on your list."}
+            </p>
+          </div>
+        ) : (
+          <p>There is no further question in this field until a new cluster is added. You can update your interest ticks below.</p>
+        )}
         {interestPanel}
         <button type="button" className="primary" onClick={() => setChosenField("")}>All fields</button>
       </Bezel>

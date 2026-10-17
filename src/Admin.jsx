@@ -14,6 +14,7 @@ import {
   fieldStudy,
   moduleOutcomes,
   modulePrompt,
+  modulesToProduce,
   placementItems,
   sectionStatus,
 } from "../lib/expansion.mjs";
@@ -207,6 +208,13 @@ export function Admin({ user, onStudy }) {
             >
               Overall
             </button>
+            <button
+              type="button"
+              className={view === "modules" ? "primary" : "text"}
+              onClick={() => { setView("modules"); setSelectedUid(""); }}
+            >
+              Modules needed
+            </button>
             {selected ? (
               <button type="button" className="primary" disabled>
                 {selected.name}
@@ -261,6 +269,8 @@ export function Admin({ user, onStudy }) {
 
       {view === "overall" ? (
         <OverallReport students={students} />
+      ) : view === "modules" ? (
+        <ModulesNeeded students={students} />
       ) : selected ? (
         <StudentPage
           student={selected}
@@ -310,6 +320,9 @@ function StudentList({ students, onOpen }) {
                   {student.missCount} miss{student.missCount === 1 ? "" : "es"}
                   {student.deepen.length ? ` · ${student.deepen.length} ready to deepen` : ""}
                   {student.practice.length ? ` · ${student.practice.length} need practice` : ""}
+                  {student.fields.filter((field) => field.awaitingModule).length
+                    ? ` · ${student.fields.filter((field) => field.awaitingModule).length} awaiting module`
+                    : ""}
                 </span>
               </button>
             </li>
@@ -335,6 +348,7 @@ function OverallReport({ students }) {
     }
   }
   const fields = [...byField.values()].sort((a, b) => b.misses - a.misses || a.title.localeCompare(b.title));
+  const needed = modulesToProduce(students);
 
   return (
     <section className="bezel">
@@ -345,6 +359,7 @@ function OverallReport({ students }) {
           <p className="stat"><b>{students.length}</b><span>students</span></p>
           <p className="stat"><b>{totalAnswers}</b><span>answers</span></p>
           <p className="stat"><b>{totalMisses}</b><span>misses</span></p>
+          <p className="stat"><b>{needed.length}</b><span>modules needed</span></p>
         </div>
         <h2>Misses by field</h2>
         {fields.length ? (
@@ -359,6 +374,72 @@ function OverallReport({ students }) {
         ) : (
           <p className="quiet">No misses recorded yet.</p>
         )}
+      </div>
+    </section>
+  );
+}
+
+function ModulesNeeded({ students }) {
+  const rows = modulesToProduce(students);
+
+  return (
+    <section className="bezel">
+      <div className="bezel-plate"><span>Admin</span><span>Modules needed</span></div>
+      <div className="bezel-screen">
+        <h1>Modules to produce</h1>
+        <p>
+          Students who finish a field (and repair every miss) wait here until the next module is written.
+          Copy a row into Cursor for the next content iteration.
+        </p>
+        {rows.length ? (
+          <div className="admin-modules-wrap">
+            <table className="admin-modules">
+              <thead>
+                <tr>
+                  <th scope="col">Field</th>
+                  <th scope="col">Mode</th>
+                  <th scope="col">Next module</th>
+                  <th scope="col">Strand id</th>
+                  <th scope="col">Students</th>
+                  <th scope="col">Held score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row) => (
+                  <tr key={row.key}>
+                    <td>{row.title}</td>
+                    <td>{row.held ? "Deepen" : "Same level"}</td>
+                    <td>{row.nextModuleRoman || "—"}</td>
+                    <td><code>{row.nextStrandId}</code></td>
+                    <td>{row.students.map((entry) => entry.name).join(", ")}</td>
+                    <td>{row.matched} / {row.total} (need {row.need})</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="quiet">No student is waiting on a new module yet.</p>
+        )}
+        {rows.length ? (
+          <div className="admin-module-prompts">
+            <h2>Production prompts</h2>
+            <p className="quiet">Paste these into the next Cursor iteration to write the missing modules.</p>
+            {rows.map((row) => (
+              <details key={`prompt-${row.key}`} className="admin-miss-fold" open={rows.length === 1}>
+                <summary>
+                  {row.title}
+                  {" · "}
+                  {row.held ? "deepen" : "practice"}
+                  {row.nextModuleRoman ? ` · ${row.nextModuleRoman}` : ""}
+                  {" · "}
+                  {row.students.length} student{row.students.length === 1 ? "" : "s"}
+                </summary>
+                <ExpansionPrompt prompt={row.prompt} pending="" />
+              </details>
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   );

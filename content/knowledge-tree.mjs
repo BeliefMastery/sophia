@@ -5,6 +5,7 @@ const nodes = [
   {
     id: "mathematics",
     title: "Mathematics",
+    symbol: "∑",
     field: "mathematics",
     parentId: null,
     tier: 0,
@@ -14,6 +15,7 @@ const nodes = [
   {
     id: "english",
     title: "English",
+    symbol: "¶",
     field: "english",
     parentId: null,
     tier: 0,
@@ -23,6 +25,7 @@ const nodes = [
   {
     id: "science",
     title: "Science",
+    symbol: "◇",
     field: null,
     parentId: null,
     tier: 0,
@@ -32,6 +35,7 @@ const nodes = [
   {
     id: "social",
     title: "Social studies",
+    symbol: "◎",
     field: null,
     parentId: null,
     tier: 0,
@@ -41,6 +45,7 @@ const nodes = [
   {
     id: "mind",
     title: "Mind and people",
+    symbol: "◉",
     field: null,
     parentId: null,
     tier: 0,
@@ -50,6 +55,7 @@ const nodes = [
   {
     id: "commerce",
     title: "Commerce",
+    symbol: "◆",
     field: null,
     parentId: null,
     tier: 0,
@@ -59,6 +65,7 @@ const nodes = [
   {
     id: "applied",
     title: "Applied fields",
+    symbol: "▣",
     field: null,
     parentId: null,
     tier: 0,
@@ -70,6 +77,7 @@ const nodes = [
   {
     id: "finance",
     title: "Finance",
+    symbol: "₡",
     field: "finance",
     parentId: "mathematics",
     tier: 1,
@@ -79,6 +87,7 @@ const nodes = [
   {
     id: "statistics",
     title: "Statistics",
+    symbol: "σ",
     field: "statistics",
     parentId: "mathematics",
     tier: 1,
@@ -90,6 +99,7 @@ const nodes = [
   {
     id: "literature",
     title: "Literature",
+    symbol: "※",
     field: "literature",
     parentId: "english",
     tier: 1,
@@ -99,6 +109,7 @@ const nodes = [
   {
     id: "linguistics",
     title: "Linguistics",
+    symbol: "∿",
     field: "linguistics",
     parentId: "english",
     tier: 1,
@@ -110,6 +121,7 @@ const nodes = [
   {
     id: "claims",
     title: "Claims and evidence",
+    symbol: "✓",
     field: "claims",
     parentId: "science",
     tier: 1,
@@ -119,6 +131,7 @@ const nodes = [
   {
     id: "physics",
     title: "Physics",
+    symbol: "∇",
     field: "physics",
     parentId: "science",
     tier: 1,
@@ -128,6 +141,7 @@ const nodes = [
   {
     id: "chemistry",
     title: "Chemistry",
+    symbol: "⚗",
     field: "chemistry",
     parentId: "science",
     tier: 1,
@@ -137,6 +151,7 @@ const nodes = [
   {
     id: "biology",
     title: "Biology",
+    symbol: "❖",
     field: "biology",
     parentId: "science",
     tier: 1,
@@ -146,6 +161,7 @@ const nodes = [
   {
     id: "geology",
     title: "Geology",
+    symbol: "△",
     field: "geology",
     parentId: "science",
     tier: 1,
@@ -155,6 +171,7 @@ const nodes = [
   {
     id: "electronics",
     title: "Electronics",
+    symbol: "⌁",
     field: "electronics",
     parentId: "physics",
     tier: 2,
@@ -164,6 +181,7 @@ const nodes = [
   {
     id: "engineering",
     title: "Engineering",
+    symbol: "⚙",
     field: "engineering",
     parentId: "physics",
     tier: 2,
@@ -173,6 +191,7 @@ const nodes = [
   {
     id: "medicine",
     title: "Medicine",
+    symbol: "✚",
     field: "medicine",
     parentId: "chemistry",
     tier: 2,
@@ -182,6 +201,7 @@ const nodes = [
   {
     id: "environmentalScience",
     title: "Environmental science",
+    symbol: "❋",
     field: "environmentalScience",
     parentId: "biology",
     tier: 2,
@@ -191,6 +211,7 @@ const nodes = [
   {
     id: "systems",
     title: "Systems thinking",
+    symbol: "⧉",
     field: "systems",
     parentId: "geology",
     tier: 2,
@@ -202,6 +223,7 @@ const nodes = [
   {
     id: "history",
     title: "History",
+    symbol: "†",
     field: "history",
     parentId: "social",
     tier: 1,
@@ -211,6 +233,7 @@ const nodes = [
   {
     id: "politics",
     title: "Politics",
+    symbol: "⚖",
     field: "politics",
     parentId: "social",
     tier: 1,
@@ -220,6 +243,7 @@ const nodes = [
   {
     id: "technology",
     title: "Technology",
+    symbol: "⚙",
     field: "technology",
     parentId: "social",
     tier: 1,
@@ -229,6 +253,7 @@ const nodes = [
   {
     id: "economics",
     title: "Economics",
+    symbol: "≈",
     field: "economics",
     parentId: "social",
     tier: 1,
@@ -238,6 +263,7 @@ const nodes = [
   {
     id: "nzHistory",
     title: "Aotearoa history",
+    symbol: "†",
     field: "nzHistory",
     parentId: "history",
     tier: 2,
@@ -247,6 +273,7 @@ const nodes = [
   {
     id: "worldHistory",
     title: "World history",
+    symbol: "‡",
     field: "worldHistory",
     parentId: "history",
     tier: 2,
@@ -258,6 +285,7 @@ const nodes = [
   {
     id: "psychology",
     title: "Psychology",
+    symbol: "Ψ",
     field: "psychology",
     parentId: "mind",
     tier: 1,
@@ -267,6 +295,7 @@ const nodes = [
   {
     id: "socialManagement",
     title: "Social management",
+    symbol: "⋈",
     field: "socialManagement",
     parentId: "mind",
     tier: 1,
@@ -276,6 +305,7 @@ const nodes = [
   {
     id: "philosophy",
     title: "Philosophy",
+    symbol: "Φ",
     field: "philosophy",
     parentId: "mind",
     tier: 1,
@@ -285,6 +315,7 @@ const nodes = [
   {
     id: "sociology",
     title: "Sociology",
+    symbol: "§",
     field: "sociology",
     parentId: "mind",
     tier: 1,
@@ -294,6 +325,7 @@ const nodes = [
   {
     id: "anthropology",
     title: "Anthropology",
+    symbol: "ʔ",
     field: "anthropology",
     parentId: "mind",
     tier: 1,
@@ -305,6 +337,7 @@ const nodes = [
   {
     id: "accounting",
     title: "Accounting",
+    symbol: "Σ",
     field: "accounting",
     parentId: "commerce",
     tier: 1,
@@ -314,6 +347,7 @@ const nodes = [
   {
     id: "marketing",
     title: "Marketing",
+    symbol: "⇒",
     field: "marketing",
     parentId: "commerce",
     tier: 1,
@@ -323,6 +357,7 @@ const nodes = [
   {
     id: "managementCore",
     title: "Management",
+    symbol: "⊞",
     field: "management",
     parentId: "commerce",
     tier: 1,
@@ -332,6 +367,7 @@ const nodes = [
   {
     id: "business",
     title: "Business",
+    symbol: "◈",
     field: "business",
     parentId: "commerce",
     tier: 1,
@@ -343,6 +379,7 @@ const nodes = [
   {
     id: "design",
     title: "Design",
+    symbol: "✎",
     field: "design",
     parentId: "applied",
     tier: 1,
@@ -352,6 +389,7 @@ const nodes = [
   {
     id: "law",
     title: "Law",
+    symbol: "§",
     field: "law",
     parentId: "applied",
     tier: 1,
@@ -361,6 +399,7 @@ const nodes = [
   {
     id: "aiLiteracy",
     title: "AI literacy",
+    symbol: "λ",
     field: "aiLiteracy",
     parentId: "applied",
     tier: 1,
@@ -370,6 +409,7 @@ const nodes = [
   {
     id: "computerScience",
     title: "Computer science",
+    symbol: "⟨⟩",
     field: "computerScience",
     parentId: "applied",
     tier: 1,
@@ -379,6 +419,7 @@ const nodes = [
   {
     id: "architecture",
     title: "Architecture",
+    symbol: "⌂",
     field: "architecture",
     parentId: "applied",
     tier: 1,
@@ -397,6 +438,7 @@ function treeCatalogRecord(list = nodes) {
       tier: node.tier,
       status: node.status,
       summary: node.summary,
+      symbol: node.symbol || "",
       order: index + 1,
     };
   });
@@ -415,6 +457,7 @@ function nodesFromCatalog(catalog) {
       tier: Number(node.tier) || 0,
       status: node.status === "planned" ? "planned" : "live",
       summary: node.summary || "",
+      symbol: node.symbol || "",
       order: Number(node.order) || 0,
     }))
     .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));

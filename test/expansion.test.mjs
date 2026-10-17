@@ -11,11 +11,18 @@ import {
   fieldProgress,
   fieldStudy,
   moduleOutcome,
+  moduleScopeIssues,
+  modulesToProduce,
+  moduleLabel,
   nextFieldStep,
   modulePrompt,
   peerAt,
   sectionStatus,
+  toRoman,
 } from "../lib/expansion.mjs";
+import { strands as coreStrands, items as coreItems } from "../content/modules.mjs";
+import { strands as part2Strands, items as part2Items } from "../content/modules-part2.mjs";
+import { strands as uniStrands, items as uniItems } from "../content/modules-university.mjs";
 
 const claim = (id) => claims.find((entry) => entry.id === id);
 
@@ -388,8 +395,12 @@ test("a finished field asks for the next cluster and leaves other fields open", 
   const electronics = done.find((field) => field.id === "electronics");
   assert.equal(math.complete, true);
   assert.equal(math.held, false);
+  assert.equal(math.awaitingModule, true);
+  assert.equal(math.moduleRoman, "Module I");
+  assert.equal(math.nextModuleRoman, "Module II");
   assert.equal(electronics.complete, true);
   assert.equal(electronics.held, true);
+  assert.equal(electronics.awaitingModule, true);
   assert.equal(nextFieldStep(strands, items, doneAttempts, repairs, "mathematics").kind, "done");
   const prompt = fieldClusterPrompt({ name: "Sophia", uid: "uid-1", field: math });
   assert.match(prompt, /Field complete: mathematics/);
@@ -397,4 +408,24 @@ test("a finished field asks for the next cluster and leaves other fields open", 
   assert.match(prompt, /same field covering the missed/);
   assert.match(prompt, /does not award NCEA/);
   assert.doesNotMatch(prompt, /electronics/);
+  const queue = modulesToProduce([
+    { uid: "uid-1", name: "Sophia", fields: [math, electronics] },
+  ]);
+  assert.equal(queue.length, 2);
+  assert.ok(queue.some((row) => row.fieldId === "mathematics" && row.mode === "same"));
+  assert.ok(queue.some((row) => row.fieldId === "electronics" && row.mode === "deeper"));
+});
+
+test("roman numerals label modules", () => {
+  assert.equal(toRoman(1), "I");
+  assert.equal(toRoman(2), "II");
+  assert.equal(toRoman(4), "IV");
+  assert.equal(moduleLabel(3), "Module III");
+  assert.equal(moduleLabel(0), "");
+});
+
+test("domain modules stay in the six-question hold scope", () => {
+  const strands = [...coreStrands, ...part2Strands, ...uniStrands];
+  const items = [...coreItems, ...part2Items, ...uniItems];
+  assert.deepEqual(moduleScopeIssues(strands, items), []);
 });

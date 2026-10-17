@@ -11,6 +11,9 @@ test("the knowledge tree is valid and seeds cleanly", () => {
   const catalog = treeCatalogRecord(nodes);
   assert.ok(nodesFromCatalog(catalog).some((node) => node.id === "electronics"));
   assert.ok(nodesFromCatalog(catalog).some((node) => node.id === "nzHistory" && node.status === "planned"));
+  assert.ok(nodes.every((node) => node.symbol));
+  assert.equal(catalog.mathematics.symbol, "∑");
+  assert.equal(nodesFromCatalog(catalog).find((node) => node.id === "philosophy").symbol, "Φ");
 });
 
 test("interest options derive from the tree", () => {
