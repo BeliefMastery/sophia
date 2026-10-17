@@ -40,6 +40,7 @@ const items = [
       "A common slip looks like this: Stops at x − 2 = 4, or treats the 2 as the solution. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Solve 4(y + 1) = 24. Write the value of y, and write the line you had just after dividing both sides by 4.",
+    repairAccept: ["y = 5", "y=5", "5"],
   }),
   item({
     id: "check-math-2",
@@ -61,6 +62,7 @@ const items = [
       "A common slip looks like this: Adds the sides, or multiplies them. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A right-angled triangle has shorter sides 5 cm and 12 cm. How long is the third side? Write the length and the two squares you added.",
+    repairAccept: ["13", "13 cm"],
   }),
   item({
     id: "check-math-3",
@@ -82,6 +84,7 @@ const items = [
       "A common slip looks like this: Takes 10% and stops, or treats 15 as the answer. After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "What is 20% of 150? Write the result and the calculation you used.",
+    repairAccept: ["30"],
   }),
   item({
     id: "check-english-1",

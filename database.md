@@ -23,12 +23,12 @@ The root is closed. Someone who is not signed in cannot read or write.
 | `profiles/{uid}/placement` | What is known as of a date | Read own | Read, write |
 | `strands/{strandId}` | A course strand | Read | Read, write |
 | `items/{itemId}` | A probe, repair, research task, retest, or placement check | Read | Read, write |
-| `guides/{itemId}` | Answer key, lookFor, misconceptions, two-paragraph `passage`, and `followPrompt` | Read one guide after a miss on that item | Read, write |
+| `guides/{itemId}` | Answer key, lookFor, optional `repairAccept`, misconceptions, two-paragraph `passage`, and `followPrompt` | Read one guide after a miss on that item | Read, write |
 | `misses/{uid}/{itemId}` | The wrong choice that opens that guide. Create once. The rules accept it only when the choice is actually wrong | Create own | No |
 | `repairs/{uid}/{itemId}` | The written answer to the different question that follows a miss. Create once. The rules accept it only when that miss exists | Read, create own | Read all |
 | `sources/{sourceId}` | A text she is to understand | Read | Read, write |
 | `attempts/{uid}/{attemptId}` | Her answer. She can create one. She cannot edit or delete it | Read, create own | Read all |
-| `reviews/{uid}/{attemptId}` | Known, partial, or unknown, plus a note | Read own | Read, write |
+| `reviews/{uid}/{itemId}` | Auto or parent mark of the written repair: known, partial, or unknown | Read own; create/update own auto mark after a repair | Read, write |
 | `mastery/{uid}/{strandId}/{ideaId}` | Whether an idea is currently known | Read own | Read, write |
 | `catalog/interests` | Interest options derived from the knowledge tree | Read | Read, write |
 | `catalog/tree` | Knowledge tech-tree nodes (domains, branches, planned leaves) | Read | Read, write |
@@ -260,7 +260,7 @@ Stable source ids, if a later year writes a record: `sovereign-of-mind`, `belief
 
 A placement-check attempt stores the chosen id and whether it matched the guide. She sends `matched`. The rules accept the write only when `matched` is the real comparison with `guides/{itemId}/answer`. A wrong `matched` is rejected, so the client cannot invent a correct answer.
 
-A miss uses the item id, not a push id. The rules accept it only when `matched` is false and that is also the real comparison. After that write, she can read `guides/{itemId}`. The guide holds the choice id, `lookFor`, `misconceptions`, `discover`, and `followPrompt`. `discover` is a list of links and search instructions. `followPrompt` is a different question from the multiple-choice prompt, and it does not quote the correct choice. The screen shows those resources and replaces the choices with a text box for `followPrompt`. It does not show the correct choice. A correct answer does not open the guide. The next multiple-choice question stays closed until `repairs/{uid}/{itemId}` has her written answer. That written answer is evidence of what she found. It does not change the first-attempt score.
+A miss uses the item id, not a push id. The rules accept it only when `matched` is false and that is also the real comparison. After that write, she can read `guides/{itemId}`. The guide holds the choice id, `lookFor`, optional `repairAccept`, misconceptions, `discover`, and `followPrompt`. `discover` is a list of links and search instructions. `followPrompt` is a different question from the multiple-choice prompt, and it does not quote the correct choice. The screen shows those resources and replaces the choices with a text box for `followPrompt`. It does not show the correct choice. A correct answer does not open the guide. The next multiple-choice question stays closed until `repairs/{uid}/{itemId}` has her written answer. That written answer is evidence of what she found. It does not change the first-attempt score. After it is saved, an auto review is written under `reviews/{uid}/{itemId}`.
 
 The repair record:
 
@@ -297,14 +297,15 @@ The first attempt for an item is the one that counts. A later push id does not r
 
 ```json
 {
-  "itemId": "m101-pestel-letters",
+  "itemId": "math-hold-1",
   "result": "partial",
-  "note": "Legal was folded into Political.",
-  "redo": true
+  "note": "Matched 1 of 2 look-for lines.",
+  "source": "auto",
+  "submittedAt": 1763200000000
 }
 ```
 
-`result` is `known`, `partial`, or `unknown`. The parent writes it. A known result is what allows mastery to be set. Opening a panel is not mastery.
+`result` is `known`, `partial`, or `unknown`. After a miss repair is saved, the client auto-marks the written answer with `lib/markRepair.mjs` using `guides/{itemId}.repairAccept` and `lookFor`, and writes `reviews/{uid}/{itemId}` with `source: "auto"`. That mark does not change the first-attempt choice score or the five-of-six held rule. The parent can overwrite the same path with `source: "parent"`. A known result is what allows mastery to be set. Opening a panel is not mastery.
 
 ## Mastery
 

@@ -69,10 +69,13 @@
       }
     },
     "reviews": {
+      ".read": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
       "$uid": {
         ".read": "auth != null && (auth.uid == $uid || root.child('roles').child(auth.uid).child('parent').val() == true)",
-        ".write": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
-        ".indexOn": ["itemId"]
+        "$itemId": {
+          ".write": "auth != null && (root.child('roles').child(auth.uid).child('parent').val() == true || (auth.uid == $uid && root.child('repairs').child($uid).child($itemId).exists() && (!data.exists() || data.child('source').val() == 'auto') && newData.child('source').val() == 'auto'))",
+          ".validate": "newData.hasChildren(['itemId','result','note','source','submittedAt']) && newData.child('itemId').val() == $itemId && (newData.child('result').val() == 'known' || newData.child('result').val() == 'partial' || newData.child('result').val() == 'unknown') && newData.child('note').isString() && newData.child('note').val().length > 0 && newData.child('note').val().length <= 500 && (newData.child('source').val() == 'auto' || newData.child('source').val() == 'parent') && newData.child('submittedAt').isNumber()"
+        }
       }
     },
     "mastery": {

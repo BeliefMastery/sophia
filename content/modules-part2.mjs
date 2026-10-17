@@ -1639,6 +1639,7 @@ const items = [
       "A common slip looks like this: Counting hardware instead of the push After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A torch cell is about one and a half volts. Is that the same push as household mains? Say yes or no.",
+    repairAccept: ["no"],
   }),
   q({
     id: "elec-1-5",
@@ -1660,6 +1661,7 @@ const items = [
       "A common slip looks like this: Giving the switch a chemical job After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Is the loop complete when the switch is open? Say yes or no.",
+    repairAccept: ["no"],
   }),
   q({
     id: "elec-1-6",
@@ -2122,6 +2124,7 @@ const items = [
       "A common slip looks like this: Confusing it with a penalty After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Is that payment the same thing as interest you pay on a loan? Say yes or no.",
+    repairAccept: ["no"],
   }),
   q({
     id: "fin-1-4",
@@ -2290,6 +2293,7 @@ const items = [
       "A common slip looks like this: Thinking the terminal is a source of new funds After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "If the account is empty, can the terminal invent the money? Say yes or no.",
+    repairAccept: ["no"],
   }),
   q({
     id: "fin-2-6",

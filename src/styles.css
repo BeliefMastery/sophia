@@ -221,6 +221,23 @@ summary {
   font-weight: 600;
 }
 
+.review-chip {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.review-chip.is-known { color: var(--good); }
+.review-chip.is-partial { color: #7a5a1e; }
+.review-chip.is-unknown { color: #a35f42; }
+
+.review-override {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
 .bezel.nested {
   box-shadow: none;
 }

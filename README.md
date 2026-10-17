@@ -14,7 +14,7 @@ A zip of `main` is at https://github.com/BeliefMastery/sophia/archive/refs/heads
 
 The live site is Firebase Hosting: https://sophia-138fe.web.app
 
-When a section is finished, the parent login shows a short student roster, an overall miss summary, and per-student missed questions with a copy-paste prompt for the next module. A wrong answer opens a two-paragraph in-app reading and a follow-up from that text, not an external search. Students pick work from the knowledge tech-tree in `content/knowledge-tree.mjs`. A deeper branch unlocks when a sitting holds (at least five of six first attempts); falling short keeps another module in the same field. Planned branches can be marked as interest only. The rules for adding the next module are in `plan.md` and `database.md`. Modules grow as results arrive. Existing ids stay.
+When a section is finished, the parent login shows a short student roster, an overall miss summary, and per-student missed questions with a copy-paste prompt for the next module. A wrong answer opens a two-paragraph in-app reading and a follow-up from that text, not an external search. The written follow-up is auto-marked into `reviews` (known / partial / unknown) from guide `repairAccept` and `lookFor`; the parent can override. That mark does not change the first-attempt choice score. Students pick work from the knowledge tech-tree in `content/knowledge-tree.mjs`. A deeper branch unlocks when a sitting holds (at least five of six first attempts); falling short keeps another module in the same field. Planned branches can be marked as interest only. The rules for adding the next module are in `plan.md` and `database.md`. Modules grow as results arrive. Existing ids stay.
 
 ## How the system is split
 

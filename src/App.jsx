@@ -6,6 +6,7 @@ import { orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
 import { passageParagraphs } from "../lib/explain.mjs";
 import { fieldPlace, fieldStudy, nextFieldStep } from "../lib/expansion.mjs";
+import { markRepair, reviewRecord } from "../lib/markRepair.mjs";
 import { Admin } from "./Admin.jsx";
 import { InterestVote } from "./InterestVote.jsx";
 import { KnowledgeTree } from "./KnowledgeTree.jsx";
@@ -225,11 +226,20 @@ export function App() {
     savingRef.current = true;
     setSaving(true);
     setRecordError("");
+    const itemId = activeRepair.item.id;
+    const submittedAt = Date.now();
     try {
-      await set(ref(db, `repairs/${user.uid}/${activeRepair.item.id}`), {
+      await set(ref(db, `repairs/${user.uid}/${itemId}`), {
         answer: text,
-        submittedAt: Date.now(),
+        submittedAt,
       });
+      try {
+        const guide = guides[itemId] || {};
+        const mark = markRepair(text, guide);
+        await set(ref(db, `reviews/${user.uid}/${itemId}`), reviewRecord(itemId, mark, submittedAt));
+      } catch {
+        // Repair already saved; auto-mark is secondary.
+      }
       setRepairDraft("");
     } catch {
       setRecordError("That written answer was not saved. Try it again.");

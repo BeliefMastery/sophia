@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { onValue, ref } from "firebase/database";
+import { onValue, ref, set } from "firebase/database";
 import { db } from "./firebase.js";
 import { studentReport } from "../lib/report.mjs";
 import { rewardFor } from "../lib/rewards.mjs";
+import { reviewRecord } from "../lib/markRepair.mjs";
 import {
   applyModules,
   chartMarks,
@@ -57,9 +58,11 @@ export function Admin({ user, onStudy }) {
   const [strands, setStrands] = useState(null);
   const [catalog, setCatalog] = useState(null);
   const [interests, setInterests] = useState(null);
+  const [reviews, setReviews] = useState(null);
   const [error, setError] = useState("");
   const [view, setView] = useState("students");
   const [selectedUid, setSelectedUid] = useState("");
+  const [reviewSaving, setReviewSaving] = useState("");
 
   useEffect(() => {
     const watch = (path, setValue) => onValue(ref(db, path), (snapshot) => {
@@ -76,6 +79,7 @@ export function Admin({ user, onStudy }) {
       watch("strands", setStrands),
       watch("catalog/interests", setCatalog),
       watch("interests", setInterests),
+      watch("reviews", setReviews),
     ];
     return () => unsubs.forEach((unsub) => unsub());
   }, []);
@@ -83,13 +87,30 @@ export function Admin({ user, onStudy }) {
   const itemList = useMemo(() => list(items), [items]);
   const survey = useMemo(() => placementItems(itemList), [itemList]);
 
+  async function onReviewOverride(uid, itemId, result) {
+    if (!uid || !itemId || reviewSaving) return;
+    setReviewSaving(`${uid}:${itemId}`);
+    try {
+      await set(ref(db, `reviews/${uid}/${itemId}`), reviewRecord(itemId, {
+        result,
+        note: `Parent marked ${result}.`,
+        source: "parent",
+      }, Date.now()));
+    } catch {
+      setError("That review was not saved. Try it again.");
+    } finally {
+      setReviewSaving("");
+    }
+  }
+
   const students = useMemo(() => {
-    if (!profiles || !attempts || !items || !guides || !repairs || !strands || !catalog || !interests) return null;
+    if (!profiles || !attempts || !items || !guides || !repairs || !strands || !catalog || !interests || !reviews) return null;
     const uids = new Set([...Object.keys(profiles), ...Object.keys(attempts), ...Object.keys(interests)]);
     return [...uids].map((uid) => {
       const self = uid === user.uid;
       const studentAttempts = list(attempts[uid]);
       const studentRepairs = repairs[uid] || {};
+      const studentReviews = reviews[uid] || {};
       const report = studentReport(survey, studentAttempts, guides, studentRepairs);
       const fields = fieldStudy(strands, itemList, studentAttempts, studentRepairs);
       const deepen = fields.filter((field) => field.complete && field.held);
@@ -98,6 +119,7 @@ export function Admin({ user, onStudy }) {
       return {
         uid,
         self,
+        reviews: studentReviews,
         name: self
           ? (profiles[uid]?.name ? `${profiles[uid].name} (admin practice)` : "Admin practice")
           : (profiles[uid]?.name || "Student"),
@@ -111,7 +133,7 @@ export function Admin({ user, onStudy }) {
         missCount,
       };
     }).sort((a, b) => Number(b.self) - Number(a.self) || a.name.localeCompare(b.name));
-  }, [profiles, attempts, items, guides, repairs, strands, catalog, interests, survey, itemList, user.uid]);
+  }, [profiles, attempts, items, guides, repairs, strands, catalog, interests, reviews, survey, itemList, user.uid]);
 
   if (error) {
     return (
@@ -173,6 +195,8 @@ export function Admin({ user, onStudy }) {
           allItems={itemList}
           catalog={catalog}
           onBack={() => setSelectedUid("")}
+          onReviewOverride={onReviewOverride}
+          reviewSaving={reviewSaving}
         />
       ) : (
         <StudentList students={students} onOpen={(uid) => setSelectedUid(uid)} />
@@ -266,7 +290,14 @@ function OverallReport({ students }) {
   );
 }
 
-function StudentPage({ student, items, strands, allItems, catalog, onBack }) {
+function reviewLabel(result) {
+  if (result === "known") return "Known";
+  if (result === "partial") return "Partial";
+  if (result === "unknown") return "Unknown";
+  return "Unmarked";
+}
+
+function StudentPage({ student, items, strands, allItems, catalog, onBack, onReviewOverride, reviewSaving }) {
   const { report } = student;
   const status = sectionStatus(items, student.attempts, student.repairs, { id: "placement-check", ...strands["placement-check"] });
   const surveyMarks = fieldMarks(report.verdicts, items, student.attempts, student.repairs);
@@ -336,13 +367,35 @@ function StudentPage({ student, items, strands, allItems, catalog, onBack }) {
                 </span>
               </summary>
               <ul className="answer-list">
-                {group.misses.map((row) => (
-                  <li key={row.id}>
-                    <p className="prompt-small">{row.prompt}</p>
-                    <p>Chosen: {row.chosen}</p>
-                    <p>Written answer: {row.repair}</p>
-                  </li>
-                ))}
+                {group.misses.map((row) => {
+                  const review = student.reviews?.[row.id];
+                  const saving = reviewSaving === `${student.uid}:${row.id}`;
+                  return (
+                    <li key={row.id}>
+                      <p className="prompt-small">{row.prompt}</p>
+                      <p>Chosen: {row.chosen}</p>
+                      <p>Written answer: {row.repair}</p>
+                      <p className={`review-chip is-${review?.result || "none"}`}>
+                        {reviewLabel(review?.result)}
+                        {review?.source ? ` · ${review.source}` : ""}
+                        {review?.note ? ` · ${review.note}` : ""}
+                      </p>
+                      <div className="review-override">
+                        {["known", "partial", "unknown"].map((result) => (
+                          <button
+                            key={result}
+                            type="button"
+                            className="text"
+                            disabled={saving}
+                            onClick={() => onReviewOverride(student.uid, row.id, result)}
+                          >
+                            {reviewLabel(result)}
+                          </button>
+                        ))}
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             </details>
           )) : (

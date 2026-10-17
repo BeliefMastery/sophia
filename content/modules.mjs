@@ -160,6 +160,7 @@ const items = [
       "A common slip looks like this: Adding 3 to 17 and also adding 3 to the 5 After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A number is doubled and then 3 is subtracted. The result is 11. What was the number?",
+    repairAccept: ["7", "seven"],
   }),
   q({
     id: "math-hold-2",
@@ -223,6 +224,7 @@ const items = [
       "A common slip looks like this: Taking 10 dollars off, or stopping at the discount itself After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "A shop adds 10% to a $40 price. Is the extra the original price, or a part of it? Say which.",
+    repairAccept: ["part of it", "a part", "part"],
   }),
   q({
     id: "math-hold-5",
@@ -244,6 +246,7 @@ const items = [
       "A common slip looks like this: Subtracting x before the bracket is expanded After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "If x stands for 1, what number does 4(x + 2) − x give? Write the number only.",
+    repairAccept: ["11", "eleven"],
   }),
   q({
     id: "math-hold-6",
@@ -265,6 +268,7 @@ const items = [
       "A common slip looks like this: Comparing red only with blue, and leaving the total out After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "If the counter is put back, does the chance on the next draw change? Answer yes or no, and say why.",
+    repairAccept: ["no"],
   }),
   q({
     id: "eng-y10-1",
@@ -811,6 +815,7 @@ const items = [
       "A common slip looks like this: Confusing that release with photosynthesis After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Is that release the same process as photosynthesis? Answer yes or no.",
+    repairAccept: ["no"],
   }),
   q({
     id: "sci-bio-3",
@@ -1168,6 +1173,7 @@ const items = [
       "A common slip looks like this: Confusing the head of government with a judge or a mayor After you finish, read the question again and check that your result answers what was asked. For the written question that follows, use only what this reading explains.",
     ],
     followPrompt: "Is the Government the same body as the whole of Parliament? Answer yes or no.",
+    repairAccept: ["no"],
   }),
   q({
     id: "ctx-pol-2",
