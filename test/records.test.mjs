@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { strand, items } from "../content/placement-check.mjs";
 import { claims, judgePlacement } from "../lib/claims.mjs";
-import { checkRows, openRepair, publicItem } from "../lib/records.mjs";
+import { checkRows, openRepair, orderedChoices, publicItem } from "../lib/records.mjs";
 
 const published = items.map((item) => ({ id: item.id, ...publicItem(item) }));
 
@@ -56,4 +56,15 @@ test("a later attempt does not replace the first answer", () => {
     { itemId: "check-math-1", selected: "six", matched: true, submittedAt: 2 },
   ]);
   assert.equal(progress.next.id, "check-math-2");
+});
+
+test("choice display order is stable but shuffled by item id", () => {
+  const sample = items[0];
+  const first = orderedChoices(sample.choices, sample.id).map((choice) => choice.id);
+  const again = orderedChoices(sample.choices, sample.id).map((choice) => choice.id);
+  assert.deepEqual(first, again);
+  const plain = orderedChoices(sample.choices).map((choice) => choice.id);
+  assert.equal(first.length, 4);
+  assert.equal(new Set(first).size, 4);
+  assert.notDeepEqual(first, plain);
 });

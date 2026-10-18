@@ -534,7 +534,7 @@ export function App() {
 
   if (step?.kind === "question" && step.item) {
     const item = step.item;
-    const choices = orderedChoices(item.choices);
+    const choices = orderedChoices(item.choices, item.id);
     const wordList = Array.isArray(item.words) ? item.words : [];
     const source = item.sourceId ? sourceCache[item.sourceId] : null;
     if (!choices.length) {
