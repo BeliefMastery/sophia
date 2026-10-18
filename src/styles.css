@@ -541,6 +541,36 @@ textarea {
   margin-left: 1.5em;
 }
 
+.study-panel {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #f7f1e6;
+  padding: 8px 12px;
+}
+
+.study-panel > summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.study-words {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.study-source {
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+  font: inherit;
+  color: var(--ink);
+  max-height: 280px;
+  overflow: auto;
+}
+
 .tech-await {
   border: 1px solid var(--brass);
   background: #f7f1e6;

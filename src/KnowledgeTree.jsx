@@ -208,10 +208,13 @@ export function KnowledgeTree({
   }
 
   function onDomainToggle(root, event) {
-    setForcedOpen((current) => ({
-      ...current,
-      [root.id]: event.currentTarget.open,
-    }));
+    const el = event.currentTarget;
+    if (!el) return;
+    const nextOpen = el.open === true;
+    setForcedOpen((current) => {
+      if (current[root.id] === nextOpen) return current;
+      return { ...current, [root.id]: nextOpen };
+    });
   }
 
   return (

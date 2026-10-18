@@ -49,6 +49,8 @@ export function App() {
   const [interests, setInterests] = useState(null);
   const [interestSaving, setInterestSaving] = useState(false);
   const [interestError, setInterestError] = useState("");
+  const [writtenDraft, setWrittenDraft] = useState("");
+  const [sourceCache, setSourceCache] = useState({});
   const [studyMode, setStudyMode] = useState(() => {
     try {
       return sessionStorage.getItem("sophia-study-mode") === "1";
@@ -169,6 +171,26 @@ export function App() {
     headingRef.current?.focus();
   }, [user, chosenField, step?.item?.id, step?.kind, activeRepair?.item?.id]);
 
+  useEffect(() => {
+    const sourceId = step?.item?.sourceId;
+    if (!user || !sourceId) return undefined;
+    let cancel = false;
+    get(ref(db, `sources/${sourceId}`)).then((snapshot) => {
+      if (cancel) return;
+      setSourceCache((current) => {
+        if (current[sourceId]) return current;
+        return { ...current, [sourceId]: snapshot.val() || { title: sourceId, body: "" } };
+      });
+    }).catch(() => {
+      if (cancel) return;
+      setSourceCache((current) => {
+        if (current[sourceId]) return current;
+        return { ...current, [sourceId]: { title: sourceId, body: "" } };
+      });
+    });
+    return () => { cancel = true; };
+  }, [user, step?.item?.sourceId]);
+
   async function onSignIn(event) {
     event.preventDefault();
     setSigningIn(true);
@@ -180,6 +202,32 @@ export function App() {
       setSignInError(signInMessages[error.code] || "Sign-in did not complete.");
     } finally {
       setSigningIn(false);
+    }
+  }
+
+  async function onRecordWritten() {
+    const item = step?.kind === "written" ? step.item : null;
+    const text = writtenDraft.trim();
+    if (!item || !text || savingRef.current || activeRepair) return;
+    savingRef.current = true;
+    setSaving(true);
+    setRecordError("");
+    const attemptRef = push(ref(db, `attempts/${user.uid}`));
+    try {
+      await set(attemptRef, {
+        itemId: item.id,
+        strandId: item.strandId,
+        ideaId: item.ideaId,
+        answerKind: item.answerKind || "essay",
+        answer: text,
+        submittedAt: Date.now(),
+      });
+      setWrittenDraft("");
+    } catch {
+      setRecordError("That written answer was not recorded. Try it again.");
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
     }
   }
 
@@ -365,7 +413,12 @@ export function App() {
             tree={tree}
             fields={fields}
             interests={interests}
-            onStudy={(fieldId) => { setSelected(""); setChosenField(fieldId); }}
+            onStudy={(fieldId) => {
+              setSelected("");
+              setWrittenDraft("");
+              setPendingRepair(null);
+              setChosenField(fieldId);
+            }}
             onSaveInterests={onInterestSave}
             savingInterest={interestSaving}
             interestError={interestError}
@@ -409,7 +462,60 @@ export function App() {
           <button type="button" className="primary" disabled={paragraphs.length < 2 || !follow || !repairDraft.trim() || saving} onClick={onRepair}>
             {saving ? "Saving…" : "Save this answer"}
           </button>
-          <button type="button" className="text" onClick={() => setChosenField("")}>All fields</button>
+          <button type="button" className="text" onClick={() => { setWrittenDraft(""); setChosenField(""); }}>All fields</button>
+        </Bezel>
+      </Shell>
+    );
+  }
+
+  if (step?.kind === "written" && step.item) {
+    const item = step.item;
+    const source = item.sourceId ? sourceCache[item.sourceId] : null;
+    const wordList = Array.isArray(item.words) ? item.words : [];
+    return (
+      <Shell {...shellProps}>
+        <Bezel plate={current.title} aside={`${step.index} of ${step.total}`} scene={sceneFor(current.id)}>
+          <div className="meter" aria-hidden="true">
+            <span style={{ width: `${((step.index - 1) / step.total) * 100}%` }} />
+          </div>
+          <h1 ref={headingRef} tabIndex={-1} className="prompt">{item.prompt}</h1>
+          {wordList.length ? (
+            <details className="study-panel">
+              <summary>Words for this question</summary>
+              <ul className="study-words">
+                {wordList.map((word) => (
+                  <li key={word.term}>
+                    <strong>{word.term}</strong>
+                    {" — "}
+                    {word.meaning}
+                    {word.example ? <span className="quiet"> Example: {word.example}</span> : null}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ) : null}
+          {item.sourceId ? (
+            <details className="study-panel">
+              <summary>{source?.title || "Source reading"}</summary>
+              {source?.body
+                ? <pre className="study-source">{source.body}</pre>
+                : <p className="quiet">Loading the source…</p>}
+            </details>
+          ) : null}
+          <label>
+            Your answer
+            <textarea
+              value={writtenDraft}
+              onChange={(event) => setWrittenDraft(event.target.value)}
+              maxLength={8000}
+              rows={10}
+            />
+          </label>
+          {recordError ? <p className="alert" role="alert">{recordError}</p> : null}
+          <button type="button" className="primary" disabled={!writtenDraft.trim() || saving} onClick={onRecordWritten}>
+            {saving ? "Recording…" : "Record this answer"}
+          </button>
+          <button type="button" className="text" onClick={() => { setWrittenDraft(""); setChosenField(""); }}>All fields</button>
         </Bezel>
       </Shell>
     );
@@ -418,6 +524,19 @@ export function App() {
   if (step?.kind === "question" && step.item) {
     const item = step.item;
     const choices = orderedChoices(item.choices);
+    const wordList = Array.isArray(item.words) ? item.words : [];
+    const source = item.sourceId ? sourceCache[item.sourceId] : null;
+    if (!choices.length) {
+      return (
+        <Shell {...shellProps}>
+          <Bezel plate={current.title} aside="Question" scene={sceneFor(current.id)}>
+            <h1 ref={headingRef} tabIndex={-1}>This question could not load.</h1>
+            <p className="alert" role="alert">The choices are missing. Open another field, or tell your admin.</p>
+            <button type="button" className="primary" onClick={() => { setSelected(""); setChosenField(""); }}>All fields</button>
+          </Bezel>
+        </Shell>
+      );
+    }
     return (
       <Shell {...shellProps}>
         <Bezel plate={current.title} aside={`${step.index} of ${step.total}`} scene={sceneFor(current.id)}>
@@ -425,6 +544,29 @@ export function App() {
             <span style={{ width: `${((step.index - 1) / step.total) * 100}%` }} />
           </div>
           <h1 ref={headingRef} tabIndex={-1} className="prompt">{item.prompt}</h1>
+          {wordList.length ? (
+            <details className="study-panel">
+              <summary>Words for this question</summary>
+              <ul className="study-words">
+                {wordList.map((word) => (
+                  <li key={word.term}>
+                    <strong>{word.term}</strong>
+                    {" — "}
+                    {word.meaning}
+                    {word.example ? <span className="quiet"> Example: {word.example}</span> : null}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ) : null}
+          {item.sourceId ? (
+            <details className="study-panel">
+              <summary>{source?.title || "Helios essay"}</summary>
+              {source?.body
+                ? <pre className="study-source">{source.body}</pre>
+                : <p className="quiet">Loading the source…</p>}
+            </details>
+          ) : null}
           <div className="choices" role="group" aria-label="Choices">
             {choices.map((choice, index) => (
               <button

@@ -132,11 +132,12 @@ async function main() {
   const { strand, items } = await import("../content/placement-check.mjs");
   const { strands: firstStrands, items: firstItems } = await import("../content/modules.mjs");
   const { strands: secondStrands, items: secondItems } = await import("../content/modules-part2.mjs");
+  const { strands: heliosStrands, items: heliosItems, heliosSource } = await import("../content/modules-helios.mjs");
   const { strands: uniStrands, items: uniItems } = await import("../content/modules-university.mjs");
   const { options, interestsCatalogRecord } = await import("../content/interest-tree.mjs");
   const { nodes, treeCatalogRecord } = await import("../content/knowledge-tree.mjs");
-  const moduleStrands = [...firstStrands, ...secondStrands, ...uniStrands];
-  const moduleItems = [...firstItems, ...secondItems, ...uniItems];
+  const moduleStrands = [...firstStrands, ...secondStrands, ...heliosStrands, ...uniStrands];
+  const moduleItems = [...firstItems, ...secondItems, ...heliosItems, ...uniItems];
   const { checkContent } = await import("../lib/checkContent.mjs");
   const { checkModules } = await import("../lib/checkModules.mjs");
   const { checkInterestTree } = await import("../lib/checkInterestTree.mjs");
@@ -159,6 +160,12 @@ async function main() {
     interestCatalog,
     treeCatalog,
   );
+  writes.push([`/sources/${heliosSource.id}`, {
+    title: heliosSource.title,
+    kind: heliosSource.kind,
+    body: heliosSource.body,
+    file: heliosSource.file,
+  }]);
   if (process.env.FIREBASE_DATABASE_EMULATOR_HOST) {
     for (const [dbPath, value] of writes) await putEmulator(dbPath, value);
   } else {

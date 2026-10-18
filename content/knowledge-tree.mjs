@@ -362,7 +362,7 @@ const nodes = [
     parentId: "commerce",
     tier: 1,
     status: "live",
-    summary: "Goal, plan, organise, lead, and control. Year 11 gateway toward university management.",
+    summary: "Helios Management 101 first (PESTEL to POLC), then Year 11 deepen toward university management.",
   },
   {
     id: "business",

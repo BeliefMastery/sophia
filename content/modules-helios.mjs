@@ -1,0 +1,193 @@
+/** Management 101 Helios walkthrough. Term 4 spine — not a second catalogue. */
+
+import { buildPassage } from "../lib/passage.mjs";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+
+const heliosPath = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "sources", "helios-strategic-execution.md");
+const heliosBody = readFileSync(heliosPath, "utf8");
+
+const heliosSource = {
+  id: "helios-strategic-execution",
+  title: "Strategic execution essay: Helios Energy",
+  kind: "essay",
+  body: heliosBody,
+  file: "sources/helios-strategic-execution.md",
+};
+
+const words = {
+  pestel: [
+    { term: "macro-environment", meaning: "Outside forces that shape a firm but sit beyond its day-to-day control.", example: "A tax credit for solar is in the macro-environment." },
+    { term: "PESTEL", meaning: "A scan of Political, Economic, Social, Technological, Environmental, and Legal factors.", example: "A subsidy is Political and often Legal as well." },
+  ],
+  swot: [
+    { term: "strength", meaning: "An internal advantage the firm already has.", example: "A proprietary battery design is a strength." },
+    { term: "weakness", meaning: "An internal limit that holds the firm back.", example: "High unit cost is a weakness." },
+    { term: "opportunity", meaning: "An external chance the firm can use.", example: "A green tax credit is an opportunity." },
+    { term: "threat", meaning: "An external risk that can hurt the firm.", example: "A lithium shortage is a threat." },
+  ],
+  smart: [
+    { term: "SMART goal", meaning: "A goal that is Specific, Measurable, Achievable, Relevant, and Time-bound.", example: "Raise microgrid sales 18% in twelve months." },
+  ],
+  polc: [
+    { term: "POLC", meaning: "Planning, Organising, Leading, and Controlling — how a goal is carried out.", example: "A sales dashboard is Controlling." },
+  ],
+  lead: [
+    { term: "incentive", meaning: "An external reward attached to the job, often pay.", example: "A bonus for hitting the sales target." },
+    { term: "intrinsic motivation", meaning: "Wanting the work itself, not only the pay.", example: "Caring about carbon cuts in the region." },
+  ],
+};
+
+function choice(entry) {
+  const item = {
+    kind: "probe",
+    answerKind: "choice",
+    ideaId: entry.id,
+    claim: "management",
+    strandId: "management-101",
+    sourceId: "helios-strategic-execution",
+    ...entry,
+  };
+  if (!Array.isArray(item.passage) || item.passage.length !== 2) {
+    item.passage = buildPassage(item);
+  }
+  if (entry.follow && !item.followPrompt) item.followPrompt = entry.follow;
+  if (entry.accept && !item.repairAccept) item.repairAccept = entry.accept;
+  return item;
+}
+
+const strands = [
+  {
+    id: "management-101",
+    title: "Management 101: Helios walkthrough",
+    domain: "management",
+    phase: "interest",
+    order: 10,
+    summary: "PESTEL, SWOT, SMART, and POLC on the Helios essay, then one case of your own. This is practice, not NCEA.",
+    depth: 2,
+    role: "module",
+    ageTier: "year10",
+    field: "management",
+    continues: "placement-check",
+  },
+];
+
+const items = [
+  choice({
+    id: "m101-pestel-letters",
+    order: 1,
+    words: words.pestel,
+    prompt: "In a PESTEL scan, which letter is mainly about laws, rules, and compliance?",
+    choices: [
+      { id: "legal", text: "Legal" },
+      { id: "social", text: "Social" },
+      { id: "economic", text: "Economic" },
+      { id: "tech", text: "Technological" },
+    ],
+    answer: "legal",
+    lookFor: ["Legal covers laws, rules, and compliance requirements"],
+    misconceptions: ["Putting every rule under Political only"],
+    follow: "Name one rule or permit that could affect a solar firm.",
+    accept: ["law", "rule", "compliance", "permit", "regulation", "grid"],
+  }),
+  choice({
+    id: "m101-helios-sort",
+    order: 2,
+    words: words.pestel,
+    prompt: "Helios faces \"evolving grid connection compliance laws.\" Which PESTEL letter fits best?",
+    choices: [
+      { id: "legal", text: "Legal — it is about compliance rules" },
+      { id: "social", text: "Social — it is about fashion only" },
+      { id: "env", text: "Environmental — it is only about weather" },
+      { id: "econ", text: "Economic — it is only about prices" },
+    ],
+    answer: "legal",
+    lookFor: ["Grid connection compliance laws sit under Legal"],
+    misconceptions: ["Treating every energy issue as Environmental"],
+    follow: "Why keep government policy and statute as two different scan letters?",
+    accept: ["policy", "law", "rule", "government", "compliance", "distinct"],
+  }),
+  choice({
+    id: "m101-swot-from-facts",
+    order: 3,
+    words: words.swot,
+    prompt: "Helios has proprietary high-efficiency battery storage. In SWOT, that is mainly a:",
+    choices: [
+      { id: "strength", text: "Strength — an internal advantage" },
+      { id: "opportunity", text: "Opportunity — an outside chance" },
+      { id: "threat", text: "Threat — an outside risk" },
+      { id: "weakness", text: "Weakness — an internal limit" },
+    ],
+    answer: "strength",
+    lookFor: ["A proprietary battery is an internal strength"],
+    misconceptions: ["Calling every good fact an opportunity"],
+    follow: "Is a federal green tax credit inside the firm or outside it? Say which and why it matters for SWOT.",
+    accept: ["outside", "external", "tax", "credit", "policy", "opportunity"],
+  }),
+  choice({
+    id: "m101-smart-missing",
+    order: 4,
+    words: words.smart,
+    prompt: "A goal says \"increase microgrid sales in the Southwest\" but gives no number and no date. Which SMART parts are missing?",
+    choices: [
+      { id: "mt", text: "Measurable and Time-bound" },
+      { id: "sr", text: "Specific and Relevant only" },
+      { id: "all", text: "All five letters at once" },
+      { id: "none", text: "Nothing — the goal is already SMART" },
+    ],
+    answer: "mt",
+    lookFor: ["Without a number and a date, Measurable and Time-bound are missing"],
+    misconceptions: ["Assuming a vague goal is already SMART"],
+    follow: "Rewrite that goal with one clear number and one finish date.",
+    accept: ["%", "percent", "month", "year", "18", "12", "quarter"],
+  }),
+  choice({
+    id: "m101-polc-place",
+    order: 5,
+    words: words.polc,
+    prompt: "Helios builds a dashboard that tracks quarterly sales and shifts marketing funds if a quarter falls short. That action is mainly:",
+    choices: [
+      { id: "control", text: "Controlling — compare results and correct course" },
+      { id: "plan", text: "Planning — invent the first goal only" },
+      { id: "org", text: "Organising — design the logo" },
+      { id: "lead", text: "Leading — ignore the numbers" },
+    ],
+    answer: "control",
+    lookFor: ["A dashboard that corrects course is Controlling"],
+    misconceptions: ["Calling every meeting Controlling"],
+    follow: "Name one figure a results dashboard might track for Helios.",
+    accept: ["sales", "cost", "lead", "volume", "acquisition", "quarter"],
+  }),
+  choice({
+    id: "m101-leading-motive",
+    order: 6,
+    words: words.lead,
+    prompt: "Helios pays bonuses for the 18% target and also talks about regional carbon reduction. Which pair is correct?",
+    choices: [
+      { id: "both", text: "Bonus is an incentive; caring about carbon can be intrinsic motivation" },
+      { id: "same", text: "Bonus and carbon talk are the same thing" },
+      { id: "only", text: "Only pay ever counts as Leading" },
+      { id: "none", text: "Neither belongs under Leading" },
+    ],
+    answer: "both",
+    lookFor: ["Pay is an incentive; purpose can support intrinsic motivation"],
+    misconceptions: ["Treating every motive as pay"],
+    follow: "In one sentence, tell a pay reward from wanting the work itself.",
+    accept: ["pay", "bonus", "want", "purpose", "intrinsic", "reward"],
+  }),
+  {
+    id: "m101-own-case",
+    strandId: "management-101",
+    ideaId: "m101-own-case",
+    kind: "research",
+    answerKind: "essay",
+    claim: "management",
+    order: 7,
+    sourceId: "helios-strategic-execution",
+    words: [...words.pestel, ...words.swot, ...words.smart, ...words.polc, ...words.lead],
+    prompt: "Choose a real organisation you know. Write a short case that uses PESTEL, SWOT, one SMART goal, and POLC. The management words must do real work in your sentences — do not only list headings.",
+  },
+];
+
+export { strands, items, heliosSource };
