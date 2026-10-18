@@ -32,16 +32,28 @@ body {
 }
 
 .top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 6px;
+  gap: 12px;
+  padding: 10px 12px;
+  margin: 0 -6px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(247, 241, 230, 0.94);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(40, 32, 24, 0.08);
 }
 
 .top-actions {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .wordmark {
@@ -49,6 +61,40 @@ body {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   font-size: 13px;
+}
+
+button.wordmark-home {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+button.wordmark-home:hover,
+button.wordmark-home:focus-visible {
+  color: var(--brass);
+}
+
+.top-home {
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: #fffdf8;
+  border: 1px solid var(--brass);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.top-home:hover,
+.top-home:focus-visible {
+  background: #f7f1e6;
 }
 
 .bezel {

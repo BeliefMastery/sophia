@@ -378,9 +378,17 @@ export function App() {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
 
+  function goHome() {
+    setSelected("");
+    setWrittenDraft("");
+    setRecordError("");
+    setChosenField("");
+  }
+
   const shellProps = {
     user,
     onAdmin: parent ? () => { setChosenField(""); setStudyMode(false); } : null,
+    onHome: chosenField ? goHome : null,
   };
 
   const interestPanel = (
@@ -629,12 +637,23 @@ export function App() {
   );
 }
 
-function Shell({ user, onAdmin, children }) {
+function Shell({ user, onAdmin, onHome, children }) {
   return (
     <main className="shell">
       <header className="top">
-        <p className="wordmark">Sophia</p>
+        {onHome ? (
+          <button type="button" className="wordmark wordmark-home" onClick={onHome} title="Knowledge map">
+            Sophia
+          </button>
+        ) : (
+          <p className="wordmark">Sophia</p>
+        )}
         <div className="top-actions">
+          {onHome ? (
+            <button type="button" className="top-home" onClick={onHome}>
+              Knowledge map
+            </button>
+          ) : null}
           {onAdmin ? (
             <button type="button" className="text" onClick={onAdmin}>Admin report</button>
           ) : null}
