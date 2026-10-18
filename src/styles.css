@@ -493,10 +493,11 @@ textarea {
   cursor: pointer;
   padding: 10px 6px;
   color: var(--ink);
-}
-
-.tech-domain-summary::-webkit-details-marker {
-  display: none;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  background: transparent;
+  border: 0;
 }
 
 .tech-domain-summary::before {
@@ -507,7 +508,7 @@ textarea {
   width: 1em;
 }
 
-.tech-domain[open] > .tech-domain-summary::before {
+.tech-domain.is-open > .tech-domain-summary::before {
   content: "▾";
 }
 

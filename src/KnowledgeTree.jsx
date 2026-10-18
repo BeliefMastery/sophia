@@ -207,13 +207,12 @@ export function KnowledgeTree({
     return domainShouldOpen(evaluated, root, focusId);
   }
 
-  function onDomainToggle(root, event) {
-    const el = event.currentTarget;
-    if (!el) return;
-    const nextOpen = el.open === true;
+  function toggleDomain(root) {
     setForcedOpen((current) => {
-      if (current[root.id] === nextOpen) return current;
-      return { ...current, [root.id]: nextOpen };
+      const wasOpen = Object.prototype.hasOwnProperty.call(current, root.id)
+        ? current[root.id]
+        : domainShouldOpen(evaluated, root, focusId);
+      return { ...current, [root.id]: !wasOpen };
     });
   }
 
@@ -252,39 +251,44 @@ export function KnowledgeTree({
           const open = isDomainOpen(root);
           const kids = childrenOf(evaluated, root.id);
           return (
-            <details
+            <div
               key={root.id}
-              className="tech-domain"
-              open={open}
-              onToggle={(event) => onDomainToggle(root, event)}
+              className={`tech-domain${open ? " is-open" : ""}`}
             >
-              <summary className="tech-domain-summary">
+              <button
+                type="button"
+                className="tech-domain-summary"
+                aria-expanded={open}
+                onClick={() => toggleDomain(root)}
+              >
                 <span className="tech-domain-heading">
                   <NodeSymbol symbol={root.symbol} title={root.title} />
                   <span className="tech-domain-title">{root.title}</span>
                 </span>
                 <span className="tech-domain-meta">{domainMeta(evaluated, root)}</span>
-              </summary>
-              <div className="tech-domain-body">
-                {root.field || root.summary ? (
-                  <NodeCard
-                    node={root}
-                    focusId={focusId}
-                    interested={interests?.[interestKey(root)] === true}
-                    onActivate={onNodeActivate}
-                  />
-                ) : null}
-                {kids.length ? (
-                  <BranchList
-                    evaluated={evaluated}
-                    parentId={root.id}
-                    focusId={focusId}
-                    interests={interests}
-                    onActivate={onNodeActivate}
-                  />
-                ) : null}
-              </div>
-            </details>
+              </button>
+              {open ? (
+                <div className="tech-domain-body">
+                  {root.field || root.summary ? (
+                    <NodeCard
+                      node={root}
+                      focusId={focusId}
+                      interested={interests?.[interestKey(root)] === true}
+                      onActivate={onNodeActivate}
+                    />
+                  ) : null}
+                  {kids.length ? (
+                    <BranchList
+                      evaluated={evaluated}
+                      parentId={root.id}
+                      focusId={focusId}
+                      interests={interests}
+                      onActivate={onNodeActivate}
+                    />
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
           );
         })}
       </div>

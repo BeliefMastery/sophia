@@ -129,9 +129,12 @@ export function App() {
     return nextFieldStep(strands || {}, library, attempts || [], repairs || {}, chosenField);
   }, [chosenField, strands, library, attempts, repairs]);
   const fieldRepair = step?.kind === "repair" ? { item: step.item, selected: step.selected } : null;
-  const pendingHere = pendingRepair
+  const pendingHere = Boolean(
+    pendingRepair?.item?.id
+    && chosenField
     && fieldPlace(strands || {}, library || [], pendingRepair.item).id === chosenField
-    && !(typeof repairs?.[pendingRepair.item.id]?.answer === "string" && repairs[pendingRepair.item.id].answer.trim());
+    && !(typeof repairs?.[pendingRepair.item.id]?.answer === "string" && repairs[pendingRepair.item.id].answer.trim()),
+  );
   const activeRepair = chosenField ? (pendingHere ? pendingRepair : fieldRepair) : null;
 
   useEffect(() => {
