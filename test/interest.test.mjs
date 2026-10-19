@@ -60,6 +60,7 @@ test("expansion prompts require passages and core-then-branch deepening", () => 
   assert.match(cluster, /deepen and broaden/);
   assert.match(cluster, /plausible misconceptions/);
   assert.match(cluster, /Never telegraph the key/);
+  assert.match(cluster, /Vary distractor phrasing/);
   assert.match(cluster, /Interest checkboxes are a register only/);
   const practice = fieldClusterPrompt({
     name: "Student",
