@@ -211,3 +211,41 @@ test("a student can register interests and cannot write another register or the 
   const listed = await get(ref(parent, "interests"));
   assert.equal(listed.val().student.philosophy, true);
 });
+
+test("a student can register entrance targets and cannot write another register or the catalog", async () => {
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    const db = context.database();
+    await set(ref(db, "roles/parent/parent"), true);
+    await set(ref(db, "catalog/entrance/english"), {
+      title: "English literacy",
+      always: true,
+      defaultOn: true,
+      order: 1,
+      nodeIds: ["english"],
+    });
+    await set(ref(db, "catalog/entrance/psychology"), {
+      title: "Psychology",
+      always: false,
+      defaultOn: true,
+      order: 4,
+      nodeIds: ["psychology"],
+    });
+  });
+  const record = {
+    english: true,
+    psychology: true,
+    updatedAt: Date.now(),
+  };
+  const student = testEnv.authenticatedContext("student").database();
+  await assertSucceeds(get(ref(student, "catalog/entrance")));
+  await assertSucceeds(set(ref(student, "entrance/student"), record));
+  await assertFails(set(ref(student, "entrance/other"), record));
+  await assertFails(set(ref(student, "catalog/entrance/english/title"), "Hack"));
+  await assertFails(set(ref(student, "entrance/student"), {
+    unknownField: true,
+    updatedAt: Date.now(),
+  }));
+  const parent = testEnv.authenticatedContext("parent").database();
+  const listed = await get(ref(parent, "entrance"));
+  assert.equal(listed.val().student.psychology, true);
+});

@@ -5,6 +5,7 @@ const nodes = [
   {
     id: "mathematics",
     title: "Mathematics",
+    wing: "entrance",
     symbol: "∑",
     field: "mathematics",
     parentId: null,
@@ -15,6 +16,7 @@ const nodes = [
   {
     id: "english",
     title: "English",
+    wing: "entrance",
     symbol: "¶",
     field: "english",
     parentId: null,
@@ -25,6 +27,7 @@ const nodes = [
   {
     id: "science",
     title: "Science",
+    wing: "entrance",
     symbol: "◇",
     field: null,
     parentId: null,
@@ -35,6 +38,7 @@ const nodes = [
   {
     id: "social",
     title: "Social studies",
+    wing: "entrance",
     symbol: "◎",
     field: null,
     parentId: null,
@@ -45,6 +49,7 @@ const nodes = [
   {
     id: "mind",
     title: "Mind and people",
+    wing: "entrance",
     symbol: "◉",
     field: null,
     parentId: null,
@@ -55,6 +60,7 @@ const nodes = [
   {
     id: "commerce",
     title: "Commerce",
+    wing: "entrance",
     symbol: "◆",
     field: null,
     parentId: null,
@@ -65,6 +71,7 @@ const nodes = [
   {
     id: "applied",
     title: "Applied fields",
+    wing: "additional",
     symbol: "▣",
     field: null,
     parentId: null,
@@ -77,6 +84,7 @@ const nodes = [
   {
     id: "finance",
     title: "Finance",
+    wing: "entrance",
     symbol: "₡",
     field: "finance",
     parentId: "mathematics",
@@ -87,6 +95,7 @@ const nodes = [
   {
     id: "statistics",
     title: "Statistics",
+    wing: "additional",
     symbol: "σ",
     field: "statistics",
     parentId: "mathematics",
@@ -99,6 +108,7 @@ const nodes = [
   {
     id: "literature",
     title: "Literature",
+    wing: "additional",
     symbol: "※",
     field: "literature",
     parentId: "english",
@@ -109,6 +119,7 @@ const nodes = [
   {
     id: "linguistics",
     title: "Linguistics",
+    wing: "additional",
     symbol: "∿",
     field: "linguistics",
     parentId: "english",
@@ -121,6 +132,7 @@ const nodes = [
   {
     id: "claims",
     title: "Claims and evidence",
+    wing: "entrance",
     symbol: "✓",
     field: "claims",
     parentId: "science",
@@ -131,6 +143,7 @@ const nodes = [
   {
     id: "physics",
     title: "Physics",
+    wing: "entrance",
     symbol: "∇",
     field: "physics",
     parentId: "science",
@@ -141,6 +154,7 @@ const nodes = [
   {
     id: "chemistry",
     title: "Chemistry",
+    wing: "entrance",
     symbol: "⚗",
     field: "chemistry",
     parentId: "science",
@@ -151,6 +165,7 @@ const nodes = [
   {
     id: "biology",
     title: "Biology",
+    wing: "entrance",
     symbol: "❖",
     field: "biology",
     parentId: "science",
@@ -161,6 +176,7 @@ const nodes = [
   {
     id: "geology",
     title: "Geology",
+    wing: "entrance",
     symbol: "△",
     field: "geology",
     parentId: "science",
@@ -171,6 +187,7 @@ const nodes = [
   {
     id: "electronics",
     title: "Electronics",
+    wing: "entrance",
     symbol: "⌁",
     field: "electronics",
     parentId: "physics",
@@ -181,6 +198,7 @@ const nodes = [
   {
     id: "engineering",
     title: "Engineering",
+    wing: "additional",
     symbol: "⚙",
     field: "engineering",
     parentId: "physics",
@@ -191,6 +209,7 @@ const nodes = [
   {
     id: "medicine",
     title: "Medicine",
+    wing: "additional",
     symbol: "✚",
     field: "medicine",
     parentId: "chemistry",
@@ -201,6 +220,7 @@ const nodes = [
   {
     id: "environmentalScience",
     title: "Environmental science",
+    wing: "additional",
     symbol: "❋",
     field: "environmentalScience",
     parentId: "biology",
@@ -211,6 +231,7 @@ const nodes = [
   {
     id: "systems",
     title: "Systems thinking",
+    wing: "additional",
     symbol: "⧉",
     field: "systems",
     parentId: "geology",
@@ -223,6 +244,7 @@ const nodes = [
   {
     id: "history",
     title: "History",
+    wing: "entrance",
     symbol: "†",
     field: "history",
     parentId: "social",
@@ -233,6 +255,7 @@ const nodes = [
   {
     id: "politics",
     title: "Politics",
+    wing: "entrance",
     symbol: "⚖",
     field: "politics",
     parentId: "social",
@@ -243,6 +266,7 @@ const nodes = [
   {
     id: "technology",
     title: "Technology",
+    wing: "entrance",
     symbol: "⚙",
     field: "technology",
     parentId: "social",
@@ -253,6 +277,7 @@ const nodes = [
   {
     id: "economics",
     title: "Economics",
+    wing: "additional",
     symbol: "≈",
     field: "economics",
     parentId: "social",
@@ -263,6 +288,7 @@ const nodes = [
   {
     id: "nzHistory",
     title: "Aotearoa history",
+    wing: "additional",
     symbol: "†",
     field: "nzHistory",
     parentId: "history",
@@ -273,6 +299,7 @@ const nodes = [
   {
     id: "worldHistory",
     title: "World history",
+    wing: "additional",
     symbol: "‡",
     field: "worldHistory",
     parentId: "history",
@@ -285,6 +312,7 @@ const nodes = [
   {
     id: "psychology",
     title: "Psychology",
+    wing: "entrance",
     symbol: "Ψ",
     field: "psychology",
     parentId: "mind",
@@ -295,6 +323,7 @@ const nodes = [
   {
     id: "socialManagement",
     title: "Social management",
+    wing: "entrance",
     symbol: "⋈",
     field: "socialManagement",
     parentId: "mind",
@@ -305,6 +334,7 @@ const nodes = [
   {
     id: "philosophy",
     title: "Philosophy",
+    wing: "additional",
     symbol: "Φ",
     field: "philosophy",
     parentId: "mind",
@@ -315,6 +345,7 @@ const nodes = [
   {
     id: "sociology",
     title: "Sociology",
+    wing: "additional",
     symbol: "§",
     field: "sociology",
     parentId: "mind",
@@ -325,6 +356,7 @@ const nodes = [
   {
     id: "anthropology",
     title: "Anthropology",
+    wing: "additional",
     symbol: "ʔ",
     field: "anthropology",
     parentId: "mind",
@@ -337,6 +369,7 @@ const nodes = [
   {
     id: "accounting",
     title: "Accounting",
+    wing: "additional",
     symbol: "Σ",
     field: "accounting",
     parentId: "commerce",
@@ -347,6 +380,7 @@ const nodes = [
   {
     id: "marketing",
     title: "Marketing",
+    wing: "additional",
     symbol: "⇒",
     field: "marketing",
     parentId: "commerce",
@@ -357,6 +391,7 @@ const nodes = [
   {
     id: "managementCore",
     title: "Management",
+    wing: "entrance",
     symbol: "⊞",
     field: "management",
     parentId: "commerce",
@@ -367,6 +402,7 @@ const nodes = [
   {
     id: "business",
     title: "Business",
+    wing: "additional",
     symbol: "◈",
     field: "business",
     parentId: "commerce",
@@ -379,6 +415,7 @@ const nodes = [
   {
     id: "design",
     title: "Design",
+    wing: "additional",
     symbol: "✎",
     field: "design",
     parentId: "applied",
@@ -389,6 +426,7 @@ const nodes = [
   {
     id: "law",
     title: "Law",
+    wing: "additional",
     symbol: "§",
     field: "law",
     parentId: "applied",
@@ -399,6 +437,7 @@ const nodes = [
   {
     id: "aiLiteracy",
     title: "AI literacy",
+    wing: "additional",
     symbol: "λ",
     field: "aiLiteracy",
     parentId: "applied",
@@ -409,6 +448,7 @@ const nodes = [
   {
     id: "computerScience",
     title: "Computer science",
+    wing: "additional",
     symbol: "⟨⟩",
     field: "computerScience",
     parentId: "applied",
@@ -419,6 +459,7 @@ const nodes = [
   {
     id: "architecture",
     title: "Architecture",
+    wing: "additional",
     symbol: "⌂",
     field: "architecture",
     parentId: "applied",
@@ -439,6 +480,7 @@ function treeCatalogRecord(list = nodes) {
       status: node.status,
       summary: node.summary,
       symbol: node.symbol || "",
+      wing: node.wing === "additional" ? "additional" : "entrance",
       order: index + 1,
     };
   });
@@ -447,7 +489,13 @@ function treeCatalogRecord(list = nodes) {
 
 function nodesFromCatalog(catalog) {
   if (!catalog) return [];
-  if (Array.isArray(catalog)) return catalog.map((node, index) => ({ ...node, order: node.order ?? index + 1 }));
+  if (Array.isArray(catalog)) {
+    return catalog.map((node, index) => ({
+      ...node,
+      wing: node.wing === "additional" ? "additional" : "entrance",
+      order: node.order ?? index + 1,
+    }));
+  }
   return Object.entries(catalog)
     .map(([id, node]) => ({
       id,
@@ -458,6 +506,7 @@ function nodesFromCatalog(catalog) {
       status: node.status === "planned" ? "planned" : "live",
       summary: node.summary || "",
       symbol: node.symbol || "",
+      wing: node.wing === "additional" ? "additional" : "entrance",
       order: Number(node.order) || 0,
     }))
     .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));

@@ -525,6 +525,99 @@ textarea {
   gap: 10px;
 }
 
+.tech-section-title {
+  font-family: Palatino, Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.tech-entrance-targets {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fffdf8;
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.tech-entrance-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.tech-additional {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #efe8dc;
+  padding: 4px 10px 10px;
+}
+
+.tech-additional-summary {
+  display: grid;
+  gap: 2px;
+  cursor: pointer;
+  padding: 10px 6px;
+  color: var(--ink);
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  background: transparent;
+  border: 0;
+}
+
+.tech-additional-summary::before {
+  content: "▸";
+  color: var(--brass);
+  margin-right: 8px;
+  display: inline-block;
+  width: 1em;
+}
+
+.tech-additional.is-open > .tech-additional-summary::before {
+  content: "▾";
+}
+
+.tech-additional-body {
+  display: grid;
+  gap: 10px;
+  padding: 4px 2px 2px;
+}
+
+.tech-weak-spots {
+  border: 1px solid var(--brass);
+  background: #f7f1e6;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.tech-weak-spots h2 {
+  font-family: Palatino, Georgia, serif;
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.tech-weak-spots ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.admin-weak-ideas {
+  list-style: disc;
+  margin: 0;
+  padding-left: 1.1em;
+  display: grid;
+  gap: 4px;
+}
+
 .tech-domain {
   border: 1px solid var(--line);
   border-radius: 16px;

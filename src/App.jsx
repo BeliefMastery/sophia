@@ -45,10 +45,14 @@ export function App() {
   const [pendingRepair, setPendingRepair] = useState(null);
   const [repairDraft, setRepairDraft] = useState("");
   const [catalog, setCatalog] = useState(null);
+  const [entranceCatalog, setEntranceCatalog] = useState(null);
   const [tree, setTree] = useState(null);
   const [interests, setInterests] = useState(null);
+  const [entrance, setEntrance] = useState(null);
   const [interestSaving, setInterestSaving] = useState(false);
   const [interestError, setInterestError] = useState("");
+  const [entranceSaving, setEntranceSaving] = useState(false);
+  const [entranceError, setEntranceError] = useState("");
   const [writtenDraft, setWrittenDraft] = useState("");
   const [sourceCache, setSourceCache] = useState({});
   const [studyMode, setStudyMode] = useState(() => {
@@ -88,11 +92,17 @@ export function App() {
     const unsubCatalog = onValue(ref(db, "catalog/interests"), (snapshot) => {
       setCatalog(snapshot.val() || {});
     });
+    const unsubEntranceCatalog = onValue(ref(db, "catalog/entrance"), (snapshot) => {
+      setEntranceCatalog(snapshot.val() || {});
+    });
     const unsubTree = onValue(ref(db, "catalog/tree"), (snapshot) => {
       setTree(snapshot.val() || {});
     });
     const unsubInterests = onValue(ref(db, `interests/${user.uid}`), (snapshot) => {
       setInterests(snapshot.val() || {});
+    });
+    const unsubEntrance = onValue(ref(db, `entrance/${user.uid}`), (snapshot) => {
+      setEntrance(snapshot.val() || {});
     });
     return () => {
       unsubItems();
@@ -101,8 +111,10 @@ export function App() {
       unsubRole();
       unsubRepairs();
       unsubCatalog();
+      unsubEntranceCatalog();
       unsubTree();
       unsubInterests();
+      unsubEntrance();
     };
   }, [user]);
 
@@ -114,9 +126,12 @@ export function App() {
     setRepairs(null);
     setChosenField("");
     setCatalog(null);
+    setEntranceCatalog(null);
     setTree(null);
     setInterests(null);
+    setEntrance(null);
     setInterestError("");
+    setEntranceError("");
     setStudyMode(false);
   }, [user]);
 
@@ -313,6 +328,19 @@ export function App() {
     }
   }
 
+  async function onEntranceSave(nextEntrance) {
+    if (!user || entranceSaving) return;
+    setEntranceSaving(true);
+    setEntranceError("");
+    try {
+      await set(ref(db, `entrance/${user.uid}`), nextEntrance);
+    } catch {
+      setEntranceError("Those entrance subjects were not saved. Try it again.");
+    } finally {
+      setEntranceSaving(false);
+    }
+  }
+
   if (user === undefined) {
     return <Shell><p className="quiet">Loading…</p></Shell>;
   }
@@ -374,7 +402,7 @@ export function App() {
     );
   }
 
-  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || tree === null || interests === null) {
+  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || entranceCatalog === null || tree === null || interests === null || entrance === null) {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
 
@@ -416,14 +444,16 @@ export function App() {
   if (!current) {
     return (
       <Shell {...shellProps}>
-        <Bezel plate="Knowledge map" aside="Tech tree" scene="study">
-          <h1 ref={headingRef} tabIndex={-1}>Knowledge map</h1>
-          <p>Choose an open branch. Later branches unlock when earlier knowledge is finished.</p>
+        <Bezel plate="Knowledge map" aside="Entrance" scene="study">
+          <h1 ref={headingRef} tabIndex={-1}>University Entrance map</h1>
+          <p>Choose an open branch on the entrance ramp. Later branches unlock when earlier knowledge is finished.</p>
           {parent ? <p className="quiet">You are in student mode. Answers are saved on this admin login so you can review them in the report.</p> : null}
           <KnowledgeTree
             tree={tree}
             fields={fields}
             interests={interests}
+            entrance={entrance}
+            entranceCatalog={entranceCatalog}
             onStudy={(fieldId) => {
               setSelected("");
               setWrittenDraft("");
@@ -431,8 +461,11 @@ export function App() {
               setChosenField(fieldId);
             }}
             onSaveInterests={onInterestSave}
+            onSaveEntrance={onEntranceSave}
             savingInterest={interestSaving}
+            savingEntrance={entranceSaving}
             interestError={interestError}
+            entranceError={entranceError}
           />
         </Bezel>
       </Shell>
@@ -612,6 +645,32 @@ export function App() {
           {current.moduleRoman ? ` ${current.moduleRoman}.` : ""}
           {current.label ? ` ${current.label}.` : ""}
         </p>
+        {current.held ? (
+          <p>
+            This sitting held. The next step can be one difficulty up once that module is written.
+          </p>
+        ) : (
+          <div className="tech-weak-spots" role="status">
+            <h2>What would hold you back</h2>
+            {(current.missDetails || []).length ? (
+              <ul>
+                {(current.missDetails || []).map((miss) => (
+                  <li key={miss.id}>
+                    <span className="tech-await-title">{miss.prompt}</span>
+                    <p className="quiet">
+                      The short in-app reading after that miss is the solution note for this idea.
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="quiet">The missed ideas from this sitting stay at this level until a training module holds them.</p>
+            )}
+            <p>
+              The next module stays at this level until those ideas hold. A harder module opens only after a held sitting.
+            </p>
+          </div>
+        )}
         {current.awaitingModule ? (
           <div className="tech-await" role="status">
             <p>

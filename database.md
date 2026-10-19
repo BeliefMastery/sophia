@@ -31,8 +31,10 @@ The root is closed. Someone who is not signed in cannot read or write.
 | `reviews/{uid}/{itemId}` | Auto or parent mark of the written repair: known, partial, or unknown | Read own; create/update own auto mark after a repair | Read, write |
 | `mastery/{uid}/{strandId}/{ideaId}` | Whether an idea is currently known | Read own | Read, write |
 | `catalog/interests` | Interest options derived from the knowledge tree | Read | Read, write |
-| `catalog/tree` | Knowledge tech-tree nodes (domains, branches, planned leaves) | Read | Read, write |
+| `catalog/entrance` | University Entrance target options (literacy, numeracy, pathway subjects) | Read | Read, write |
+| `catalog/tree` | Knowledge tech-tree nodes (domains, branches, planned leaves; each has `wing`) | Read | Read, write |
 | `interests/{uid}` | Checkbox register (`optionId: true` plus `updatedAt`) | Read, write own | Read all |
+| `entrance/{uid}` | Entrance-subject register (`optionId: true` plus `updatedAt`) | Read, write own | Read all |
 
 `attemptId` is a Realtime Database push id. Do not use the item id as the attempt id. She will answer the same idea more than once, and the earlier answer has to remain.
 
@@ -42,7 +44,11 @@ After a miss, the student reads `guides/{itemId}.passage`: exactly two paragraph
 
 ## Knowledge tree
 
-The student field map is a tech-tree in git as `content/knowledge-tree.mjs`. The seed job writes it to `catalog/tree`. Domain roots fan into live and planned branches. Within a branch, a child with live content unlocks only when its parent field’s current sitting held: at least `ceil(5n/6)` first attempts matched. A finished sitting that did not hold stays in that field for another practice module. Domain containers do not block their children. Planned nodes stay visible with no study content so a student can mark interest. The tree grows when the admin writes and seeds a new module from a result or interest request.
+The student field map is a tech-tree in git as `content/knowledge-tree.mjs`. The seed job writes it to `catalog/tree`. Each node has `wing: "entrance"` or `wing: "additional"`. The home map shows the entrance ramp first and collapses Additional fields. Within a branch, a child with live content unlocks only when its parent field’s current sitting held: at least `ceil(5n/6)` first attempts matched. A finished sitting that did not hold stays in that field for another practice module aimed at the weak ideas. Domain containers do not block their children. Planned nodes stay visible with no study content so a student can mark interest. The tree grows when the admin writes and seeds a new module from a result or interest request.
+
+## Entrance targets
+
+Entrance options live in `content/entrance-targets.mjs`. The seed job writes them to `catalog/entrance`. English literacy and mathematics numeracy are always on; school sciences, psychology, and management default on and can be toggled. Each ticked key must exist under `catalog/entrance`.
 
 ## Interest register
 

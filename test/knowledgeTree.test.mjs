@@ -12,8 +12,13 @@ test("the knowledge tree is valid and seeds cleanly", () => {
   assert.ok(nodesFromCatalog(catalog).some((node) => node.id === "electronics"));
   assert.ok(nodesFromCatalog(catalog).some((node) => node.id === "nzHistory" && node.status === "planned"));
   assert.ok(nodes.every((node) => node.symbol));
+  assert.ok(nodes.every((node) => node.wing === "entrance" || node.wing === "additional"));
   assert.equal(catalog.mathematics.symbol, "∑");
+  assert.equal(catalog.mathematics.wing, "entrance");
+  assert.equal(catalog.philosophy.wing, "additional");
   assert.equal(nodesFromCatalog(catalog).find((node) => node.id === "philosophy").symbol, "Φ");
+  assert.equal(nodesFromCatalog(catalog).find((node) => node.id === "philosophy").wing, "additional");
+  assert.equal(nodesFromCatalog(catalog).find((node) => node.id === "managementCore").wing, "entrance");
 });
 
 test("interest options derive from the tree", () => {

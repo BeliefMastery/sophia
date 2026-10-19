@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
-import { nodes, treeCatalogRecord } from "../content/knowledge-tree.mjs";
+import { nodes, nodesFromCatalog, treeCatalogRecord } from "../content/knowledge-tree.mjs";
+import {
+  effectiveEntrance,
+  entranceRecordForSave,
+  optionsFromCatalog,
+  visibleEntranceNodeIds,
+} from "../content/entrance-targets.mjs";
 import { evaluateTree, childrenOf } from "../lib/knowledgeTree.mjs";
 import { moduleLabel } from "../lib/expansion.mjs";
 
@@ -46,8 +52,8 @@ function descendantsOf(evaluated, parentId) {
   return kids.concat(...kids.map((kid) => descendantsOf(evaluated, kid.id)));
 }
 
-function domainMeta(evaluated, root) {
-  const desc = descendantsOf(evaluated, root.id);
+function domainMeta(evaluated, root, allowNode) {
+  const desc = descendantsOf(evaluated, root.id).filter(allowNode);
   const openCount = desc.filter((node) => node.state === "open" || node.state === "active" || node.state === "practice").length;
   const branchCount = desc.length;
   const parts = [`${branchCount} branch${branchCount === 1 ? "" : "es"}`];
@@ -55,10 +61,10 @@ function domainMeta(evaluated, root) {
   return parts.join(" · ");
 }
 
-function domainShouldOpen(evaluated, root, focusId) {
+function domainShouldOpen(evaluated, root, focusId, allowNode) {
   if (focusId === root.id) return true;
-  if (root.state === "active" || root.state === "practice") return true;
-  const desc = descendantsOf(evaluated, root.id);
+  if (allowNode(root) && (root.state === "active" || root.state === "practice")) return true;
+  const desc = descendantsOf(evaluated, root.id).filter(allowNode);
   if (focusId && desc.some((node) => node.id === focusId)) return true;
   return desc.some((node) => node.state === "active" || node.state === "practice");
 }
@@ -122,13 +128,14 @@ function BranchList({
   focusId,
   interests,
   onActivate,
+  allowNode,
 }) {
-  const kids = childrenOf(evaluated, parentId);
+  const kids = childrenOf(evaluated, parentId).filter(allowNode);
   if (!kids.length) return null;
   return (
     <ul className="tech-children">
       {kids.map((node) => {
-        const nested = childrenOf(evaluated, node.id);
+        const nested = childrenOf(evaluated, node.id).filter(allowNode);
         return (
           <li key={node.id} className="tech-branch-item">
             <NodeCard
@@ -144,6 +151,7 @@ function BranchList({
                 focusId={focusId}
                 interests={interests}
                 onActivate={onActivate}
+                allowNode={allowNode}
               />
             ) : null}
           </li>
@@ -153,27 +161,128 @@ function BranchList({
   );
 }
 
+function DomainBlock({
+  root,
+  evaluated,
+  focusId,
+  interests,
+  onActivate,
+  allowNode,
+  forcedOpen,
+  onToggle,
+  includeRootCard,
+}) {
+  const open = Object.prototype.hasOwnProperty.call(forcedOpen, root.id)
+    ? forcedOpen[root.id]
+    : domainShouldOpen(evaluated, root, focusId, allowNode);
+  const kids = childrenOf(evaluated, root.id).filter(allowNode);
+  const showRoot = includeRootCard && allowNode(root) && (root.field || root.summary);
+
+  return (
+    <div className={`tech-domain${open ? " is-open" : ""}`}>
+      <button
+        type="button"
+        className="tech-domain-summary"
+        aria-expanded={open}
+        onClick={() => onToggle(root, open)}
+      >
+        <span className="tech-domain-heading">
+          <NodeSymbol symbol={root.symbol} title={root.title} />
+          <span className="tech-domain-title">{root.title}</span>
+        </span>
+        <span className="tech-domain-meta">{domainMeta(evaluated, root, allowNode)}</span>
+      </button>
+      {open ? (
+        <div className="tech-domain-body">
+          {showRoot ? (
+            <NodeCard
+              node={root}
+              focusId={focusId}
+              interested={interests?.[interestKey(root)] === true}
+              onActivate={onActivate}
+            />
+          ) : null}
+          {kids.length ? (
+            <BranchList
+              evaluated={evaluated}
+              parentId={root.id}
+              focusId={focusId}
+              interests={interests}
+              onActivate={onActivate}
+              allowNode={allowNode}
+            />
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function KnowledgeTree({
   tree,
   fields,
   interests,
+  entrance,
+  entranceCatalog,
   onStudy,
   onSaveInterests,
+  onSaveEntrance,
   savingInterest,
+  savingEntrance,
   interestError,
+  entranceError,
 }) {
   const source = useMemo(() => {
     if (tree && typeof tree === "object" && Object.keys(tree).length) return tree;
     return treeCatalogRecord(nodes);
   }, [tree]);
   const evaluated = useMemo(() => evaluateTree(source, fields || []), [source, fields]);
-  const roots = useMemo(
-    () => evaluated.filter((node) => !node.parentId)
-      .sort((a, b) => (a.order || 0) - (b.order || 0) || a.title.localeCompare(b.title)),
-    [evaluated],
+  const treeNodes = useMemo(() => {
+    if (Array.isArray(source)) return source;
+    if (source && typeof source === "object" && Object.keys(source).length) {
+      return nodesFromCatalog(source);
+    }
+    return nodes;
+  }, [source]);
+  const entranceOptions = useMemo(
+    () => optionsFromCatalog(entranceCatalog),
+    [entranceCatalog],
   );
+  const entranceTicks = useMemo(
+    () => effectiveEntrance(entrance, entranceCatalog || entranceOptions),
+    [entrance, entranceCatalog, entranceOptions],
+  );
+  const entranceIds = useMemo(
+    () => visibleEntranceNodeIds(entranceTicks, entranceCatalog || entranceOptions, treeNodes),
+    [entranceTicks, entranceCatalog, entranceOptions, treeNodes],
+  );
+  const allowEntrance = useMemo(
+    () => (node) => node.wing !== "additional" && entranceIds.has(node.id),
+    [entranceIds],
+  );
+  const allowAdditional = useMemo(
+    () => (node) => node.wing === "additional",
+    [],
+  );
+  const entranceRoots = useMemo(
+    () => evaluated
+      .filter((node) => !node.parentId)
+      .filter((root) => allowEntrance(root) || descendantsOf(evaluated, root.id).some(allowEntrance))
+      .sort((a, b) => (a.order || 0) - (b.order || 0) || a.title.localeCompare(b.title)),
+    [evaluated, allowEntrance],
+  );
+  const additionalSections = useMemo(() => {
+    const roots = evaluated
+      .filter((node) => !node.parentId)
+      .sort((a, b) => (a.order || 0) - (b.order || 0) || a.title.localeCompare(b.title));
+    return roots.filter((root) => {
+      if (root.wing === "additional") return true;
+      return descendantsOf(evaluated, root.id).some(allowAdditional);
+    });
+  }, [evaluated, allowAdditional]);
   const [focusId, setFocusId] = useState("");
   const [forcedOpen, setForcedOpen] = useState({});
+  const [additionalOpen, setAdditionalOpen] = useState(false);
   const focus = evaluated.find((node) => node.id === focusId) || null;
   const awaiting = useMemo(
     () => (fields || []).filter((field) => field.awaitingModule),
@@ -191,6 +300,14 @@ export function KnowledgeTree({
     onSaveInterests(next);
   }
 
+  function toggleEntrance(optionId, always) {
+    if (always || !onSaveEntrance) return;
+    const next = { ...entranceTicks };
+    if (next[optionId]) delete next[optionId];
+    else next[optionId] = true;
+    onSaveEntrance(entranceRecordForSave(next, entranceCatalog || entranceOptions));
+  }
+
   function onNodeActivate(node) {
     setFocusId(node.id);
     if (
@@ -202,26 +319,40 @@ export function KnowledgeTree({
     }
   }
 
-  function isDomainOpen(root) {
-    if (Object.prototype.hasOwnProperty.call(forcedOpen, root.id)) return forcedOpen[root.id];
-    return domainShouldOpen(evaluated, root, focusId);
-  }
-
-  function toggleDomain(root) {
-    setForcedOpen((current) => {
-      const wasOpen = Object.prototype.hasOwnProperty.call(current, root.id)
-        ? current[root.id]
-        : domainShouldOpen(evaluated, root, focusId);
-      return { ...current, [root.id]: !wasOpen };
-    });
+  function toggleDomain(root, wasOpen) {
+    setForcedOpen((current) => ({ ...current, [root.id]: !wasOpen }));
   }
 
   return (
     <div className="tech-tree">
       <p className="quiet">
-        Work through open branches. Hold a module (five of six on a six-question set) to open a deeper branch.
-        Falling short keeps you in this field for another module at the same level. Planned ones are not written yet.
+        This map is the University Entrance ramp: literacy, numeracy, school science, and the pathway subjects you switch on.
+        Hold a module (five of six on a six-question set) to open a deeper branch. Falling short keeps you in this field for another module at the same level.
       </p>
+      <div className="tech-entrance-targets">
+        <h2 className="tech-section-title">Entrance subjects</h2>
+        <p className="quiet">English and mathematics stay on. Tick the pathway subjects you are preparing.</p>
+        <ul className="tech-entrance-list">
+          {entranceOptions.map((option) => (
+            <li key={option.id}>
+              <label className="tech-interest-toggle">
+                <input
+                  type="checkbox"
+                  checked={entranceTicks[option.id] === true}
+                  disabled={option.always || savingEntrance || !onSaveEntrance}
+                  onChange={() => toggleEntrance(option.id, option.always)}
+                />
+                <span>
+                  {option.title}
+                  {option.always ? " (always on)" : ""}
+                </span>
+              </label>
+            </li>
+          ))}
+        </ul>
+        {entranceError ? <p className="alert" role="alert">{entranceError}</p> : null}
+        {savingEntrance ? <p className="quiet">Saving entrance subjects…</p> : null}
+      </div>
       {awaiting.length ? (
         <div className="tech-await" role="status">
           <p>
@@ -247,51 +378,58 @@ export function KnowledgeTree({
         </div>
       ) : null}
       <div className="tech-outline" role="list">
-        {roots.map((root) => {
-          const open = isDomainOpen(root);
-          const kids = childrenOf(evaluated, root.id);
-          return (
-            <div
-              key={root.id}
-              className={`tech-domain${open ? " is-open" : ""}`}
-            >
-              <button
-                type="button"
-                className="tech-domain-summary"
-                aria-expanded={open}
-                onClick={() => toggleDomain(root)}
-              >
-                <span className="tech-domain-heading">
-                  <NodeSymbol symbol={root.symbol} title={root.title} />
-                  <span className="tech-domain-title">{root.title}</span>
-                </span>
-                <span className="tech-domain-meta">{domainMeta(evaluated, root)}</span>
-              </button>
-              {open ? (
-                <div className="tech-domain-body">
-                  {root.field || root.summary ? (
-                    <NodeCard
-                      node={root}
-                      focusId={focusId}
-                      interested={interests?.[interestKey(root)] === true}
-                      onActivate={onNodeActivate}
-                    />
-                  ) : null}
-                  {kids.length ? (
-                    <BranchList
-                      evaluated={evaluated}
-                      parentId={root.id}
-                      focusId={focusId}
-                      interests={interests}
-                      onActivate={onNodeActivate}
-                    />
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-          );
-        })}
+        {entranceRoots.map((root) => (
+          <DomainBlock
+            key={root.id}
+            root={root}
+            evaluated={evaluated}
+            focusId={focusId}
+            interests={interests}
+            onActivate={onNodeActivate}
+            allowNode={allowEntrance}
+            forcedOpen={forcedOpen}
+            onToggle={toggleDomain}
+            includeRootCard
+          />
+        ))}
       </div>
+
+      {additionalSections.length ? (
+        <div className={`tech-additional${additionalOpen ? " is-open" : ""}`}>
+          <button
+            type="button"
+            className="tech-additional-summary"
+            aria-expanded={additionalOpen}
+            onClick={() => setAdditionalOpen((open) => !open)}
+          >
+            <span className="tech-domain-title">Additional fields</span>
+            <span className="tech-domain-meta">Beyond the entrance ramp</span>
+          </button>
+          {additionalOpen ? (
+            <div className="tech-additional-body">
+              <p className="quiet">
+                Introductory university subjects stay studyable here. They are not the front door for University Entrance preparation.
+              </p>
+              <div className="tech-outline" role="list">
+                {additionalSections.map((root) => (
+                  <DomainBlock
+                    key={`extra-${root.id}`}
+                    root={root}
+                    evaluated={evaluated}
+                    focusId={focusId}
+                    interests={interests}
+                    onActivate={onNodeActivate}
+                    allowNode={allowAdditional}
+                    forcedOpen={forcedOpen}
+                    onToggle={toggleDomain}
+                    includeRootCard={root.wing === "additional"}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
       {focus ? (
         <div className="tech-detail">

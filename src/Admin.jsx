@@ -389,7 +389,7 @@ function ModulesNeeded({ students }) {
         <h1>Modules to produce</h1>
         <p>
           Students who finish a field (and repair every miss) wait here until the next module is written.
-          Copy a row into Cursor for the next content iteration.
+          Weak ideas are the training-set brief for a same-level module. Copy a row into Cursor for the next content iteration.
         </p>
         {rows.length ? (
           <div className="admin-modules-wrap">
@@ -400,6 +400,7 @@ function ModulesNeeded({ students }) {
                   <th scope="col">Mode</th>
                   <th scope="col">Next module</th>
                   <th scope="col">Strand id</th>
+                  <th scope="col">Weak ideas</th>
                   <th scope="col">Students</th>
                   <th scope="col">Held score</th>
                 </tr>
@@ -411,6 +412,17 @@ function ModulesNeeded({ students }) {
                     <td>{row.held ? "Deepen" : "Same level"}</td>
                     <td>{row.nextModuleRoman || "—"}</td>
                     <td><code>{row.nextStrandId}</code></td>
+                    <td>
+                      {(row.weakIdeas || []).length
+                        ? (
+                          <ul className="admin-weak-ideas">
+                            {row.weakIdeas.map((idea) => (
+                              <li key={idea}>{idea}</li>
+                            ))}
+                          </ul>
+                        )
+                        : <span className="quiet">—</span>}
+                    </td>
                     <td>{row.students.map((entry) => entry.name).join(", ")}</td>
                     <td>{row.matched} / {row.total} (need {row.need})</td>
                   </tr>

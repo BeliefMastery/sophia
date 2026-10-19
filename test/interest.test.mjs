@@ -84,7 +84,8 @@ test("expansion prompts require passages and core-then-branch deepening", () => 
       }],
     },
   });
-  assert.match(practice, /same field covering the missed/);
+  assert.match(practice, /same-level training set/);
+  assert.match(practice, /weak-spot brief/);
   assert.match(practice, /What year was the Treaty signed/);
   const module = modulePrompt({
     name: "Student",

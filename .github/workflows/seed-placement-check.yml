@@ -11,7 +11,9 @@ on:
       - content/modules-part2.mjs
       - content/modules-university.mjs
       - content/interest-tree.mjs
+      - content/entrance-targets.mjs
       - content/knowledge-tree.mjs
+      - content/modules-helios.mjs
       - lib/checkContent.mjs
       - lib/checkModules.mjs
       - lib/checkInterestTree.mjs
@@ -33,7 +35,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Write the placement questions
+      - name: Clear student results and seed catalog
         env:
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
+          # Beta retest under hardened MC: wipe attempts/repairs/reviews/misses/mastery before seed.
+          RESET_STUDENT_RESULTS: "1"
         run: node scripts/seed-placement-check.js

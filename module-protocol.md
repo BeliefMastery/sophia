@@ -14,10 +14,12 @@ Do **not** write from interest ticks alone. Interests are a register only.
 
 | Sitting result | Next module |
 | --- | --- |
-| Did not hold (`matched` &lt; `ceil(5n/6)` on choice items) | **Same field, same difficulty** — cover missed ideas; do not deepen |
+| Did not hold (`matched` &lt; `ceil(5n/6)` on choice items) | **Same field, same difficulty** — a training set for the listed weak ideas; do not deepen past an unheld weak set |
 | Held | **Deeper / broader** in that field — new range and optional branches; list core already taught; do not only restate |
 
 Research / essay items count for completion but **not** toward the 5-of-6 hold score.
+
+The student home is the University Entrance ramp first (literacy, numeracy, school science, and switched-on pathway subjects). Year 11 university-intro 101s live under **Additional fields**. Do not pull 101 content into an entrance-ramp prompt unless the field’s tree node is `wing: "additional"`.
 
 ## 2. Copy the prompt
 

@@ -72,7 +72,7 @@ function accessToken(serviceAccount) {
   });
 }
 
-function databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, moduleItems, interestCatalog, treeCatalog) {
+function databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, moduleItems, interestCatalog, entranceCatalog, treeCatalog) {
   const writes = [[`/strands/placement-check`, strand]];
   for (const item of items) {
     writes.push([`/items/${item.id}`, publicItem(item)]);
@@ -87,6 +87,7 @@ function databaseWrites(strand, items, publicItem, guideRecord, moduleStrands, m
     writes.push([`/guides/${item.id}`, guideRecord(item)]);
   }
   writes.push(["/catalog/interests", interestCatalog]);
+  writes.push(["/catalog/entrance", entranceCatalog]);
   writes.push(["/catalog/tree", treeCatalog]);
   return writes;
 }
@@ -105,6 +106,13 @@ async function putProduction(token, dbPath, value) {
     body,
   });
   if (response.status !== 200) fail(`Write failed with HTTP ${response.status}`);
+}
+
+/** Clears sitting results so beta retesting starts from an empty progress record. */
+async function resetStudentResults(put) {
+  const paths = ["/attempts", "/repairs", "/reviews", "/misses", "/mastery"];
+  for (const dbPath of paths) await put(dbPath, null);
+  console.log(`student results cleared: ${paths.join(", ")}`);
 }
 
 async function putEmulator(dbPath, value) {
@@ -135,6 +143,7 @@ async function main() {
   const { strands: heliosStrands, items: heliosItems, heliosSource } = await import("../content/modules-helios.mjs");
   const { strands: uniStrands, items: uniItems } = await import("../content/modules-university.mjs");
   const { options, interestsCatalogRecord } = await import("../content/interest-tree.mjs");
+  const { options: entranceOptions, entranceCatalogRecord } = await import("../content/entrance-targets.mjs");
   const { nodes, treeCatalogRecord } = await import("../content/knowledge-tree.mjs");
   const moduleStrands = [...firstStrands, ...secondStrands, ...heliosStrands, ...uniStrands];
   const moduleItems = [...firstItems, ...secondItems, ...heliosItems, ...uniItems];
@@ -149,6 +158,7 @@ async function main() {
     .concat(checkKnowledgeTree(nodes));
   if (errors.length) fail(errors.join("; "));
   const interestCatalog = interestsCatalogRecord(options);
+  const entranceCatalog = entranceCatalogRecord(entranceOptions);
   const treeCatalog = treeCatalogRecord(nodes);
   const writes = databaseWrites(
     strand,
@@ -158,6 +168,7 @@ async function main() {
     moduleStrands,
     moduleItems,
     interestCatalog,
+    entranceCatalog,
     treeCatalog,
   );
   writes.push([`/sources/${heliosSource.id}`, {
@@ -167,13 +178,19 @@ async function main() {
     file: heliosSource.file,
   }]);
   if (process.env.FIREBASE_DATABASE_EMULATOR_HOST) {
+    if (process.env.RESET_STUDENT_RESULTS === "1") {
+      await resetStudentResults((dbPath, value) => putEmulator(dbPath, value));
+    }
     for (const [dbPath, value] of writes) await putEmulator(dbPath, value);
   } else {
     const serviceAccount = parseServiceAccount(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
     const token = await accessToken(serviceAccount);
+    if (process.env.RESET_STUDENT_RESULTS === "1") {
+      await resetStudentResults((dbPath, value) => putProduction(token, dbPath, value));
+    }
     for (const [dbPath, value] of writes) await putProduction(token, dbPath, value);
   }
-  console.log(`placement check seeded: ${items.length} questions; modules seeded: ${moduleItems.length}; interests seeded: ${options.length}; tree nodes: ${nodes.length}`);
+  console.log(`placement check seeded: ${items.length} questions; modules seeded: ${moduleItems.length}; interests seeded: ${options.length}; entrance targets: ${entranceOptions.length}; tree nodes: ${nodes.length}`);
 }
 
 main().catch((error) => fail(error.message || "placement seed failed"));

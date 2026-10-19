@@ -89,6 +89,10 @@
         ".read": "auth != null",
         ".write": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true"
       },
+      "entrance": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true"
+      },
       "tree": {
         ".read": "auth != null",
         ".write": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true"
@@ -105,6 +109,20 @@
         },
         "$optionId": {
           ".validate": "newData.isBoolean() && newData.val() == true && root.child('catalog').child('interests').child($optionId).exists()"
+        }
+      }
+    },
+    "entrance": {
+      ".read": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('roles').child(auth.uid).child('parent').val() == true)",
+        ".write": "auth != null && auth.uid == $uid",
+        ".validate": "newData.hasChild('updatedAt') && newData.child('updatedAt').isNumber()",
+        "updatedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "$optionId": {
+          ".validate": "newData.isBoolean() && newData.val() == true && root.child('catalog').child('entrance').child($optionId).exists()"
         }
       }
     }

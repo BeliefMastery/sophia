@@ -407,7 +407,8 @@ test("a finished field asks for the next cluster and leaves other fields open", 
   const prompt = fieldClusterPrompt({ name: "Sophia", uid: "uid-1", field: math });
   assert.match(prompt, /Field complete: mathematics/);
   assert.match(prompt, /did not hold/i);
-  assert.match(prompt, /same field covering the missed/);
+  assert.match(prompt, /same-level training set/);
+  assert.match(prompt, /weak-spot brief/);
   assert.match(prompt, /does not award NCEA/);
   assert.doesNotMatch(prompt, /electronics/);
   const queue = modulesToProduce([
@@ -416,6 +417,8 @@ test("a finished field asks for the next cluster and leaves other fields open", 
   assert.equal(queue.length, 2);
   assert.ok(queue.some((row) => row.fieldId === "mathematics" && row.mode === "same"));
   assert.ok(queue.some((row) => row.fieldId === "electronics" && row.mode === "deeper"));
+  const mathRow = queue.find((row) => row.fieldId === "mathematics");
+  assert.ok((mathRow.weakIdeas || []).length >= 0);
 });
 
 test("roman numerals label modules", () => {
