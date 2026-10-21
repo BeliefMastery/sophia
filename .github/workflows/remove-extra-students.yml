@@ -1,0 +1,22 @@
+name: Remove extra students
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  remove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Remove Debora and Ella accounts
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
+          SOPHIA_AUTH_EMAIL: ${{ secrets.SOPHIA_AUTH_EMAIL }}
+          PARENT_AUTH_EMAIL: ${{ secrets.PARENT_AUTH_EMAIL }}
+        run: node scripts/remove-extra-students.js

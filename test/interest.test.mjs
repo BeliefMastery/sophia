@@ -57,7 +57,7 @@ test("expansion prompts require passages and core-then-branch deepening", () => 
     },
   });
   assert.match(cluster, /two passage paragraphs/);
-  assert.match(cluster, /deepen and broaden/);
+  assert.match(cluster, /depth track|deeper cluster|deepen from the core/i);
   assert.match(cluster, /plausible misconceptions/);
   assert.match(cluster, /Never telegraph the key/);
   assert.match(cluster, /Vary distractor phrasing/);

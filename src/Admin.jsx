@@ -388,7 +388,7 @@ function ModulesNeeded({ students }) {
       <div className="bezel-screen">
         <h1>Modules to produce</h1>
         <p>
-          Students who finish a field (and repair every miss) wait here until the next module is written.
+          After a held sitting, both a deepen (same field) and a lateral width leaf may appear here.
           Weak ideas are the training-set brief for a same-level module. Copy a row into Cursor for the next content iteration.
         </p>
         {rows.length ? (
@@ -409,7 +409,11 @@ function ModulesNeeded({ students }) {
                 {rows.map((row) => (
                   <tr key={row.key}>
                     <td>{row.title}</td>
-                    <td>{row.held ? "Deepen" : "Same level"}</td>
+                    <td>
+                      {row.mode === "lateral" ? "Width"
+                        : row.mode === "deeper" || row.held ? "Deepen"
+                          : "Same level"}
+                    </td>
                     <td>{row.nextModuleRoman || "—"}</td>
                     <td><code>{row.nextStrandId}</code></td>
                     <td>
@@ -442,7 +446,7 @@ function ModulesNeeded({ students }) {
                 <summary>
                   {row.title}
                   {" · "}
-                  {row.held ? "deepen" : "practice"}
+                  {row.mode === "lateral" ? "width" : row.mode === "deeper" || row.held ? "deepen" : "practice"}
                   {row.nextModuleRoman ? ` · ${row.nextModuleRoman}` : ""}
                   {" · "}
                   {row.students.length} student{row.students.length === 1 ? "" : "s"}

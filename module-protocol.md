@@ -15,11 +15,13 @@ Do **not** write from interest ticks alone. Interests are a register only.
 | Sitting result | Next module |
 | --- | --- |
 | Did not hold (`matched` &lt; `ceil(5n/6)` on choice items) | **Same field, same difficulty** — a training set for the listed weak ideas; do not deepen past an unheld weak set |
-| Held | **Deeper / broader** in that field — new range and optional branches; list core already taught; do not only restate |
+| Held | **Two tracks:** (1) **Deepen** — harder module in the same field (`…-depth-n`); (2) **Width** — lateral leaf with its own `field` (prefer an empty child on the tree, else add a sibling). Modules needed lists both gaps. |
 
 Research / essay items count for completion but **not** toward the 5-of-6 hold score.
 
-The student home is the University Entrance ramp first (literacy, numeracy, school science, and switched-on pathway subjects). Year 11 university-intro 101s live under **Additional fields**. Do not pull 101 content into an entrance-ramp prompt unless the field’s tree node is `wing: "additional"`.
+The map tracks **depth** (down a field) and **width** (sibling leaves). One Cursor iteration still writes one strand; copy one Modules needed row at a time.
+
+The student home is the University Entrance ramp first (literacy, numeracy, school science, and switched-on pathway subjects). Year 11 university-intro 101s live under **Additional fields**. Do not pull 101 content into an entrance-ramp prompt unless the field’s tree node is `wing: "additional"`. This project is Sophia-only with Warwick as admin.
 
 ## 2. Copy the prompt
 

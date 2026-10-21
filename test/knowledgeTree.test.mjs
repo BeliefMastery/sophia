@@ -10,7 +10,8 @@ test("the knowledge tree is valid and seeds cleanly", () => {
   assert.equal(checkKnowledgeTree(nodes).length, 0);
   const catalog = treeCatalogRecord(nodes);
   assert.ok(nodesFromCatalog(catalog).some((node) => node.id === "electronics"));
-  assert.ok(nodesFromCatalog(catalog).some((node) => node.id === "nzHistory" && node.status === "planned"));
+  assert.ok(nodesFromCatalog(catalog).some((node) => node.id === "nzHistory" && node.status === "live"));
+  assert.ok(nodesFromCatalog(catalog).some((node) => node.id === "rhetoric" && node.wing === "entrance"));
   assert.ok(nodes.every((node) => node.symbol));
   assert.ok(nodes.every((node) => node.wing === "entrance" || node.wing === "additional"));
   assert.equal(catalog.mathematics.symbol, "∑");
@@ -43,9 +44,13 @@ test("planned nodes are never studyable", () => {
   const planned = evaluated.filter((node) => node.status === "planned");
   assert.ok(planned.length > 0);
   assert.equal(planned.every((node) => node.studyable === false && node.state === "planned"), true);
+  const world = evaluated.find((node) => node.id === "worldHistory");
+  assert.equal(world.studyable, false);
+  assert.equal(world.state, "planned");
   const nz = evaluated.find((node) => node.id === "nzHistory");
-  assert.equal(nz.studyable, false);
+  assert.equal(nz.status, "live");
   assert.equal(nz.state, "planned");
+  assert.equal(nz.studyable, false);
   const science = evaluated.find((node) => node.id === "science");
   assert.equal(science.studyable, false);
   assert.equal(science.state, "open");

@@ -1,0 +1,21 @@
+name: Report Sophia progress
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Print held fields for Sophia
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVIE_ACCOUNT_JSON }}
+          SOPHIA_AUTH_EMAIL: ${{ secrets.SOPHIA_AUTH_EMAIL }}
+        run: node scripts/report-sophia-progress.mjs

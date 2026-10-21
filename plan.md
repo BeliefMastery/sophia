@@ -16,7 +16,7 @@ Her father's books are part of what she should eventually understand. They set c
 
 Sophia does not award NCEA or University Entrance. Practice on the site is labeled as practice. A link school, or Te Kura from age 16, is how a real assessment is entered. No school is obliged to be the link school.
 
-The knowledge map leads with the University Entrance ramp: English literacy, mathematics numeracy, school science, and the pathway subjects she ticks (psychology and management by default). Introductory university 101 subjects stay under a collapsed Additional fields wing. After a sitting that does not hold, the next module stays at that level and trains the recorded weak ideas before difficulty advances.
+The knowledge map leads with the University Entrance ramp: English literacy, mathematics numeracy, school science, and the pathway subjects she ticks (psychology and management by default). Introductory university 101 subjects stay under a collapsed Additional fields wing. After a sitting that does not hold, the next module stays at that level and trains the recorded weak ideas before difficulty advances. After a sitting that holds, two productions open: a deeper module in the same field, and a lateral width leaf into related material not yet covered, so she can track how deep and how wide each domain goes. Logins are Sophia (student) and Warwick (admin) only.
 
 She is under 16, so home education needs a Ministry of Education Certificate of Exemption under section 38 of the Education and Training Act 2020 until she turns 16. Whether that certificate is already in force is still unknown. Her birthday is unknown, so the date she turns 16 is unknown.
 

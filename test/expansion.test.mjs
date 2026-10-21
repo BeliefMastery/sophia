@@ -414,9 +414,10 @@ test("a finished field asks for the next cluster and leaves other fields open", 
   const queue = modulesToProduce([
     { uid: "uid-1", name: "Sophia", fields: [math, electronics] },
   ]);
-  assert.equal(queue.length, 2);
   assert.ok(queue.some((row) => row.fieldId === "mathematics" && row.mode === "same"));
-  assert.ok(queue.some((row) => row.fieldId === "electronics" && row.mode === "deeper"));
+  assert.ok(queue.some((row) => row.mode === "deeper" && row.nextStrandId.includes("electronics")));
+  assert.ok(queue.some((row) => row.mode === "lateral"));
+  assert.ok(queue.length >= 3);
   const mathRow = queue.find((row) => row.fieldId === "mathematics");
   assert.ok((mathRow.weakIdeas || []).length >= 0);
 });

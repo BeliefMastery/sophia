@@ -646,9 +646,24 @@ export function App() {
           {current.label ? ` ${current.label}.` : ""}
         </p>
         {current.held ? (
-          <p>
-            This sitting held. The next step can be one difficulty up once that module is written.
-          </p>
+          <div className="tech-weak-spots" role="status">
+            <h2>Depth and width</h2>
+            <p>
+              This sitting held. Two tracks open: a harder module deeper in {current.title},
+              and a lateral branch into related material
+              {current.lateralFieldId ? ` (${current.lateralFieldId})` : ""}.
+            </p>
+            {(current.nextModules || []).filter((entry) => entry.awaiting).length ? (
+              <ul>
+                {(current.nextModules || []).filter((entry) => entry.awaiting).map((entry) => (
+                  <li key={entry.strandId}>
+                    <span className="tech-await-title">{entry.title}</span>
+                    <p className="quiet"><code>{entry.strandId}</code></p>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
         ) : (
           <div className="tech-weak-spots" role="status">
             <h2>What would hold you back</h2>
@@ -667,7 +682,7 @@ export function App() {
               <p className="quiet">The missed ideas from this sitting stay at this level until a training module holds them.</p>
             )}
             <p>
-              The next module stays at this level until those ideas hold. A harder module opens only after a held sitting.
+              The next module stays at this level until those ideas hold. Depth and width open only after a held sitting.
             </p>
           </div>
         )}
@@ -675,14 +690,14 @@ export function App() {
           <div className="tech-await" role="status">
             <p>
               {current.held
-                ? `This sitting held. ${current.nextModuleRoman || "The next deeper module"} is not written yet.`
+                ? "This sitting held. The next deepen and/or width modules are not written yet."
                 : `This sitting did not hold. Another module at the same level (${current.nextModuleRoman || "practice"}) is not written yet.`}
               {" "}
               Your admin has been notified and can see this gap in the Modules needed table.
             </p>
             <p className="quiet">
               {current.held
-                ? "If a deeper subdomain is already open on the map, you can study that next. Otherwise mark an interest and return later."
+                ? "If a sibling branch is already open on the map, you can study that for width. Otherwise mark an interest and return later."
                 : "Study other open fields for now, or mark this field as an interest so it stays on your list."}
             </p>
           </div>
