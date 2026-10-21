@@ -587,6 +587,81 @@ textarea {
   padding: 4px 2px 2px;
 }
 
+.learning-level,
+.pace-feedback {
+  border: 1px solid var(--brass);
+  background: #f7f1e6;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.learning-level h2,
+.pace-feedback h2 {
+  font-family: Palatino, Georgia, serif;
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.learning-level-headline {
+  font-family: Palatino, Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.learning-level-band {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.pace-slider {
+  display: grid;
+  gap: 8px;
+}
+
+.pace-ends {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.pace-current {
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.pace-slider input[type="range"] {
+  width: 100%;
+  accent-color: var(--brass);
+}
+
+.admin-pace {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.admin-pace h2 {
+  font-family: Palatino, Georgia, serif;
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.admin-pace-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
 .tech-weak-spots {
   border: 1px solid var(--brass);
   background: #f7f1e6;

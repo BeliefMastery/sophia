@@ -60,6 +60,7 @@ export function Admin({ user, onStudy }) {
   const [strands, setStrands] = useState(null);
   const [catalog, setCatalog] = useState(null);
   const [interests, setInterests] = useState(null);
+  const [pace, setPace] = useState(null);
   const [reviews, setReviews] = useState(null);
   const [error, setError] = useState("");
   const [view, setView] = useState("students");
@@ -87,6 +88,7 @@ export function Admin({ user, onStudy }) {
       watch("strands", setStrands),
       watch("catalog/interests", setCatalog),
       watch("interests", setInterests),
+      watch("pace", setPace),
       watch("reviews", setReviews),
     ];
     return () => unsubs.forEach((unsub) => unsub());
@@ -139,8 +141,8 @@ export function Admin({ user, onStudy }) {
   }
 
   const students = useMemo(() => {
-    if (!profiles || !attempts || !items || !guides || !repairs || !strands || !catalog || !interests || !reviews) return null;
-    const uids = new Set([...Object.keys(profiles), ...Object.keys(attempts), ...Object.keys(interests)]);
+    if (!profiles || !attempts || !items || !guides || !repairs || !strands || !catalog || !interests || !pace || !reviews) return null;
+    const uids = new Set([...Object.keys(profiles), ...Object.keys(attempts), ...Object.keys(interests), ...Object.keys(pace)]);
     return [...uids].map((uid) => {
       const self = uid === user.uid;
       const studentAttempts = list(attempts[uid]);
@@ -151,6 +153,17 @@ export function Admin({ user, onStudy }) {
       const deepen = fields.filter((field) => field.complete && field.held);
       const practice = fields.filter((field) => field.complete && !field.held);
       const missCount = fields.reduce((sum, field) => sum + (field.missed?.length || 0), 0);
+      const studentPace = pace[uid] || {};
+      const paceRows = fields
+        .filter((field) => studentPace[field.id])
+        .map((field) => ({
+          id: field.id,
+          title: field.title,
+          rating: studentPace[field.id].rating,
+          label: studentPace[field.id].label,
+          submittedAt: studentPace[field.id].submittedAt,
+          learningLevel: field.learningLevel,
+        }));
       return {
         uid,
         self,
@@ -161,6 +174,8 @@ export function Admin({ user, onStudy }) {
         attempts: studentAttempts,
         repairs: studentRepairs,
         interests: interests[uid] || {},
+        pace: studentPace,
+        paceRows,
         report,
         fields,
         deepen,
@@ -168,7 +183,7 @@ export function Admin({ user, onStudy }) {
         missCount,
       };
     }).sort((a, b) => Number(b.self) - Number(a.self) || a.name.localeCompare(b.name));
-  }, [profiles, attempts, items, guides, repairs, strands, catalog, interests, reviews, survey, itemList, user.uid]);
+  }, [profiles, attempts, items, guides, repairs, strands, catalog, interests, pace, reviews, survey, itemList, user.uid]);
 
   if (error) {
     return (
@@ -520,6 +535,25 @@ function StudentPage({ student, items, strands, allItems, catalog, onBack, onRev
           <FieldCounts fields={student.fields} />
           <DepthChart marks={marks} />
           <InterestReport ticks={ticks} />
+          <div className="admin-pace">
+            <h2>Difficulty feel</h2>
+            {student.paceRows?.length ? (
+              <ul className="admin-pace-list">
+                {student.paceRows.map((row) => (
+                  <li key={row.id}>
+                    <span className="tech-await-title">{row.title}</span>
+                    <p>
+                      {row.label}
+                      {row.learningLevel ? ` · finished at ${row.learningLevel.headline}` : ""}
+                    </p>
+                    <p className="quiet">{when(row.submittedAt)}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="quiet">No difficulty ratings yet. They appear after a finished module.</p>
+            )}
+          </div>
         </div>
       </section>
 

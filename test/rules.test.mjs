@@ -249,3 +249,30 @@ test("a student can register entrance targets and cannot write another register 
   const listed = await get(ref(parent, "entrance"));
   assert.equal(listed.val().student.psychology, true);
 });
+
+test("a student can save pace ratings for finished fields", async () => {
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    const db = context.database();
+    await set(ref(db, "roles/parent/parent"), true);
+  });
+  const record = {
+    rating: 4,
+    label: "A bit hard",
+    submittedAt: Date.now(),
+  };
+  const student = testEnv.authenticatedContext("student").database();
+  await assertSucceeds(set(ref(student, "pace/student/mathematics"), record));
+  await assertFails(set(ref(student, "pace/other/mathematics"), record));
+  await assertFails(set(ref(student, "pace/student/mathematics"), {
+    rating: 6,
+    label: "Too much",
+    submittedAt: Date.now(),
+  }));
+  await assertFails(set(ref(student, "pace/student/mathematics"), {
+    rating: 3,
+    submittedAt: Date.now(),
+  }));
+  const parent = testEnv.authenticatedContext("parent").database();
+  const listed = await get(ref(parent, "pace"));
+  assert.equal(listed.val().student.mathematics.label, "A bit hard");
+});

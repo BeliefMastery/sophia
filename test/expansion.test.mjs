@@ -10,7 +10,9 @@ import {
   fieldPlace,
   fieldProgress,
   fieldStudy,
+  learningLevelFor,
   moduleOutcome,
+  paceLabelFor,
   moduleScopeIssues,
   modulesToProduce,
   moduleLabel,
@@ -266,6 +268,9 @@ test("a later module that holds raises the field depth without renaming the stra
   assert.equal(outcome.position, peerAt);
   assert.equal(outcome.mode, "deeper");
   assert.equal(outcome.nextStrandId, "science-physics-depth-3");
+  assert.equal(outcome.ageTier, "year10");
+  assert.equal(outcome.learningLevel.yearLabel, "Year 10");
+  assert.match(outcome.learningLevel.nceaBand, /Before NCEA/);
   assert.match(outcome.recommendation, /Do not rename science-physics/);
 
   const survey = fieldMarks([
@@ -293,6 +298,21 @@ test("a later module that holds raises the field depth without renaming the stra
   assert.match(prompt, /Physics question 6/);
   assert.match(prompt, /does not award NCEA/);
   assert.equal(modulePrompt({ name: "Sample", uid: "uid-1", outcome: { ...outcome, complete: false } }), "");
+});
+
+test("learningLevelFor maps age tiers to NCEA depth references", () => {
+  const year10 = learningLevelFor("year10");
+  assert.equal(year10.yearLabel, "Year 10");
+  assert.equal(year10.age, 15);
+  assert.match(year10.nceaBand, /Before NCEA/);
+  assert.match(year10.disclaimer, /does not award NCEA/);
+  const year12 = learningLevelFor("year12");
+  assert.match(year12.nceaBand, /Level 2/);
+  assert.match(year12.headline, /Year 12/);
+  assert.equal(paceLabelFor(1), "Much too easy");
+  assert.equal(paceLabelFor(3), "About right");
+  assert.equal(paceLabelFor(5), "Much too hard");
+  assert.equal(paceLabelFor(9), "");
 });
 
 test("a later module that misses stays at the same difficulty", () => {

@@ -19,6 +19,8 @@ Do **not** write from interest ticks alone. Interests are a register only.
 
 Research / essay items count for completion but **not** toward the 5-of-6 hold score.
 
+On finish, the app shows a clear learning-level / NCEA-depth reference for the module’s `ageTier` (reference only; not an award). Sophia can also rate difficulty on a 1–5 slider (`pace/{uid}/{fieldId}`) so later deepen/practice steps can ease or raise pace.
+
 The map tracks **depth** (down a field) and **width** (sibling leaves). One Cursor iteration still writes one strand; copy one Modules needed row at a time.
 
 The student home is the University Entrance ramp first (literacy, numeracy, school science, and switched-on pathway subjects). Year 11 university-intro 101s live under **Additional fields**. Do not pull 101 content into an entrance-ramp prompt unless the field’s tree node is `wing: "additional"`. This project is Sophia-only with Warwick as admin.

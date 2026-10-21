@@ -6,9 +6,9 @@ The database URL is `https://sophia-138fe-default-rtdb.asia-southeast1.firebased
 
 ## Who can touch what
 
-A signed-in student reads her own profile, attempts, reviews, mastery, written repairs, and the interest catalog. She writes her name, her own attempts, one written repair after a miss, and her interest checkbox register. She reads strands, items, and sources. After a wrong multiple-choice answer is stored, she can read that one guide, including its two-paragraph reading passage.
+A signed-in student reads her own profile, attempts, reviews, mastery, written repairs, and the interest catalog. She writes her name, her own attempts, one written repair after a miss, her interest checkbox register, and a difficulty rating after a finished field (`pace/{uid}/{fieldId}`). She reads strands, items, and sources. After a wrong multiple-choice answer is stored, she can read that one guide, including its two-paragraph reading passage.
 
-The parent does that, and also writes placement, strands, items, guides, sources, reviews, mastery, and the interest catalog. The parent login is the admin report: it can read every profile, every attempt, every written repair, and every interest register. From the admin home screen the parent can switch into student mode and take the modules on the same login; those practice attempts and repairs are stored under the parent uid and appear in the report as admin practice. Guides are marking notes. Sophia cannot read a guide before she has missed that question, and she cannot read the guide list.
+The parent does that, and also writes placement, strands, items, guides, sources, reviews, mastery, and the interest catalog. The parent login is the admin report: it can read every profile, every attempt, every written repair, every interest register, and every pace rating. From the admin home screen the parent can switch into student mode and take the modules on the same login; those practice attempts and repairs are stored under the parent uid and appear in the report as admin practice. Guides are marking notes. Sophia cannot read a guide before she has missed that question, and she cannot read the guide list.
 
 `roles/{uid}/parent` is true only for the parent. Clients cannot write `roles`. That value is set later with the admin credential, after the login exists.
 
@@ -35,6 +35,7 @@ The root is closed. Someone who is not signed in cannot read or write.
 | `catalog/tree` | Knowledge tech-tree nodes (domains, branches, planned leaves; each has `wing`) | Read | Read, write |
 | `interests/{uid}` | Checkbox register (`optionId: true` plus `updatedAt`) | Read, write own | Read all |
 | `entrance/{uid}` | Entrance-subject register (`optionId: true` plus `updatedAt`) | Read, write own | Read all |
+| `pace/{uid}/{fieldId}` | Difficulty feel after a finished field (`rating` 1–5, `label`, `submittedAt`) | Read, write own | Read all |
 
 `attemptId` is a Realtime Database push id. Do not use the item id as the attempt id. She will answer the same idea more than once, and the earlier answer has to remain.
 

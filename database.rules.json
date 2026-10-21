@@ -125,6 +125,16 @@
           ".validate": "newData.isBoolean() && newData.val() == true && root.child('catalog').child('entrance').child($optionId).exists()"
         }
       }
+    },
+    "pace": {
+      ".read": "auth != null && root.child('roles').child(auth.uid).child('parent').val() == true",
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('roles').child(auth.uid).child('parent').val() == true)",
+        "$fieldId": {
+          ".write": "auth != null && auth.uid == $uid",
+          ".validate": "newData.hasChildren(['rating','label','submittedAt']) && newData.child('rating').isNumber() && newData.child('rating').val() >= 1 && newData.child('rating').val() <= 5 && newData.child('label').isString() && newData.child('label').val().length > 0 && newData.child('label').val().length <= 40 && newData.child('submittedAt').isNumber()"
+        }
+      }
     }
   }
 }

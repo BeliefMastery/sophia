@@ -5,7 +5,7 @@ import { recordChoice } from "../lib/recordChoice.mjs";
 import { orderedChoices } from "../lib/records.mjs";
 import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
 import { passageParagraphs } from "../lib/explain.mjs";
-import { fieldPlace, fieldStudy, nextFieldStep } from "../lib/expansion.mjs";
+import { fieldPlace, fieldStudy, nextFieldStep, paceLabelFor, paceLabels } from "../lib/expansion.mjs";
 import { markRepair, reviewRecord } from "../lib/markRepair.mjs";
 import { Admin } from "./Admin.jsx";
 import { InterestVote } from "./InterestVote.jsx";
@@ -49,10 +49,14 @@ export function App() {
   const [tree, setTree] = useState(null);
   const [interests, setInterests] = useState(null);
   const [entrance, setEntrance] = useState(null);
+  const [pace, setPace] = useState(null);
   const [interestSaving, setInterestSaving] = useState(false);
   const [interestError, setInterestError] = useState("");
   const [entranceSaving, setEntranceSaving] = useState(false);
   const [entranceError, setEntranceError] = useState("");
+  const [paceSaving, setPaceSaving] = useState(false);
+  const [paceError, setPaceError] = useState("");
+  const [paceDraft, setPaceDraft] = useState(3);
   const [writtenDraft, setWrittenDraft] = useState("");
   const [sourceCache, setSourceCache] = useState({});
   const [studyMode, setStudyMode] = useState(() => {
@@ -104,6 +108,9 @@ export function App() {
     const unsubEntrance = onValue(ref(db, `entrance/${user.uid}`), (snapshot) => {
       setEntrance(snapshot.val() || {});
     });
+    const unsubPace = onValue(ref(db, `pace/${user.uid}`), (snapshot) => {
+      setPace(snapshot.val() || {});
+    });
     return () => {
       unsubItems();
       unsubStrands();
@@ -115,6 +122,7 @@ export function App() {
       unsubTree();
       unsubInterests();
       unsubEntrance();
+      unsubPace();
     };
   }, [user]);
 
@@ -130,8 +138,11 @@ export function App() {
     setTree(null);
     setInterests(null);
     setEntrance(null);
+    setPace(null);
     setInterestError("");
     setEntranceError("");
+    setPaceError("");
+    setPaceDraft(3);
     setStudyMode(false);
   }, [user]);
 
@@ -188,6 +199,13 @@ export function App() {
   useEffect(() => {
     headingRef.current?.focus();
   }, [user, chosenField, step?.item?.id, step?.kind, activeRepair?.item?.id]);
+
+  useEffect(() => {
+    if (!chosenField || !pace) return;
+    const saved = Number(pace[chosenField]?.rating);
+    setPaceDraft(saved >= 1 && saved <= 5 ? saved : 3);
+    setPaceError("");
+  }, [chosenField, pace]);
 
   useEffect(() => {
     const sourceId = step?.item?.sourceId;
@@ -341,6 +359,26 @@ export function App() {
     }
   }
 
+  async function onPaceSave(fieldId, rating) {
+    if (!user || !fieldId || paceSaving) return;
+    const value = Math.min(5, Math.max(1, Number(rating) || 3));
+    const label = paceLabelFor(value);
+    if (!label) return;
+    setPaceSaving(true);
+    setPaceError("");
+    try {
+      await set(ref(db, `pace/${user.uid}/${fieldId}`), {
+        rating: value,
+        label,
+        submittedAt: Date.now(),
+      });
+    } catch {
+      setPaceError("That difficulty rating was not saved. Try it again.");
+    } finally {
+      setPaceSaving(false);
+    }
+  }
+
   if (user === undefined) {
     return <Shell><p className="quiet">Loading…</p></Shell>;
   }
@@ -402,7 +440,7 @@ export function App() {
     );
   }
 
-  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || entranceCatalog === null || tree === null || interests === null || entrance === null) {
+  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || entranceCatalog === null || tree === null || interests === null || entrance === null || pace === null) {
     return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
   }
 
@@ -636,6 +674,10 @@ export function App() {
     );
   }
 
+  const level = current.learningLevel;
+  const savedPace = pace[current.id];
+  const paceValue = Number(paceDraft) || 3;
+
   return (
     <Shell {...shellProps}>
       <Bezel plate={current.title} aside="Section finished" scene={sceneFor(current.id)}>
@@ -645,6 +687,50 @@ export function App() {
           {current.moduleRoman ? ` ${current.moduleRoman}.` : ""}
           {current.label ? ` ${current.label}.` : ""}
         </p>
+        {level ? (
+          <div className="learning-level" role="status">
+            <h2>Where this module sat</h2>
+            <p className="learning-level-headline">{level.headline}</p>
+            <p className="learning-level-band">{level.nceaBand}</p>
+            <p>{level.detail}</p>
+            <p className="quiet">{level.disclaimer}</p>
+          </div>
+        ) : null}
+        <div className="pace-feedback">
+          <h2>How hard did this feel?</h2>
+          <p className="quiet">
+            Move the slider so we know whether to ease or raise the next steps.
+          </p>
+          <label className="pace-slider" htmlFor={`pace-${current.id}`}>
+            <span className="pace-ends">
+              <span>Too easy</span>
+              <span className="pace-current">{paceLabels[paceValue] || "About right"}</span>
+              <span>Too hard</span>
+            </span>
+            <input
+              id={`pace-${current.id}`}
+              type="range"
+              min={1}
+              max={5}
+              step={1}
+              value={paceValue}
+              disabled={paceSaving}
+              onChange={(event) => setPaceDraft(Number(event.target.value))}
+            />
+          </label>
+          <button
+            type="button"
+            className="primary"
+            disabled={paceSaving}
+            onClick={() => onPaceSave(current.id, paceValue)}
+          >
+            {paceSaving ? "Saving…" : "Save how it felt"}
+          </button>
+          {savedPace?.label ? (
+            <p className="quiet">Saved: {savedPace.label}</p>
+          ) : null}
+          {paceError ? <p className="alert" role="alert">{paceError}</p> : null}
+        </div>
         {current.held ? (
           <div className="tech-weak-spots" role="status">
             <h2>Depth and width</h2>
@@ -705,7 +791,7 @@ export function App() {
           <p>There is no further question in this field until a new cluster is added. You can update your interest ticks below.</p>
         )}
         {interestPanel}
-        <button type="button" className="primary" onClick={() => setChosenField("")}>All fields</button>
+        <button type="button" className="text" onClick={() => setChosenField("")}>All fields</button>
       </Bezel>
     </Shell>
   );

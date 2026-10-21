@@ -131,6 +131,7 @@ async function main() {
     "catalog",
     "interests",
     "entrance",
+    "pace",
   ];
   const missing = expected.filter((name) => !names.includes(name));
   if (missing.length) fail(`rules are missing ${missing.join(", ")}`);
