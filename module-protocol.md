@@ -110,6 +110,7 @@ Student answer is stored on the attempt (`answer` string). Parent reviews separa
 | Year 9–10 core / science / English / maths | `content/modules.mjs` or `content/modules-part2.mjs` |
 | Helios Management 101 | `content/modules-helios.mjs` |
 | Year 11 university-path 101s | `content/modules-university.mjs` |
+| Post-hold deepen + lateral width | `content/modules-depth-width.mjs` |
 | New family of modules | New `content/modules-….mjs` **and** wire it into `scripts/seed-placement-check.js` |
 
 If the tree needs a new leaf or a `planned` → `live` flip, edit `content/knowledge-tree.mjs` (symbol, parent, summary). Interest options derive from the tree on seed.

@@ -142,11 +142,12 @@ async function main() {
   const { strands: secondStrands, items: secondItems } = await import("../content/modules-part2.mjs");
   const { strands: heliosStrands, items: heliosItems, heliosSource } = await import("../content/modules-helios.mjs");
   const { strands: uniStrands, items: uniItems } = await import("../content/modules-university.mjs");
+  const { strands: depthStrands, items: depthItems } = await import("../content/modules-depth-width.mjs");
   const { options, interestsCatalogRecord } = await import("../content/interest-tree.mjs");
   const { options: entranceOptions, entranceCatalogRecord } = await import("../content/entrance-targets.mjs");
   const { nodes, treeCatalogRecord } = await import("../content/knowledge-tree.mjs");
-  const moduleStrands = [...firstStrands, ...secondStrands, ...heliosStrands, ...uniStrands];
-  const moduleItems = [...firstItems, ...secondItems, ...heliosItems, ...uniItems];
+  const moduleStrands = [...firstStrands, ...secondStrands, ...heliosStrands, ...uniStrands, ...depthStrands];
+  const moduleItems = [...firstItems, ...secondItems, ...heliosItems, ...uniItems, ...depthItems];
   const { checkContent } = await import("../lib/checkContent.mjs");
   const { checkModules } = await import("../lib/checkModules.mjs");
   const { checkInterestTree } = await import("../lib/checkInterestTree.mjs");

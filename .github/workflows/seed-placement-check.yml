@@ -14,7 +14,9 @@ on:
       - content/entrance-targets.mjs
       - content/knowledge-tree.mjs
       - content/modules-helios.mjs
+      - content/modules-depth-width.mjs
       - lib/checkContent.mjs
+      - lib/lateral.mjs
       - lib/checkModules.mjs
       - lib/checkInterestTree.mjs
       - lib/checkKnowledgeTree.mjs
