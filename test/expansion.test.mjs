@@ -26,6 +26,7 @@ import { strands as coreStrands, items as coreItems } from "../content/modules.m
 import { strands as part2Strands, items as part2Items } from "../content/modules-part2.mjs";
 import { strands as heliosStrands, items as heliosItems } from "../content/modules-helios.mjs";
 import { strands as uniStrands, items as uniItems } from "../content/modules-university.mjs";
+import { strands as depthStrands, items as depthItems } from "../content/modules-depth-width.mjs";
 import { checkModules } from "../lib/checkModules.mjs";
 
 const claim = (id) => claims.find((entry) => entry.id === id);
@@ -451,8 +452,8 @@ test("roman numerals label modules", () => {
 });
 
 test("domain modules stay in the six-question hold scope", () => {
-  const strands = [...coreStrands, ...part2Strands, ...heliosStrands, ...uniStrands];
-  const items = [...coreItems, ...part2Items, ...heliosItems, ...uniItems];
+  const strands = [...coreStrands, ...part2Strands, ...heliosStrands, ...uniStrands, ...depthStrands];
+  const items = [...coreItems, ...part2Items, ...heliosItems, ...uniItems, ...depthItems];
   assert.deepEqual(moduleScopeIssues(strands, items), []);
   assert.deepEqual(checkModules(strands, items, []), []);
 });

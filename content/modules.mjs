@@ -446,7 +446,7 @@ const items = [
     prompt: "In a fair test, which of these do you change?",
     choices: [
       { id: "one", text: "Only one factor, while the others stay the same" },
-      { id: "all", text: "Every factor in the test at once" },
+      { id: "all", text: "Every factor in the test all at the same time" },
       { id: "conclusion", text: "The conclusion, decided before any trials" },
       { id: "units", text: "The units of measurement after each reading" },
     ],
@@ -594,7 +594,7 @@ const items = [
     choices: [
       { id: "weight", text: "Its weight, which depends on gravity" },
       { id: "mass", text: "Its mass, the amount of matter in it" },
-      { id: "formula", text: "Its chemical formula" },
+      { id: "formula", text: "Its chemical formula, written in symbols" },
       { id: "atoms", text: "The total number of atoms inside it" },
     ],
     answer: "weight",
@@ -1141,8 +1141,8 @@ const items = [
     choices: [
       { id: "decided", text: "What did the council decide, and who objected?" },
       { id: "wicked", text: "Was that council decision morally wrong?" },
-      { id: "like", text: "Do I personally like the council?" },
-      { id: "kinder", text: "Should people have been kinder?" },
+      { id: "like", text: "Do I personally like the council leader?" },
+      { id: "kinder", text: "Should people back then have been kinder?" },
     ],
     answer: "decided",
     lookFor: ["A historical question can be answered from sources about what was done and said"],
@@ -1330,9 +1330,9 @@ const items = [
     prompt: "A cheaper material is chosen, and the product breaks sooner. What kind of choice is this?",
     choices: [
       { id: "tradeoff", text: "A tradeoff between cost and durability" },
-      { id: "law", text: "A law passed by Parliament" },
+      { id: "law", text: "A law passed by Parliament last year" },
       { id: "source", text: "A primary historical source document" },
-      { id: "neutral", text: "A change where nothing is lost" },
+      { id: "neutral", text: "A change where nothing is ever lost" },
     ],
     answer: "tradeoff",
     lookFor: ["A gain in cost is paid for by a loss in durability"],
@@ -1604,7 +1604,7 @@ const items = [
     choices: [
       { id: "did", text: "The person who completed their part" },
       { id: "typed", text: "The person who typed yes in the chat" },
-      { id: "both", text: "Both people equally" },
+      { id: "both", text: "Both people share the credit equally" },
       { id: "neither", text: "Neither person, because the whole project is not finished" },
     ],
     answer: "did",
