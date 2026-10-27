@@ -387,8 +387,8 @@ export function App() {
     return (
       <Shell>
         <Bezel plate="Sophia" aside="Sign in" scene="study">
-          <h1 ref={headingRef} tabIndex={-1}>The web app key is not in this build yet.</h1>
-          <p>The placement check is ready. Email sign-in needs the Firebase web key before a real login can open it.</p>
+          <h1 ref={headingRef} tabIndex={-1}>Sign-in is not ready in this build yet.</h1>
+          <p>The questions are prepared, but this copy of the site still needs its web sign-in key before you can log in.</p>
         </Bezel>
       </Shell>
     );
@@ -399,7 +399,7 @@ export function App() {
       <Shell>
         <Bezel plate="Sophia" aside="Sign in" scene="study">
           <h1 ref={headingRef} tabIndex={-1}>Sophia</h1>
-          <p>Sign in with the account made for you. Then choose a field to study.</p>
+          <p>Sign in with the account made for you, then choose a subject to study.</p>
           <form onSubmit={onSignIn} className="sign-in">
             <label>
               Email
@@ -426,7 +426,7 @@ export function App() {
               {signingIn ? "Signing in…" : "Sign in"}
             </button>
           </form>
-          <p className="quiet">Practice on this site is not an NCEA assessment.</p>
+          <p className="quiet">Practising here is not an official NCEA assessment.</p>
         </Bezel>
       </Shell>
     );
@@ -441,7 +441,7 @@ export function App() {
   }
 
   if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || entranceCatalog === null || tree === null || interests === null || entrance === null || pace === null) {
-    return <Shell user={user}><p className="quiet">Loading the check…</p></Shell>;
+    return <Shell user={user}><p className="quiet">Loading your map…</p></Shell>;
   }
 
   function goHome() {
@@ -471,8 +471,8 @@ export function App() {
     return (
       <Shell {...shellProps}>
         <Bezel plate="Fields" aside="Empty">
-          <h1 ref={headingRef} tabIndex={-1}>The questions are not loaded.</h1>
-          <p>There is no field to open yet.</p>
+          <h1 ref={headingRef} tabIndex={-1}>The questions have not loaded yet.</h1>
+          <p>There is no subject to open right now.</p>
         </Bezel>
       </Shell>
     );
@@ -484,8 +484,8 @@ export function App() {
       <Shell {...shellProps}>
         <Bezel plate="Knowledge map" aside="Entrance" scene="study">
           <h1 ref={headingRef} tabIndex={-1}>University Entrance map</h1>
-          <p>Choose an open branch on the entrance ramp. Later branches unlock when earlier knowledge is finished.</p>
-          {parent ? <p className="quiet">You are in student mode. Answers are saved on this admin login so you can review them in the report.</p> : null}
+          <p>Choose an open subject. Later subjects unlock when you finish the ones that come before them.</p>
+          {parent ? <p className="quiet">You are practising as a student. Answers save on this admin login so you can review them in the report.</p> : null}
           <KnowledgeTree
             tree={tree}
             fields={fields}
@@ -518,11 +518,11 @@ export function App() {
     return (
       <Shell {...shellProps}>
         <Bezel plate="Discovery" aside="Written answer" scene="discovery">
-          <p>That choice did not match. The choices are closed.</p>
-          {chosen ? <p className="quiet">Your choice: {chosen}</p> : null}
-          {!follow || paragraphs.length < 2 ? <p className="quiet">Loading the reading…</p> : (
+          <p>That answer was not right, so the multiple-choice options are closed for this question.</p>
+          {chosen ? <p className="quiet">You chose: {chosen}</p> : null}
+          {!follow || paragraphs.length < 2 ? <p className="quiet">Loading the short reading…</p> : (
             <>
-              <p>Read the passages below, then answer the new question from that reading only.</p>
+              <p>Read the short explanation below, then answer the new question using only what that reading says.</p>
               <div className="passage">
                 {paragraphs.map((paragraph, index) => (
                   <p key={`passage-${index}`}>{paragraph}</p>
@@ -544,7 +544,7 @@ export function App() {
           <button type="button" className="primary" disabled={paragraphs.length < 2 || !follow || !repairDraft.trim() || saving} onClick={onRepair}>
             {saving ? "Saving…" : "Save this answer"}
           </button>
-          <button type="button" className="text" onClick={() => { setWrittenDraft(""); setChosenField(""); }}>All fields</button>
+          <button type="button" className="text" onClick={() => { setWrittenDraft(""); setChosenField(""); }}>Back to map</button>
         </Bezel>
       </Shell>
     );
@@ -597,7 +597,7 @@ export function App() {
           <button type="button" className="primary" disabled={!writtenDraft.trim() || saving} onClick={onRecordWritten}>
             {saving ? "Recording…" : "Record this answer"}
           </button>
-          <button type="button" className="text" onClick={() => { setWrittenDraft(""); setChosenField(""); }}>All fields</button>
+          <button type="button" className="text" onClick={() => { setWrittenDraft(""); setChosenField(""); }}>Back to map</button>
         </Bezel>
       </Shell>
     );
@@ -613,8 +613,8 @@ export function App() {
         <Shell {...shellProps}>
           <Bezel plate={current.title} aside="Question" scene={sceneFor(current.id)}>
             <h1 ref={headingRef} tabIndex={-1}>This question could not load.</h1>
-            <p className="alert" role="alert">The choices are missing. Open another field, or tell your admin.</p>
-            <button type="button" className="primary" onClick={() => { setSelected(""); setChosenField(""); }}>All fields</button>
+            <p className="alert" role="alert">The answer choices are missing. Open another subject, or tell your parent or admin.</p>
+            <button type="button" className="primary" onClick={() => { setSelected(""); setChosenField(""); }}>Back to map</button>
           </Bezel>
         </Shell>
       );
@@ -668,7 +668,7 @@ export function App() {
           <button type="button" className="primary" disabled={!selected || saving} onClick={onRecord}>
             {saving ? "Recording…" : "Record this answer"}
           </button>
-          <button type="button" className="text" onClick={() => { setSelected(""); setChosenField(""); }}>All fields</button>
+          <button type="button" className="text" onClick={() => { setSelected(""); setChosenField(""); }}>Back to map</button>
         </Bezel>
       </Shell>
     );
@@ -680,16 +680,16 @@ export function App() {
 
   return (
     <Shell {...shellProps}>
-      <Bezel plate={current.title} aside="Section finished" scene={sceneFor(current.id)}>
+      <Bezel plate={current.title} aside="Finished" scene={sceneFor(current.id)}>
         <h1 ref={headingRef} tabIndex={-1}>{current.title} is finished</h1>
         <p>
-          {current.answered} of {current.total} questions are answered.
-          {current.moduleRoman ? ` ${current.moduleRoman}.` : ""}
+          You answered {current.answered} of {current.total} questions.
+          {current.moduleRoman ? ` (${current.moduleRoman})` : ""}
           {current.label ? ` ${current.label}.` : ""}
         </p>
         {level ? (
           <div className="learning-level" role="status">
-            <h2>Where this module sat</h2>
+            <h2>Rough year level for this set</h2>
             <p className="learning-level-headline">{level.headline}</p>
             <p className="learning-level-band">{level.nceaBand}</p>
             <p>{level.detail}</p>
@@ -699,7 +699,7 @@ export function App() {
         <div className="pace-feedback">
           <h2>How hard did this feel?</h2>
           <p className="quiet">
-            Move the slider so we know whether to ease or raise the next steps.
+            Move the slider so the next sets can be made a bit easier or a bit harder for you.
           </p>
           <label className="pace-slider" htmlFor={`pace-${current.id}`}>
             <span className="pace-ends">
@@ -733,18 +733,16 @@ export function App() {
         </div>
         {current.held ? (
           <div className="tech-weak-spots" role="status">
-            <h2>Depth and width</h2>
+            <h2>What can open next</h2>
             <p>
-              This sitting held. Two tracks open: a harder module deeper in {current.title},
-              and a lateral branch into related material
-              {current.lateralFieldId ? ` (${current.lateralFieldId})` : ""}.
+              You got enough questions right first time that two new paths can open:
+              a harder set in {current.title}, and a related subject nearby.
             </p>
             {(current.nextModules || []).filter((entry) => entry.awaiting).length ? (
               <ul>
                 {(current.nextModules || []).filter((entry) => entry.awaiting).map((entry) => (
                   <li key={entry.strandId}>
                     <span className="tech-await-title">{entry.title}</span>
-                    <p className="quiet"><code>{entry.strandId}</code></p>
                   </li>
                 ))}
               </ul>
@@ -752,23 +750,24 @@ export function App() {
           </div>
         ) : (
           <div className="tech-weak-spots" role="status">
-            <h2>What would hold you back</h2>
+            <h2>Ideas to strengthen</h2>
             {(current.missDetails || []).length ? (
               <ul>
                 {(current.missDetails || []).map((miss) => (
                   <li key={miss.id}>
                     <span className="tech-await-title">{miss.prompt}</span>
                     <p className="quiet">
-                      The short in-app reading after that miss is the solution note for this idea.
+                      The short reading after that miss explains this idea before you write your own answer.
                     </p>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="quiet">The missed ideas from this sitting stay at this level until a training module holds them.</p>
+              <p className="quiet">The ideas you missed stay at this level until a practice set covers them again.</p>
             )}
             <p>
-              The next module stays at this level until those ideas hold. Depth and width open only after a held sitting.
+              The next set in this subject stays at the same level until those ideas are stronger.
+              Harder and wider paths open only after you get enough questions right first time.
             </p>
           </div>
         )}
@@ -776,22 +775,22 @@ export function App() {
           <div className="tech-await" role="status">
             <p>
               {current.held
-                ? "This sitting held. The next deepen and/or width modules are not written yet."
-                : `This sitting did not hold. Another module at the same level (${current.nextModuleRoman || "practice"}) is not written yet.`}
+                ? "You did well enough on this set. The next harder set, or a related subject, is not written yet."
+                : `This set was not strong enough yet. Another practice set at the same level${current.nextModuleRoman ? ` (${current.nextModuleRoman})` : ""} is not written yet.`}
               {" "}
-              Your admin has been notified and can see this gap in the Modules needed table.
+              Your parent or admin has been told and can see what to write next.
             </p>
             <p className="quiet">
               {current.held
-                ? "If a sibling branch is already open on the map, you can study that for width. Otherwise mark an interest and return later."
-                : "Study other open fields for now, or mark this field as an interest so it stays on your list."}
+                ? "If another related subject is already open on the map, you can study that. Otherwise mark an interest and come back later."
+                : "Study other open subjects for now, or mark this one as an interest so it stays on your list."}
             </p>
           </div>
         ) : (
-          <p>There is no further question in this field until a new cluster is added. You can update your interest ticks below.</p>
+          <p>There are no more questions in this subject until a new set is added. You can update your interests below.</p>
         )}
         {interestPanel}
-        <button type="button" className="text" onClick={() => setChosenField("")}>All fields</button>
+        <button type="button" className="text" onClick={() => setChosenField("")}>Back to map</button>
       </Bezel>
     </Shell>
   );

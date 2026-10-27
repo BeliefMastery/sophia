@@ -40,7 +40,7 @@ function ResultMarks({ marks, complete, held }) {
       ))}
       {complete ? (
         <span className="tech-mark-caption">
-          {held ? "Deeper branch open" : "Another module in this field"}
+          {held ? "Harder set can open" : "More practice in this subject"}
         </span>
       ) : null}
     </div>
@@ -76,7 +76,7 @@ function progressMeta(node) {
     parts.push(node.progress.moduleRoman || moduleLabel(node.progress.depth));
   }
   if (node.progress.complete) {
-    parts.push(`${node.progress.matched} held (need ${node.progress.need})`);
+    parts.push(`${node.progress.matched} of ${node.progress.need} needed right first time`);
   }
   return parts.filter(Boolean).join(" · ");
 }
@@ -326,12 +326,13 @@ export function KnowledgeTree({
   return (
     <div className="tech-tree">
       <p className="quiet">
-        This map is the University Entrance ramp: literacy, numeracy, school science, and the pathway subjects you switch on.
-        Hold a module (five of six on a six-question set) to open a deeper branch. Falling short keeps you in this field for another module at the same level.
+        This map is for University Entrance preparation: English, maths, school science, and any pathway subjects you switch on.
+        Get most questions right the first time (about five out of six) to unlock a harder set in that subject.
+        If you miss too many, you stay here for more practice at the same level.
       </p>
       <div className="tech-entrance-targets">
         <h2 className="tech-section-title">Entrance subjects</h2>
-        <p className="quiet">English and mathematics stay on. Tick the pathway subjects you are preparing.</p>
+        <p className="quiet">English and mathematics stay on. Tick any other pathway subjects you are working toward.</p>
         <ul className="tech-entrance-list">
           {entranceOptions.map((option) => (
             <li key={option.id}>
@@ -357,10 +358,10 @@ export function KnowledgeTree({
         <div className="tech-await" role="status">
           <p>
             {awaiting.length === 1
-              ? `${awaiting[0].title} needs a new ${awaiting[0].held ? "deeper" : "same-level"} module.`
-              : `${awaiting.length} fields are waiting on new modules.`}
+              ? `${awaiting[0].title} is waiting for a new question set${awaiting[0].held ? " at a harder level" : " at this level"}.`
+              : `${awaiting.length} subjects are waiting for new question sets.`}
             {" "}
-            Your admin has been notified. Meanwhile you can study other open branches or mark interests below.
+            Your parent or admin has been told. You can study other open subjects for now, or mark interests below.
           </p>
           <ul>
             {awaiting.map((field) => (
@@ -368,9 +369,8 @@ export function KnowledgeTree({
                 <span className="tech-await-title">{field.title}</span>
                 <span className="quiet">
                   {" · "}
-                  {field.held ? "deepen" : "practice"}
+                  {field.held ? "next: harder set" : "next: more practice"}
                   {field.nextModuleRoman ? ` · ${field.nextModuleRoman}` : ""}
-                  {field.nextStrandId ? ` · ${field.nextStrandId}` : ""}
                 </span>
               </li>
             ))}
@@ -402,13 +402,13 @@ export function KnowledgeTree({
             aria-expanded={additionalOpen}
             onClick={() => setAdditionalOpen((open) => !open)}
           >
-            <span className="tech-domain-title">Additional fields</span>
-            <span className="tech-domain-meta">Beyond the entrance ramp</span>
+            <span className="tech-domain-title">Extra subjects</span>
+            <span className="tech-domain-meta">Beyond University Entrance prep</span>
           </button>
           {additionalOpen ? (
             <div className="tech-additional-body">
               <p className="quiet">
-                Introductory university subjects stay studyable here. They are not the front door for University Entrance preparation.
+                These are introductory university-style subjects. They are useful to explore, but they are not the main path for University Entrance preparation.
               </p>
               <div className="tech-outline" role="list">
                 {additionalSections.map((root) => (
@@ -457,12 +457,12 @@ export function KnowledgeTree({
               onClick={() => onStudy(focus.field)}
             >
               {focus.state === "active"
-                ? "Continue this field"
+                ? "Continue this subject"
                 : focus.state === "practice"
-                  ? "Open this field"
+                  ? "Open this subject"
                   : focus.state === "complete"
-                    ? "Open this field"
-                    : "Study this field"}
+                    ? "Open this subject"
+                    : "Study this subject"}
             </button>
           ) : null}
           {focus.field ? (
@@ -473,11 +473,11 @@ export function KnowledgeTree({
                 onChange={() => toggleInterest(focus)}
                 disabled={savingInterest}
               />
-              <span>Mark as an interest</span>
+              <span>Keep this on my interest list</span>
             </label>
           ) : null}
           {interestError ? <p className="alert" role="alert">{interestError}</p> : null}
-          {savingInterest ? <p className="quiet">Saving interest…</p> : null}
+          {savingInterest ? <p className="quiet">Saving…</p> : null}
         </div>
       ) : null}
     </div>

@@ -136,7 +136,7 @@ const nodes = [
     parentId: "english",
     tier: 1,
     status: "live",
-    summary: "Argument, audience, and persuasion after core English holds.",
+    summary: "Argument, audience, and persuasion after core English is strong enough.",
   },
 
   // Science
@@ -215,7 +215,7 @@ const nodes = [
     parentId: "physics",
     tier: 2,
     status: "live",
-    summary: "Designing solutions with physical constraints after physics holds.",
+    summary: "Designing solutions with physical constraints after physics is strong enough.",
   },
   {
     id: "medicine",
@@ -226,7 +226,7 @@ const nodes = [
     parentId: "chemistry",
     tier: 2,
     status: "live",
-    summary: "Body systems and applied chemistry for health after chemistry holds.",
+    summary: "Body systems and applied chemistry for health after chemistry is strong enough.",
   },
   {
     id: "environmentalScience",
@@ -237,7 +237,7 @@ const nodes = [
     parentId: "biology",
     tier: 2,
     status: "live",
-    summary: "Living systems under environmental pressure after biology holds.",
+    summary: "Living systems under environmental pressure after biology is strong enough.",
   },
   {
     id: "systems",
@@ -248,7 +248,7 @@ const nodes = [
     parentId: "geology",
     tier: 2,
     status: "live",
-    summary: "Earth and human systems as linked wholes after geology holds.",
+    summary: "Earth and human systems as linked wholes after geology is strong enough.",
   },
 
   // Social
@@ -305,7 +305,7 @@ const nodes = [
     parentId: "history",
     tier: 2,
     status: "live",
-    summary: "Deeper NZ strand after the core anchors hold.",
+    summary: "A deeper New Zealand strand after the core history anchors are strong enough.",
   },
   {
     id: "civics",
@@ -316,7 +316,7 @@ const nodes = [
     parentId: "politics",
     tier: 2,
     status: "live",
-    summary: "Citizenship and local decision-making after politics holds.",
+    summary: "Citizenship and local decision-making after politics is strong enough.",
   },
   {
     id: "designChoice",
@@ -327,7 +327,7 @@ const nodes = [
     parentId: "technology",
     tier: 2,
     status: "live",
-    summary: "Trade-offs in designed systems after technology holds.",
+    summary: "Trade-offs in designed systems after technology is strong enough.",
   },
   {
     id: "worldHistory",

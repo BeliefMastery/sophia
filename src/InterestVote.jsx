@@ -25,7 +25,7 @@ export function InterestVote({ catalog, interests, onSave, saving, error }) {
   }, [catalog, interests]);
 
   if (!options.length) {
-    return <p className="quiet">Interest options are not loaded yet.</p>;
+    return <p className="quiet">Interest options are still loading.</p>;
   }
 
   function toggle(id) {
@@ -44,8 +44,11 @@ export function InterestVote({ catalog, interests, onSave, saving, error }) {
 
   return (
     <div className="interest">
-      <h2>Fields of interest</h2>
-      <p>Tick any school or university fields you care about. This only registers interest. It does not add a module by itself.</p>
+      <h2>Subjects you care about</h2>
+      <p>
+        Tick school or university subjects you want to keep an eye on.
+        This only saves your interest list. It does not unlock new questions by itself.
+      </p>
       {selected.length ? (
         <p className="quiet">Selected: {selected.join(", ")}</p>
       ) : (

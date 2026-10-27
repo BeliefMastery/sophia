@@ -62,6 +62,18 @@ Add one strand object (typically in the content file that already owns that fiel
 
 **Scope:** about **six choice questions** (allowed band **5–8** choice items). Optional **one** research/essay item after the choices (Helios-style) if the prompt needs a written case — research does not replace the six-choice hold band.
 
+## 4b. Student voice (Year 10)
+
+Sophia is about 15. Student-facing wording must read as clear Year 10 English:
+
+- Full sentences a good teacher would say — not telegraphic exam headlines.
+- Passages teach the idea; they must not sound like checklist advice about “how to work through questions”.
+- Avoid internal product words on the student path (`sitting`, `hold`, `depth/width`, `cluster`) unless you explain them in plain language.
+- Keep academic demand the same; clearer language is not easier content.
+- Choice texts should be clear phrases of similar length; do not make the correct option obviously longest.
+
+Admin Cursor prompts may stay terse. The student UI and every `prompt` / choice / `passage` / `followPrompt` must not.
+
 ## 5. Item shape (each choice probe)
 
 ```text
