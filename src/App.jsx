@@ -10,6 +10,7 @@ import { markRepair, reviewRecord } from "../lib/markRepair.mjs";
 import { Admin } from "./Admin.jsx";
 import { InterestVote } from "./InterestVote.jsx";
 import { KnowledgeTree } from "./KnowledgeTree.jsx";
+import { NceaRoadmap } from "./NceaRoadmap.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
 
 const signInMessages = {
@@ -59,6 +60,8 @@ export function App() {
   const [paceDraft, setPaceDraft] = useState(3);
   const [writtenDraft, setWrittenDraft] = useState("");
   const [sourceCache, setSourceCache] = useState({});
+  const [dashboardView, setDashboardView] = useState("map");
+  const [confirmedMatch, setConfirmedMatch] = useState(null);
   const [studyMode, setStudyMode] = useState(() => {
     try {
       return sessionStorage.getItem("sophia-study-mode") === "1";
@@ -144,6 +147,8 @@ export function App() {
     setPaceError("");
     setPaceDraft(3);
     setStudyMode(false);
+    setDashboardView("map");
+    setConfirmedMatch(null);
   }, [user]);
 
   const fields = useMemo(
@@ -293,8 +298,12 @@ export function App() {
         }
         setRepairDraft("");
         setPendingRepair({ item, selected });
+        setSelected("");
+      } else {
+        const choiceText = item.choices?.[selected]?.text || selected;
+        setConfirmedMatch({ item, choiceText });
+        setSelected("");
       }
-      setSelected("");
     } catch {
       setPendingRepair(null);
       setRecordError("That answer was not recorded. Try it again.");
@@ -449,6 +458,7 @@ export function App() {
     setWrittenDraft("");
     setRecordError("");
     setChosenField("");
+    setConfirmedMatch(null);
   }
 
   const shellProps = {
@@ -482,29 +492,66 @@ export function App() {
   if (!current) {
     return (
       <Shell {...shellProps}>
-        <Bezel plate="Knowledge map" aside="Entrance" scene="study">
-          <h1 ref={headingRef} tabIndex={-1}>University Entrance map</h1>
-          <p>Choose an open subject. Later subjects unlock when you finish the ones that come before them.</p>
-          {parent ? <p className="quiet">You are practising as a student. Answers save on this admin login so you can review them in the report.</p> : null}
-          <KnowledgeTree
-            tree={tree}
-            fields={fields}
-            interests={interests}
-            entrance={entrance}
-            entranceCatalog={entranceCatalog}
-            onStudy={(fieldId) => {
-              setSelected("");
-              setWrittenDraft("");
-              setPendingRepair(null);
-              setChosenField(fieldId);
-            }}
-            onSaveInterests={onInterestSave}
-            onSaveEntrance={onEntranceSave}
-            savingInterest={interestSaving}
-            savingEntrance={entranceSaving}
-            interestError={interestError}
-            entranceError={entranceError}
-          />
+        <Bezel
+          plate={dashboardView === "roadmap" ? "Pathway" : "Knowledge map"}
+          aside={dashboardView === "roadmap" ? "NCEA & UE" : "Entrance"}
+          scene="study"
+        >
+          <div className="view-toggle-bar">
+            <button
+              type="button"
+              className={`view-toggle-btn ${dashboardView === "map" ? "is-active" : ""}`}
+              onClick={() => setDashboardView("map")}
+            >
+              Knowledge Map (Study)
+            </button>
+            <button
+              type="button"
+              className={`view-toggle-btn ${dashboardView === "roadmap" ? "is-active" : ""}`}
+              onClick={() => setDashboardView("roadmap")}
+            >
+              NCEA & University Roadmap
+            </button>
+          </div>
+
+          {dashboardView === "roadmap" ? (
+            <NceaRoadmap
+              fields={fields}
+              onStudy={(fieldId) => {
+                setSelected("");
+                setWrittenDraft("");
+                setPendingRepair(null);
+                setConfirmedMatch(null);
+                setChosenField(fieldId);
+              }}
+            />
+          ) : (
+            <>
+              <h1 ref={headingRef} tabIndex={-1}>University Entrance map</h1>
+              <p>Choose an open subject. Later subjects unlock when you finish the ones that come before them.</p>
+              {parent ? <p className="quiet">You are practising as a student. Answers save on this admin login so you can review them in the report.</p> : null}
+              <KnowledgeTree
+                tree={tree}
+                fields={fields}
+                interests={interests}
+                entrance={entrance}
+                entranceCatalog={entranceCatalog}
+                onStudy={(fieldId) => {
+                  setSelected("");
+                  setWrittenDraft("");
+                  setPendingRepair(null);
+                  setConfirmedMatch(null);
+                  setChosenField(fieldId);
+                }}
+                onSaveInterests={onInterestSave}
+                onSaveEntrance={onEntranceSave}
+                savingInterest={interestSaving}
+                savingEntrance={entranceSaving}
+                interestError={interestError}
+                entranceError={entranceError}
+              />
+            </>
+          )}
         </Bezel>
       </Shell>
     );
@@ -545,6 +592,52 @@ export function App() {
             {saving ? "Saving…" : "Save this answer"}
           </button>
           <button type="button" className="text" onClick={() => { setWrittenDraft(""); setChosenField(""); }}>Back to map</button>
+        </Bezel>
+      </Shell>
+    );
+  }
+
+  if (confirmedMatch) {
+    const item = confirmedMatch.item;
+    const wordList = Array.isArray(item.words) ? item.words : [];
+    return (
+      <Shell {...shellProps}>
+        <Bezel plate={current?.title || "Concept Confirmed"} aside="Mastered" tone="good" scene={current?.id ? sceneFor(current.id) : "study"}>
+          <div className="learning-confirmation" role="status">
+            <span className="confirmation-badge">✓ Concept Understood</span>
+            <h1 ref={headingRef} tabIndex={-1} className="prompt">{item.prompt}</h1>
+            <p className="confirmed-choice">
+              <b>Your answer:</b> {confirmedMatch.choiceText}
+            </p>
+            <div className="learning-takeaway">
+              <h3>Key Learning</h3>
+              <p>
+                You demonstrated the core principle for this question. Every verified concept strengthens the foundation needed for NCEA achievement standards and University Entrance.
+              </p>
+            </div>
+            {wordList.length ? (
+              <div className="confirmed-words">
+                <h4>Key vocabulary for this concept:</h4>
+                <ul>
+                  {wordList.map((word) => (
+                    <li key={word.term}>
+                      <strong>{word.term}</strong>: {word.meaning}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                setConfirmedMatch(null);
+              }}
+            >
+              Continue to next question →
+            </button>
+            <button type="button" className="text" onClick={goHome}>Back to map</button>
+          </div>
         </Bezel>
       </Shell>
     );
@@ -731,6 +824,61 @@ export function App() {
           ) : null}
           {paceError ? <p className="alert" role="alert">{paceError}</p> : null}
         </div>
+        <div className="finished-diagnostics">
+          <div className="finished-card mastery-card">
+            <h3>✓ Concepts Mastered in This Sitting</h3>
+            <p>
+              You achieved <b>{current.matched} of {current.total}</b> questions right on your first attempt.
+              {current.held
+                ? " You demonstrated solid understanding across the core concepts tested here."
+                : " Every question you answered correctly reinforces essential baseline knowledge for your senior pathway."}
+            </p>
+          </div>
+
+          <div className="finished-card frontier-card">
+            <h3>🎯 Where You Are Limited (Your Learning Frontier)</h3>
+            {(current.missDetails || []).length ? (
+              <>
+                <p>The following ideas were unfamiliar or need strengthening before advancing to higher NCEA standards:</p>
+                <ul>
+                  {(current.missDetails || []).map((miss) => (
+                    <li key={miss.id} className="finished-miss-item">
+                      <b>Concept:</b> {miss.prompt}
+                      {miss.chosen ? <div className="quiet">Initial choice: {miss.chosen}</div> : null}
+                      {miss.repair ? <div><b>Your repair answer:</b> {miss.repair}</div> : null}
+                    </li>
+                  ))}
+                </ul>
+                <p className="quiet">
+                  Completing the short reading and written repair helps eliminate this limitation. Another practice set at this level will solidify these concepts.
+                </p>
+              </>
+            ) : (
+              <p>
+                No limitations detected in this sitting! All tested concepts held at this tier. You are ready for deeper or broader material.
+              </p>
+            )}
+          </div>
+
+          <div className="finished-card pathway-card">
+            <h3>🎓 NCEA & University Entrance Impact</h3>
+            <p>
+              This module builds toward <b>{level?.nceaBand || "NCEA Foundation"}</b>.
+              Mastery here feeds directly into your University Entrance requirements (Co-requisite or Approved Subject credit readiness).
+            </p>
+            <button
+              type="button"
+              className="frontier-btn"
+              onClick={() => {
+                setChosenField("");
+                setDashboardView("roadmap");
+              }}
+            >
+              View your NCEA & University Roadmap →
+            </button>
+          </div>
+        </div>
+
         {current.held ? (
           <div className="tech-weak-spots" role="status">
             <h2>What can open next</h2>
@@ -775,15 +923,13 @@ export function App() {
           <div className="tech-await" role="status">
             <p>
               {current.held
-                ? "You did well enough on this set. The next harder set, or a related subject, is not written yet."
-                : `This set was not strong enough yet. Another practice set at the same level${current.nextModuleRoman ? ` (${current.nextModuleRoman})` : ""} is not written yet.`}
+                ? "You did well enough on this set. The next harder set, or a related subject, is queued to be prepared."
+                : `This set was not strong enough yet. Another practice set at the same level${current.nextModuleRoman ? ` (${current.nextModuleRoman})` : ""} is queued.`}
               {" "}
-              Your parent or admin has been told and can see what to write next.
+              Your parent or admin has been notified.
             </p>
             <p className="quiet">
-              {current.held
-                ? "If another related subject is already open on the map, you can study that. Otherwise mark an interest and come back later."
-                : "Study other open subjects for now, or mark this one as an interest so it stays on your list."}
+              You don't have to wait! Explore other open subjects on the Knowledge Map, or check your NCEA Roadmap above.
             </p>
           </div>
         ) : (
