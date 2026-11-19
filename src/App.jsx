@@ -1,17 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { get, onValue, push, ref, set } from "firebase/database";
-import { recordChoice } from "../lib/recordChoice.mjs";
 import { orderedChoices } from "../lib/records.mjs";
-import { auth, db, firebaseConfig, useEmulators } from "./firebase.js";
+import { auth, firebaseConfig, useEmulators } from "./firebase.js";
 import { passageParagraphs } from "../lib/explain.mjs";
-import { fieldPlace, fieldStudy, nextFieldStep, paceLabelFor, paceLabels } from "../lib/expansion.mjs";
-import { markRepair, reviewRecord } from "../lib/markRepair.mjs";
+import { paceLabels } from "../lib/expansion.mjs";
 import { Admin } from "./Admin.jsx";
 import { InterestVote } from "./InterestVote.jsx";
 import { KnowledgeTree } from "./KnowledgeTree.jsx";
 import { NceaRoadmap } from "./NceaRoadmap.jsx";
 import { Scene, sceneFor } from "./scenes.jsx";
+import { useLearningStore } from "./useLearningStore.js";
 
 const signInMessages = {
   "auth/invalid-credential": "That email or password did not match.",
@@ -22,46 +20,17 @@ const signInMessages = {
   "auth/too-many-requests": "Too many attempts. Wait a moment and try again.",
 };
 
-function listFromSnapshot(value) {
-  if (!value) return [];
-  return Object.entries(value).map(([id, record]) => ({ id, ...record }));
-}
-
 export function App() {
   const [user, setUser] = useState(undefined);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signInError, setSignInError] = useState("");
   const [signingIn, setSigningIn] = useState(false);
-  const [library, setLibrary] = useState(null);
-  const [strands, setStrands] = useState(null);
-  const [chosenField, setChosenField] = useState("");
-  const [attempts, setAttempts] = useState(null);
-  const [parent, setParent] = useState(null);
   const [selected, setSelected] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [recordError, setRecordError] = useState("");
-  const [repairs, setRepairs] = useState(null);
-  const [guides, setGuides] = useState({});
-  const [pendingRepair, setPendingRepair] = useState(null);
   const [repairDraft, setRepairDraft] = useState("");
-  const [catalog, setCatalog] = useState(null);
-  const [entranceCatalog, setEntranceCatalog] = useState(null);
-  const [tree, setTree] = useState(null);
-  const [interests, setInterests] = useState(null);
-  const [entrance, setEntrance] = useState(null);
-  const [pace, setPace] = useState(null);
-  const [interestSaving, setInterestSaving] = useState(false);
-  const [interestError, setInterestError] = useState("");
-  const [entranceSaving, setEntranceSaving] = useState(false);
-  const [entranceError, setEntranceError] = useState("");
-  const [paceSaving, setPaceSaving] = useState(false);
-  const [paceError, setPaceError] = useState("");
   const [paceDraft, setPaceDraft] = useState(3);
   const [writtenDraft, setWrittenDraft] = useState("");
-  const [sourceCache, setSourceCache] = useState({});
   const [dashboardView, setDashboardView] = useState("map");
-  const [confirmedMatch, setConfirmedMatch] = useState(null);
   const [studyMode, setStudyMode] = useState(() => {
     try {
       return sessionStorage.getItem("sophia-study-mode") === "1";
@@ -69,8 +38,48 @@ export function App() {
       return false;
     }
   });
-  const savingRef = useRef(false);
   const headingRef = useRef(null);
+
+  const store = useLearningStore(user);
+  const {
+    ready,
+    library,
+    strands,
+    parent,
+    guides,
+    catalog,
+    entranceCatalog,
+    tree,
+    interests,
+    entrance,
+    pace,
+    sourceCache,
+    fields,
+    step,
+    activeRepair,
+    chosenField,
+    setChosenField,
+    setPendingRepair,
+    confirmedMatch,
+    setConfirmedMatch,
+    primerDismissed,
+    dismissPrimer,
+    saving,
+    recordError,
+    setRecordError,
+    interestSaving,
+    interestError,
+    entranceSaving,
+    entranceError,
+    paceSaving,
+    paceError,
+    submitChoice,
+    submitWritten,
+    submitRepair,
+    saveInterests,
+    saveEntrance,
+    savePace,
+  } = store;
 
   useEffect(() => onAuthStateChanged(auth, setUser), []);
 
@@ -84,122 +93,12 @@ export function App() {
   }, [studyMode]);
 
   useEffect(() => {
-    if (!user) return undefined;
-    const unsubItems = onValue(ref(db, "items"), (snapshot) => setLibrary(listFromSnapshot(snapshot.val())));
-    const unsubStrands = onValue(ref(db, "strands"), (snapshot) => setStrands(snapshot.val() || {}));
-    const unsubAttempts = onValue(ref(db, `attempts/${user.uid}`), (snapshot) => {
-      setAttempts(listFromSnapshot(snapshot.val()));
-    });
-    const unsubRole = onValue(ref(db, `roles/${user.uid}/parent`), (snapshot) => {
-      setParent(snapshot.val() === true);
-    });
-    const unsubRepairs = onValue(ref(db, `repairs/${user.uid}`), (snapshot) => {
-      setRepairs(snapshot.val() || {});
-    });
-    const unsubCatalog = onValue(ref(db, "catalog/interests"), (snapshot) => {
-      setCatalog(snapshot.val() || {});
-    });
-    const unsubEntranceCatalog = onValue(ref(db, "catalog/entrance"), (snapshot) => {
-      setEntranceCatalog(snapshot.val() || {});
-    });
-    const unsubTree = onValue(ref(db, "catalog/tree"), (snapshot) => {
-      setTree(snapshot.val() || {});
-    });
-    const unsubInterests = onValue(ref(db, `interests/${user.uid}`), (snapshot) => {
-      setInterests(snapshot.val() || {});
-    });
-    const unsubEntrance = onValue(ref(db, `entrance/${user.uid}`), (snapshot) => {
-      setEntrance(snapshot.val() || {});
-    });
-    const unsubPace = onValue(ref(db, `pace/${user.uid}`), (snapshot) => {
-      setPace(snapshot.val() || {});
-    });
-    return () => {
-      unsubItems();
-      unsubStrands();
-      unsubAttempts();
-      unsubRole();
-      unsubRepairs();
-      unsubCatalog();
-      unsubEntranceCatalog();
-      unsubTree();
-      unsubInterests();
-      unsubEntrance();
-      unsubPace();
-    };
-  }, [user]);
-
-  useEffect(() => {
     if (user) return;
-    setPendingRepair(null);
-    setGuides({});
     setRepairDraft("");
-    setRepairs(null);
-    setChosenField("");
-    setCatalog(null);
-    setEntranceCatalog(null);
-    setTree(null);
-    setInterests(null);
-    setEntrance(null);
-    setPace(null);
-    setInterestError("");
-    setEntranceError("");
-    setPaceError("");
     setPaceDraft(3);
     setStudyMode(false);
     setDashboardView("map");
-    setConfirmedMatch(null);
   }, [user]);
-
-  const fields = useMemo(
-    () => fieldStudy(strands || {}, library || [], attempts || [], repairs || {}),
-    [strands, library, attempts, repairs],
-  );
-  const step = useMemo(() => {
-    if (!chosenField || !library) return null;
-    return nextFieldStep(strands || {}, library, attempts || [], repairs || {}, chosenField);
-  }, [chosenField, strands, library, attempts, repairs]);
-  const fieldRepair = step?.kind === "repair" ? { item: step.item, selected: step.selected } : null;
-  const pendingHere = Boolean(
-    pendingRepair?.item?.id
-    && chosenField
-    && fieldPlace(strands || {}, library || [], pendingRepair.item).id === chosenField
-    && !(typeof repairs?.[pendingRepair.item.id]?.answer === "string" && repairs[pendingRepair.item.id].answer.trim()),
-  );
-  const activeRepair = chosenField ? (pendingHere ? pendingRepair : fieldRepair) : null;
-
-  useEffect(() => {
-    if (!pendingRepair || repairs === null) return;
-    const saved = repairs[pendingRepair.item.id]?.answer;
-    if (typeof saved === "string" && saved.trim()) setPendingRepair(null);
-  }, [repairs, pendingRepair]);
-
-  useEffect(() => {
-    const itemId = activeRepair?.item?.id;
-    if (!user || !itemId || guides[itemId]) return undefined;
-    let cancel = false;
-    let timer = 0;
-    async function load(attempt) {
-      try {
-        const snapshot = await get(ref(db, `guides/${itemId}`));
-        if (cancel) return;
-        setGuides((current) => ({ ...current, [itemId]: snapshot.val() || {} }));
-        setRecordError("");
-      } catch {
-        if (cancel) return;
-        if (attempt < 4) {
-          timer = window.setTimeout(() => load(attempt + 1), 200);
-          return;
-        }
-        setRecordError("The next question did not load. Try it again.");
-      }
-    }
-    load(0);
-    return () => {
-      cancel = true;
-      window.clearTimeout(timer);
-    };
-  }, [user, activeRepair?.item?.id, guides]);
 
   useEffect(() => {
     headingRef.current?.focus();
@@ -209,28 +108,7 @@ export function App() {
     if (!chosenField || !pace) return;
     const saved = Number(pace[chosenField]?.rating);
     setPaceDraft(saved >= 1 && saved <= 5 ? saved : 3);
-    setPaceError("");
   }, [chosenField, pace]);
-
-  useEffect(() => {
-    const sourceId = step?.item?.sourceId;
-    if (!user || !sourceId) return undefined;
-    let cancel = false;
-    get(ref(db, `sources/${sourceId}`)).then((snapshot) => {
-      if (cancel) return;
-      setSourceCache((current) => {
-        if (current[sourceId]) return current;
-        return { ...current, [sourceId]: snapshot.val() || { title: sourceId, body: "" } };
-      });
-    }).catch(() => {
-      if (cancel) return;
-      setSourceCache((current) => {
-        if (current[sourceId]) return current;
-        return { ...current, [sourceId]: { title: sourceId, body: "" } };
-      });
-    });
-    return () => { cancel = true; };
-  }, [user, step?.item?.sourceId]);
 
   async function onSignIn(event) {
     event.preventDefault();
@@ -248,145 +126,29 @@ export function App() {
 
   async function onRecordWritten() {
     const item = step?.kind === "written" ? step.item : null;
-    const text = writtenDraft.trim();
-    if (!item || !text || savingRef.current || activeRepair) return;
-    savingRef.current = true;
-    setSaving(true);
-    setRecordError("");
-    const attemptRef = push(ref(db, `attempts/${user.uid}`));
-    try {
-      await set(attemptRef, {
-        itemId: item.id,
-        strandId: item.strandId,
-        ideaId: item.ideaId,
-        answerKind: item.answerKind || "essay",
-        answer: text,
-        submittedAt: Date.now(),
-      });
+    if (await submitWritten(item, writtenDraft)) {
       setWrittenDraft("");
-    } catch {
-      setRecordError("That written answer was not recorded. Try it again.");
-    } finally {
-      savingRef.current = false;
-      setSaving(false);
     }
   }
 
   async function onRecord() {
     const item = step?.kind === "question" ? step.item : null;
-    if (!item || !selected || savingRef.current || activeRepair) return;
-    savingRef.current = true;
-    setSaving(true);
-    setRecordError("");
-    const attemptRef = push(ref(db, `attempts/${user.uid}`));
-    const payload = {
-      itemId: item.id,
-      strandId: item.strandId,
-      ideaId: item.ideaId,
-      answerKind: "choice",
-      selected,
-      submittedAt: Date.now(),
-    };
-    try {
-      const matched = await recordChoice((body) => set(attemptRef, body), payload);
-      if (!matched) {
-        const missRef = ref(db, `misses/${user.uid}/${item.id}`);
-        try {
-          await set(missRef, { selected, matched: false, submittedAt: payload.submittedAt });
-        } catch (error) {
-          if (error?.code !== "PERMISSION_DENIED") throw error;
-        }
-        setRepairDraft("");
-        setPendingRepair({ item, selected });
-        setSelected("");
-      } else {
-        const choiceText = item.choices?.[selected]?.text || selected;
-        setConfirmedMatch({ item, choiceText });
-        setSelected("");
-      }
-    } catch {
-      setPendingRepair(null);
-      setRecordError("That answer was not recorded. Try it again.");
-    } finally {
-      savingRef.current = false;
-      setSaving(false);
+    if (!item || !selected) return;
+    setRepairDraft("");
+    if (await submitChoice(item, selected)) {
+      setSelected("");
     }
   }
 
   async function onRepair() {
-    const text = repairDraft.trim();
-    if (!activeRepair || !text || savingRef.current) return;
-    savingRef.current = true;
-    setSaving(true);
-    setRecordError("");
-    const itemId = activeRepair.item.id;
-    const submittedAt = Date.now();
-    try {
-      await set(ref(db, `repairs/${user.uid}/${itemId}`), {
-        answer: text,
-        submittedAt,
-      });
-      try {
-        const guide = guides[itemId] || {};
-        const mark = markRepair(text, guide);
-        await set(ref(db, `reviews/${user.uid}/${itemId}`), reviewRecord(itemId, mark, submittedAt));
-      } catch {
-        // Repair already saved; auto-mark is secondary.
-      }
+    if (await submitRepair(repairDraft)) {
       setRepairDraft("");
-    } catch {
-      setRecordError("That written answer was not saved. Try it again.");
-    } finally {
-      savingRef.current = false;
-      setSaving(false);
     }
   }
 
-  async function onInterestSave(nextInterests) {
-    if (!user || interestSaving) return;
-    setInterestSaving(true);
-    setInterestError("");
-    try {
-      await set(ref(db, `interests/${user.uid}`), nextInterests);
-    } catch {
-      setInterestError("Those interests were not saved. Try it again.");
-    } finally {
-      setInterestSaving(false);
-    }
-  }
-
-  async function onEntranceSave(nextEntrance) {
-    if (!user || entranceSaving) return;
-    setEntranceSaving(true);
-    setEntranceError("");
-    try {
-      await set(ref(db, `entrance/${user.uid}`), nextEntrance);
-    } catch {
-      setEntranceError("Those entrance subjects were not saved. Try it again.");
-    } finally {
-      setEntranceSaving(false);
-    }
-  }
-
-  async function onPaceSave(fieldId, rating) {
-    if (!user || !fieldId || paceSaving) return;
-    const value = Math.min(5, Math.max(1, Number(rating) || 3));
-    const label = paceLabelFor(value);
-    if (!label) return;
-    setPaceSaving(true);
-    setPaceError("");
-    try {
-      await set(ref(db, `pace/${user.uid}/${fieldId}`), {
-        rating: value,
-        label,
-        submittedAt: Date.now(),
-      });
-    } catch {
-      setPaceError("That difficulty rating was not saved. Try it again.");
-    } finally {
-      setPaceSaving(false);
-    }
-  }
+  const onInterestSave = saveInterests;
+  const onEntranceSave = saveEntrance;
+  const onPaceSave = savePace;
 
   if (user === undefined) {
     return <Shell><p className="quiet">Loading…</p></Shell>;
@@ -449,7 +211,7 @@ export function App() {
     );
   }
 
-  if (!library || !strands || !attempts || repairs === null || parent === null || catalog === null || entranceCatalog === null || tree === null || interests === null || entrance === null || pace === null) {
+  if (!ready) {
     return <Shell user={user}><p className="quiet">Loading your map…</p></Shell>;
   }
 
@@ -635,6 +397,36 @@ export function App() {
               }}
             >
               Continue to next question →
+            </button>
+            <button type="button" className="text" onClick={goHome}>Back to map</button>
+          </div>
+        </Bezel>
+      </Shell>
+    );
+  }
+
+  if (step?.item && step.index === 1 && !primerDismissed[current.id]) {
+    const strand = strands?.[step.item.strandId] || {};
+    return (
+      <Shell {...shellProps}>
+        <Bezel plate={current.title} aside="Concept Primer" scene={sceneFor(current.id)}>
+          <div className="learning-confirmation" role="region" aria-label="Concept Primer">
+            <span className="confirmation-badge">Module Overview</span>
+            <h1 ref={headingRef} tabIndex={-1}>{strand.title || current.title}</h1>
+            <p>{strand.summary || `You are starting a ${step.total}-question set in ${current.title}.`}</p>
+            <div className="learning-takeaway">
+              <h3>What to keep in mind</h3>
+              <p>
+                Take your time with each question. If you get one right, you will see a quick concept summary.
+                If you miss one, you will get a short reading to build the idea before moving on.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => dismissPrimer(current.id)}
+            >
+              Start module ({step.total} questions) →
             </button>
             <button type="button" className="text" onClick={goHome}>Back to map</button>
           </div>
