@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { checkChoices } from "../lib/checkChoices.mjs";
+import { checkChoices, auditChoices } from "../lib/checkChoices.mjs";
 
 test("repeated Only… openings on wrong answers are rejected", () => {
   const errors = checkChoices({
@@ -29,4 +29,20 @@ test("parallel numeric choices are allowed", () => {
       { id: "ten", text: "x = 10" },
     ],
   }), []);
+});
+
+test("auditChoices catches absolute qualifiers and negative framing on distractors", () => {
+  const warnings = auditChoices({
+    id: "sample-tells",
+    answerKind: "choice",
+    answer: "balanced",
+    choices: [
+      { id: "balanced", text: "It depends on the context and evidence" },
+      { id: "a", text: "It always works in every situation" },
+      { id: "b", text: "It never applies and cannot be used" },
+      { id: "c", text: "It ignores all evidence" },
+    ],
+  });
+  assert.ok(warnings.some((line) => line.includes("absolute qualifiers")));
+  assert.ok(warnings.some((line) => line.includes("negative framing")));
 });

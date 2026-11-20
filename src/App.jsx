@@ -28,6 +28,7 @@ export function App() {
   const [signingIn, setSigningIn] = useState(false);
   const [selected, setSelected] = useState("");
   const [repairDraft, setRepairDraft] = useState("");
+  const [whyDraft, setWhyDraft] = useState("");
   const [paceDraft, setPaceDraft] = useState(3);
   const [writtenDraft, setWrittenDraft] = useState("");
   const [dashboardView, setDashboardView] = useState("map");
@@ -389,16 +390,28 @@ export function App() {
                 </ul>
               </div>
             ) : null}
+            <label>
+              In one sentence, why is this answer right?
+              <textarea
+                value={whyDraft}
+                onChange={(event) => setWhyDraft(event.target.value)}
+                placeholder="Explain the idea in your own words to lock it in…"
+                maxLength={500}
+                rows={2}
+              />
+            </label>
             <button
               type="button"
               className="primary"
+              disabled={whyDraft.trim().length < 12}
               onClick={() => {
+                setWhyDraft("");
                 setConfirmedMatch(null);
               }}
             >
               Continue to next question →
             </button>
-            <button type="button" className="text" onClick={goHome}>Back to map</button>
+            <button type="button" className="text" onClick={() => { setWhyDraft(""); goHome(); }}>Back to map</button>
           </div>
         </Bezel>
       </Shell>
